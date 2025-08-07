@@ -8,17 +8,14 @@ const SubNav = () => {
     if (location.pathname.startsWith('/sp')) {
       return (
         <>
-          <NavLink to="/sp/backup" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Backup</NavLink>
-          <NavLink to="/sp/rollback" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Rollback</NavLink>
+          <NavLink to="/sp" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Stored Procedure</NavLink>
         </>
       );
     }
     if (location.pathname.startsWith('/table')) {
       return (
         <>
-          <NavLink to="/table/alter" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Alter</NavLink>
-          <NavLink to="/table/backup" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Backup</NavLink>
-          <NavLink to="/table/rollback" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Rollback</NavLink>
+          <NavLink to="/table" className={({ isActive }) => isActive ? 'text-blue-600' : ''}>Table</NavLink>
         </>
       );
     }
@@ -26,9 +23,14 @@ const SubNav = () => {
   };
 
   return (
-    <div className="bg-gray-100 px-6 py-2 space-x-4 border-b">
-      {renderLinks()}
-    </div>
+    <nav className="bg-gray-100 px-6 py-2 flex gap-4 border-b">
+      <NavLink to="/sp" className={({ isActive }) => isActive ? 'font-semibold text-blue-600' : ''}>
+        SP
+      </NavLink>
+      <NavLink to="/table" className={({ isActive }) => isActive ? 'font-semibold text-blue-600' : ''}>
+        Table
+      </NavLink>
+    </nav>
   );
 };
 

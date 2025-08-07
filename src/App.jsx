@@ -1,14 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import BackupScript from './components/BackupScript';
-import RollbackScript from './components/RollbackScript';
 import SubNav from './components/SubNav';
 import Home from './components/Home';
-
-const Placeholder = ({ title }) => (
-  <div className="p-6 text-xl text-center text-gray-600">{title} Page Under Construction</div>
-);
+import StoredProcedure from './pages/StoredProcedure';
+import Tables from './pages/Tables';
+import SPWithNoLockEnhancer from './pages/SPWithNoLockEnhancer';
 
 const App = () => {
   return (
@@ -17,11 +14,10 @@ const App = () => {
         <Navbar />
         <SubNav />
         <Routes>
-          <Route path="/sp/backup" element={<BackupScript />} />
-          <Route path="/sp/rollback" element={<RollbackScript />} />
-          <Route path="/table/alter" element={<Placeholder title="Alter Table" />} />
-          <Route path="/table/backup" element={<Placeholder title="Backup Table" />} />
-          <Route path="/table/rollback" element={<Placeholder title="Rollback Table" />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/sp" element={<StoredProcedure />} />
+        <Route path="/table" element={<Tables />} />
+        <Route path="/withnolock" element={<SPWithNoLockEnhancer />} />
           <Route path="*" element={<Home title="Select a Module" />} />
         </Routes>
       </div>
