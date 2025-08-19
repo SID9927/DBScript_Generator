@@ -1,13 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const StoredProcedure = () => {
- const [spName, setSpName] = useState('');
+
+   const [spName, setSpName] = useState('');
    const [suffix, setSuffix] = useState('');
    const [backupScript, setBackupScript] = useState('');
    const [rollbackScript, setRollbackScript] = useState('');
+   const [defaultSuffix, setDefaultSuffix] = useState('');
  
+   // Generate default suffix on component mount
+  useEffect(() => {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const yyyy = today.getFullYear();
+  const formattedDate = `${dd}${mm}${yyyy}`;
+  setDefaultSuffix(`bkup${formattedDate}`);
+}, []);
+
    const generateScript = () => {
-     const backupName = `${spName}_${suffix}`;
+      const actualSuffix = suffix.trim() !== '' ? suffix : defaultSuffix;
+      const backupName = `${spName}_${actualSuffix}`;
  
      // Generate Backup Script
      const sqlBackupScript = `
@@ -46,12 +59,12 @@ const StoredProcedure = () => {
          />
  
          <input
-           className="w-full p-2 border border-gray-300 rounded"
-           type="text"
-           placeholder="Enter Backup Suffix (e.g. bkup05082025)"
-           value={suffix}
-           onChange={(e) => setSuffix(e.target.value)}
-         />
+          className="w-full p-2 border border-gray-300 rounded"
+          type="text"
+          placeholder={`Enter Backup Suffix (default: ${defaultSuffix})`}
+          value={suffix}
+          onChange={(e) => setSuffix(e.target.value)}
+        />
  
          <button
            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"

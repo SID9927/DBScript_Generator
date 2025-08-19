@@ -4,24 +4,27 @@ const SPWithNoLockEnhancer = () => {
   const [inputSP, setInputSP] = useState('');
   const [outputSP, setOutputSP] = useState('');
 
-   const addNoLockToTables = (sql) => {
-    return sql.replace(
-      /\b(FROM|JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|OUTER JOIN)\s+((?:\w+\.)?\w+)(?:\s+WITH\s*\(\s*NOLOCK\s*\))?\s*(?:AS\s+)?(\w+)?/gi,
-      (match, joinType, tableName, alias) => {
-        // ✅ If already has WITH (NOLOCK), skip adding again
-        if (/WITH\s*\(\s*NOLOCK\s*\)/i.test(match)) {
-          return match;
-        }
+  const addNoLockToTables = (sql) => {
+  const lines = sql.split('\n');
 
-        let replacement = `${joinType} ${tableName} WITH (NOLOCK)`;
-        if (alias && alias.toUpperCase() !== 'WITH') {
-          replacement += ` ${alias}`;
-        }
+  const updatedLines = lines.map((line) => {
+    // Remove any existing WITH (NOLOCK)
+    const cleanedLine = line.replace(/\s+WITH\s*\(\s*NOLOCK\s*\)/gi, '');
 
-        return replacement;
+    // Match JOINs with or without alias
+    return cleanedLine.replace(
+      /\b(FROM|JOIN|LEFT JOIN|RIGHT JOIN|INNER JOIN|OUTER JOIN)\s+((?:\w+\.)?\w+)(\s+(?:AS\s+)?\w+)?/i,
+      (match, joinType, tableName, aliasPart = '') => {
+        return `${joinType} ${tableName}${aliasPart} WITH (NOLOCK)`;
       }
     );
-  };
+  });
+
+  return updatedLines.join('\n');
+};
+
+
+
 
   const handleScan = () => {
     const enhancedSP = addNoLockToTables(inputSP);
