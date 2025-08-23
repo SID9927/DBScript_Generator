@@ -9,38 +9,54 @@ const Home = ({ title }) => {
       <div className="grid grid-cols-2 gap-4">
         {/* SP Section */}
         <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
-          <h2 className="text-xl font-medium mb-2">Backup and Rollback</h2>
           <ul className="space-y-1">
-            <li><Link className="text-blue-600 hover:underline" to="/sp">Stored Procedure</Link></li>
-            <li><Link className="text-blue-600 hover:underline" to="/table">Table</Link></li>
+            <li><Link className="text-xl font-medium hover:underline" to="/backup&rollback">Backup and Rollback</Link></li>
           </ul>
         </div>
 
         {/* Table Section */}
         <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
-          <h2 className="text-xl font-medium mb-2">Alter</h2>
           <ul className="space-y-1">
-            <li><Link className="text-blue-600 hover:underline" to="/table">Table</Link></li>
+            <li><Link className="text-xl font-medium hover:underline" to="/table-guide">Table</Link></li>
           </ul>
         </div>
 
-        {/*Index Section*/ }
+        {/*Stored Procedure Guide Section*/}
         <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
           {/* <h2 className="text-xl font-medium mb-2">Index</h2> */}
           <ul className="space-y-1">
-            <li><Link className="text-xl font-medium hover:underline" to="/#">Index</Link></li>
+            <li><Link className="text-xl font-medium hover:underline" to="/stored-procedures-guide">Stored Procedures Guide</Link></li>
           </ul>
         </div>
 
-        {/*Trigger Section*/ }
+        {/*Index Section*/}
         <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
           {/* <h2 className="text-xl font-medium mb-2">Index</h2> */}
           <ul className="space-y-1">
-            <li><Link className="text-xl font-medium hover:underline" to="/#">Trigger</Link></li>
+            <li><Link className="text-xl font-medium hover:underline" to="/indexes">Index</Link></li>
           </ul>
         </div>
 
-        {/*Performance Section*/ }
+        {/*Trigger Section*/}
+        <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
+          {/* <h2 className="text-xl font-medium mb-2">Index</h2> */}
+          <ul className="space-y-1">
+            <li><Link className="text-xl font-medium hover:underline" to="/triggers">Trigger</Link></li>
+          </ul>
+        </div>
+
+        {/*View Section*/}
+        <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
+          {/* <h2 className="text-xl font-medium mb-2">Index</h2> */}
+          <ul className="space-y-1">
+            <li><Link className="text-xl font-medium hover:underline" to="/views">View</Link></li>
+          </ul>
+        </div>
+
+
+
+
+        {/*Performance Section*/}
         <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
           <h2 className="text-xl font-medium mb-2">Performance</h2>
           <ul className="space-y-1">

@@ -2,12 +2,23 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
+  const linkClass = ({ isActive }) =>
+    isActive
+      ? 'text-white font-semibold'
+      : 'text-gray-300 hover:text-white transition-colors';
+
   return (
-    <nav className="bg-gray-800 text-white px-6 py-4 shadow-md">
+    <nav className="bg-black px-6 py-4 shadow-md">
       <div className="flex justify-between items-center">
-        <div className="text-xl font-semibold">SQL Script Generator</div>
+        <div className="text-xl font-semibold">
+          <a href="/">
+            <img src="/logoDB.png" alt="Logo" className="h-8 inline-block mr-2" />
+          </a>
+        </div>
         <div className="space-x-4">
-          <NavLink to="/Home" className={({ isActive }) => isActive ? 'text-yellow-300' : ''}>Home</NavLink>
+          <NavLink to="/" end className={linkClass}>
+            Home
+          </NavLink>
         </div>
       </div>
     </nav>
