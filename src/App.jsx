@@ -12,6 +12,7 @@ import ViewsGuide from './pages/ViewsGuide';
 import StoredProceduresGuide from './pages/StoredProceduresGuide';
 import BackupRollbackHome from './pages/BackupRollbackHome';
 import TablesGuide from './pages/TablesGuide';
+import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
 
 const backupLinks = [
   { name: 'Home', to: '/backup&rollback' },
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/views" element={<ViewsGuide />} />
           <Route path="/stored-procedures-guide" element={<StoredProceduresGuide />} />
           <Route path='/table-guide' element={<TablesGuide />} />
+          <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
           <Route path="*" element={<Home title="Select a Module" />} />
         </Routes>
       </div>

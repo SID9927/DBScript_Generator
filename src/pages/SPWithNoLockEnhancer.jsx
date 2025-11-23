@@ -229,118 +229,136 @@ const SPWithNoLockEnhancer = () => {
   };
 
   // Parse and rewrite ONE table reference (before ON/JOIN/WHERE/,...)
-const parseOneTableRef = (sql, start, action) => {
-  let i = skipSpaces(sql, start);
-  const leading = sql.substring(start, i); // keep indentation/spaces
+  const parseOneTableRef = (sql, start, action) => {
+    let i = skipSpaces(sql, start);
+    const leading = sql.substring(start, i); // keep indentation/spaces
 
-  // If derived table "(...)" — process inner recursively but DO NOT add NOLOCK here
-  if (sql[i] === "(") {
-    const closeAfter = readBalanced(sql, i);
-    const inner = sql.substring(i + 1, closeAfter - 1);
-    const processedInner = transform(inner, action);
-    let out = leading + "(" + processedInner + ")";
+    // If derived table "(...)" — process inner recursively but DO NOT add NOLOCK here
+    if (sql[i] === "(") {
+      const closeAfter = readBalanced(sql, i);
+      const inner = sql.substring(i + 1, closeAfter - 1);
+      const processedInner = transform(inner, action);
+      let out = leading + "(" + processedInner + ")";
 
-    // Handle alias after derived table
-    let p = skipSpaces(sql, closeAfter);
-    let aliasText = "";
+      // Handle alias after derived table
+      let p = skipSpaces(sql, closeAfter);
+      let aliasText = "";
 
-    // check for "AS alias" or bare alias
-    const asLen = ciMatchWord(sql, p, "AS");
-    if (asLen) {
-      const aliasStart = p;
-      p += asLen;
-      const afterAs = skipSpaces(sql, p);
-      let aliasEnd = afterAs;
+      // check for "AS alias" or bare alias
+      const asLen = ciMatchWord(sql, p, "AS");
+      if (asLen) {
+        const aliasStart = p;
+        p += asLen;
+        const afterAs = skipSpaces(sql, p);
+        let aliasEnd = afterAs;
 
-      if (sql[aliasEnd] === "[") aliasEnd = readBracketIdent(sql, aliasEnd + 1);
-      else if (sql[aliasEnd] === '"') aliasEnd = readQuotedIdent(sql, aliasEnd + 1);
-      else if (isIdentStart(sql[aliasEnd])) {
-        let j = aliasEnd + 1;
-        while (isIdentChar(sql[j])) j++;
-        aliasEnd = j;
+        if (sql[aliasEnd] === "[") aliasEnd = readBracketIdent(sql, aliasEnd + 1);
+        else if (sql[aliasEnd] === '"') aliasEnd = readQuotedIdent(sql, aliasEnd + 1);
+        else if (isIdentStart(sql[aliasEnd])) {
+          let j = aliasEnd + 1;
+          while (isIdentChar(sql[j])) j++;
+          aliasEnd = j;
+        }
+        aliasText = sql.substring(aliasStart, aliasEnd);
+        p = aliasEnd;
+      } else if (isIdentStart(sql[p])) {
+        let aliasEnd = p + 1;
+        while (isIdentChar(sql[aliasEnd])) aliasEnd++;
+        aliasText = sql.substring(p, aliasEnd);
+        p = aliasEnd;
       }
-      aliasText = sql.substring(aliasStart, aliasEnd);
-      p = aliasEnd;
-    } else if (isIdentStart(sql[p])) {
-      let aliasEnd = p + 1;
-      while (isIdentChar(sql[aliasEnd])) aliasEnd++;
-      aliasText = sql.substring(p, aliasEnd);
-      p = aliasEnd;
+
+      // remove NOLOCK after alias if exists
+      let tail = sql.substring(p);
+      tail = tail.replace(/^\s*\bWITH\s*\(\s*NOLOCK\s*\)/i, "");
+
+      out += aliasText + tail;
+      return { text: out, nextPos: sql.length - tail.length };
     }
 
-    // remove NOLOCK after alias if exists
-    let tail = sql.substring(p);
-    tail = tail.replace(/^\s*\bWITH\s*\(\s*NOLOCK\s*\)/i, "");
-
-    out += aliasText + tail;
-    return { text: out, nextPos: sql.length - tail.length };
-  }
-
-  // Base table or TVF
-  const nameStart = i;
-  const nameEnd = readMultipartNameEnd(sql, i);
-  if (nameEnd === i) {
-    return { text: sql[start], nextPos: start + 1 }; // nothing parsed
-  }
-
-  // If function-like (fn(...), OPENQUERY(...)) => leave as-is, just strip misplaced NOLOCK
-  if (looksFunctionLikeAt(sql, nameStart, nameEnd)) {
-    const argsEnd = readBalanced(sql, skipSpaces(sql, nameEnd));
-    let segment = sql.substring(start, argsEnd);
-    segment = stripNoLockEverywhere(segment);
-    return { text: segment, nextPos: argsEnd };
-  }
-
-  // Slice until ON/WHERE/… or comma
-  let q = nameEnd;
-  let localDepth = 0;
-  while (q < sql.length) {
-    if (sql[q] === "(") { localDepth++; q++; continue; }
-    if (sql[q] === ")") { if (localDepth === 0) break; localDepth--; q++; continue; }
-    if (sql[q] === "'" || sql[q] === "[" || sql[q] === '"' || 
-       (sql[q] === "-" && sql[q+1] === "-") || (sql[q] === "/" && sql[q+1] === "*")) {
-      if (sql[q] === "'") q = readSingleQuoted(sql, q+1);
-      else if (sql[q] === "[") q = readBracketIdent(sql, q+1);
-      else if (sql[q] === '"') q = readQuotedIdent(sql, q+1);
-      else if (sql[q] === "-" && sql[q+1] === "-") q = readLineEnd(sql, q+2);
-      else if (sql[q] === "/" && sql[q+1] === "*") q = readBlockCommentEnd(sql, q+2);
-      continue;
+    // Base table or TVF
+    const nameStart = i;
+    const nameEnd = readMultipartNameEnd(sql, i);
+    if (nameEnd === i) {
+      return { text: sql[start], nextPos: start + 1 }; // nothing parsed
     }
-    if (localDepth === 0) {
-      if (isTerminatorAt(sql, q) || sql[q] === "," ) break;
+
+    // If function-like (fn(...), OPENQUERY(...)) => leave as-is, just strip misplaced NOLOCK
+    if (looksFunctionLikeAt(sql, nameStart, nameEnd)) {
+      const argsEnd = readBalanced(sql, skipSpaces(sql, nameEnd));
+      let segment = sql.substring(start, argsEnd);
+      segment = stripNoLockEverywhere(segment);
+      return { text: segment, nextPos: argsEnd };
     }
-    q++;
-  }
 
-  let slice = sql.substring(nameStart, q);   // table + alias
-  slice = stripNoLockEverywhere(slice);      // remove misplaced hints
+    // Slice until ON/WHERE/… or comma
+    let q = nameEnd;
+    let localDepth = 0;
+    while (q < sql.length) {
+      if (sql[q] === "(") { localDepth++; q++; continue; }
+      if (sql[q] === ")") { if (localDepth === 0) break; localDepth--; q++; continue; }
+      if (sql[q] === "'" || sql[q] === "[" || sql[q] === '"' ||
+        (sql[q] === "-" && sql[q + 1] === "-") || (sql[q] === "/" && sql[q + 1] === "*")) {
+        if (sql[q] === "'") q = readSingleQuoted(sql, q + 1);
+        else if (sql[q] === "[") q = readBracketIdent(sql, q + 1);
+        else if (sql[q] === '"') q = readQuotedIdent(sql, q + 1);
+        else if (sql[q] === "-" && sql[q + 1] === "-") q = readLineEnd(sql, q + 2);
+        else if (sql[q] === "/" && sql[q + 1] === "*") q = readBlockCommentEnd(sql, q + 2);
+        continue;
+      }
+      if (localDepth === 0) {
+        if (isTerminatorAt(sql, q) || sql[q] === ",") break;
+      }
+      q++;
+    }
 
-  // Extract alias (if any)
-  const relNameEnd = readMultipartNameEnd(slice, 0);
-  const tableText = slice.substring(0, relNameEnd);
-  let rest = slice.substring(relNameEnd);
+    let slice = sql.substring(nameStart, q);   // table + alias + any existing hints
 
-  // Preserve spacing carefully
-  let out = leading + tableText;
-  rest = rest.replace(/^\s+/, m => m); // keep leading spaces
+    // Extract table name
+    const relNameEnd = readMultipartNameEnd(slice, 0);
+    const tableText = slice.substring(0, relNameEnd);
+    let afterTable = slice.substring(relNameEnd);
 
-  if (action === "remove") {
-    out += rest;
-  } else {
-    // enforce WITH(NOLOCK) -> put it AFTER alias if alias exists, otherwise after table
-    let aliasMatch = rest.match(/^(\s*(AS\s+)?[\[\]"A-Za-z0-9_]+)(\s*.*)?$/i);
+    // Check if NOLOCK already exists right after table name
+    const existingNolockMatch = afterTable.match(/^\s*WITH\s*\(\s*NOLOCK\s*\)/i);
+    const hasExistingNolock = existingNolockMatch !== null;
+
+    // Remove ALL existing NOLOCK hints from the entire slice
+    afterTable = afterTable.replace(/\bWITH\s*\(\s*NOLOCK\s*\)/gi, "");
+
+    // Extract alias (if any) from the cleaned afterTable
+    let aliasMatch = afterTable.match(/^\s*(AS\s+)?(\[?[A-Za-z0-9_]+\]?)/i);
+    let aliasPart = "";
+    let afterAlias = "";
+
     if (aliasMatch) {
-      const aliasPart = aliasMatch[1];
-      const afterAlias = aliasMatch[3] || "";
-      out += aliasPart + " WITH(NOLOCK)" + afterAlias;
+      aliasPart = afterTable.substring(0, aliasMatch[0].length);
+      afterAlias = afterTable.substring(aliasMatch[0].length);
     } else {
-      // no alias
-      out += " WITH(NOLOCK)" + rest;
+      afterAlias = afterTable;
     }
-  }
 
-  return { text: out, nextPos: q };
-};
+    // Build output
+    let out = leading + tableText;
+
+    if (action === "remove") {
+      // Remove mode: just table + alias + rest (no NOLOCK)
+      out += aliasPart + afterAlias;
+    } else {
+      // Enforce mode: table + WITH(NOLOCK) + alias + rest
+      // Only add WITH(NOLOCK) if it wasn't already there in the correct position
+      if (!hasExistingNolock) {
+        out += " WITH(NOLOCK)";
+      } else {
+        out += " WITH(NOLOCK)"; // Re-add it in correct position
+      }
+      out += aliasPart + afterAlias;
+    }
+
+    return { text: out, nextPos: q };
+  };
+
+
 
 
   // Parse a FROM list (can be t1, t2, ... then joins etc.). We handle the initial comma list.
@@ -510,9 +528,8 @@ const parseOneTableRef = (sql, start, action) => {
           <button
             onClick={handleCopy}
             disabled={!outputSP}
-            className={`px-3 py-1 rounded ${
-              copied ? "bg-green-600 text-white" : "bg-gray-700 text-white hover:bg-gray-800"
-            }`}
+            className={`px-3 py-1 rounded ${copied ? "bg-green-600 text-white" : "bg-gray-700 text-white hover:bg-gray-800"
+              }`}
           >
             {copied ? "Copied!" : "Copy"}
           </button>
