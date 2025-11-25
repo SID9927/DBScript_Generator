@@ -1,151 +1,101 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { fadeIn, staggerContainer, staggerItem, cardHover } from '../utils/animations';
+import {
+  IconBackup,
+  IconTable,
+  IconStoredProcedure,
+  IconSearch,
+  IconChart,
+  IconLightning,
+  IconEye,
+  IconRocket
+} from './Icons';
 
-const Home = ({ title }) => {
+const Home = () => {
   const modules = [
     {
       name: 'Backup and Rollback',
       to: '/backup&rollback',
-      description: 'Generate backup and rollback scripts for stored procedures and tables',
-      icon: '🔄',
-      gradient: 'from-blue-500 to-cyan-500'
+      description: 'Generate backup and rollback scripts for stored procedures and tables.',
+      icon: <IconBackup className="w-8 h-8 text-blue-600" />
     },
     {
       name: 'Table Guide',
       to: '/table-guide',
-      description: 'Comprehensive guide for table operations, DDL, and DML',
-      icon: '📊',
-      gradient: 'from-purple-500 to-pink-500'
+      description: 'Comprehensive guide for table operations, DDL, and DML.',
+      icon: <IconTable className="w-8 h-8 text-blue-600" />
     },
     {
-      name: 'Stored Procedures Guide',
+      name: 'Stored Procedures',
       to: '/stored-procedures-guide',
-      description: 'Learn about stored procedures, transactions, and best practices',
-      icon: '⚙️',
-      gradient: 'from-indigo-500 to-purple-500'
+      description: 'Learn about stored procedures, transactions, and best practices.',
+      icon: <IconStoredProcedure className="w-8 h-8 text-blue-600" />
     },
     {
       name: 'Index Guide',
       to: '/indexes',
-      description: 'Master database indexes for optimal query performance',
-      icon: '🔍',
-      gradient: 'from-green-500 to-teal-500'
+      description: 'Master database indexes for optimal query performance.',
+      icon: <IconSearch className="w-8 h-8 text-blue-600" />
     },
     {
-      name: 'Execution Plan Guide',
+      name: 'Execution Plan',
       to: '/execution-plan',
-      description: 'Learn to read and optimize SQL Server execution plans',
-      icon: '📈',
-      gradient: 'from-emerald-500 to-green-500'
+      description: 'Learn to read and optimize SQL Server execution plans.',
+      icon: <IconChart className="w-8 h-8 text-blue-600" />
     },
     {
       name: 'Trigger Guide',
       to: '/triggers',
-      description: 'Understanding and implementing database triggers',
-      icon: '⚡',
-      gradient: 'from-orange-500 to-red-500'
+      description: 'Understanding and implementing database triggers.',
+      icon: <IconLightning className="w-8 h-8 text-blue-600" />
     },
     {
       name: 'View Guide',
       to: '/views',
-      description: 'Create and manage database views effectively',
-      icon: '👁️',
-      gradient: 'from-pink-500 to-rose-500'
+      description: 'Create and manage database views effectively.',
+      icon: <IconEye className="w-8 h-8 text-blue-600" />
     },
     {
-      name: 'Performance: WITH (NOLOCK)',
+      name: 'Performance',
       to: '/withnolock',
-      description: 'Enhance stored procedures with NOLOCK hints',
-      icon: '🚀',
-      gradient: 'from-yellow-500 to-orange-500'
+      description: 'Enhance stored procedures with NOLOCK hints.',
+      icon: <IconRocket className="w-8 h-8 text-blue-600" />
     }
   ];
 
   return (
-    <motion.div
-      className="p-8 max-w-7xl mx-auto"
-      variants={fadeIn}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.h1
-        className="text-5xl font-extrabold mb-3 gradient-text text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        DB Script Generator
-      </motion.h1>
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">
+          DB Script Generator
+        </h1>
+        <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+          Your comprehensive toolkit for database script generation and management.
+        </p>
+      </div>
 
-      <motion.p
-        className="text-center text-gray-600 mb-12 text-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-      >
-        Your comprehensive toolkit for database script generation and management
-      </motion.p>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        {modules.map((module, index) => (
-          <motion.div
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {modules.map((module) => (
+          <Link
             key={module.to}
-            variants={staggerItem}
-            whileHover="hover"
-            initial="rest"
+            to={module.to}
+            className="group block h-full"
           >
-            <Link to={module.to}>
-              <motion.div
-                className="relative group h-full"
-                variants={cardHover}
-              >
-                {/* Gradient border effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${module.gradient} rounded-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-300 blur-sm`}></div>
-
-                {/* Card content */}
-                <div className="relative bg-white rounded-2xl p-6 h-full shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                  {/* Icon */}
-                  <motion.div
-                    className="text-5xl mb-4"
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    {module.icon}
-                  </motion.div>
-
-                  {/* Title */}
-                  <h2 className={`text-xl font-bold mb-2 bg-gradient-to-r ${module.gradient} bg-clip-text text-transparent`}>
-                    {module.name}
-                  </h2>
-
-                  {/* Description */}
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {module.description}
-                  </p>
-
-                  {/* Arrow indicator */}
-                  <motion.div
-                    className="absolute bottom-4 right-4 text-gray-400 group-hover:text-indigo-600"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    →
-                  </motion.div>
-                </div>
-              </motion.div>
-            </Link>
-          </motion.div>
+            <div className="bg-white border border-slate-200 rounded-lg p-6 h-full hover:border-blue-400 hover:shadow-md transition-all duration-200">
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg inline-block group-hover:bg-blue-100 transition-colors">
+                {module.icon}
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                {module.name}
+              </h2>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                {module.description}
+              </p>
+            </div>
+          </Link>
         ))}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

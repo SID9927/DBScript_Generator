@@ -1,66 +1,35 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { slideInFromTop, pulse } from '../utils/animations';
 
 const Navbar = () => {
   const linkClass = ({ isActive }) =>
     isActive
-      ? 'text-white font-semibold'
-      : 'text-gray-200 hover:text-white transition-colors duration-300';
+      ? 'text-white font-medium text-sm'
+      : 'text-slate-400 hover:text-white transition-colors duration-200 text-sm font-medium';
 
   return (
-    <motion.nav
-      className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 px-6 py-4 shadow-2xl overflow-hidden"
-      variants={slideInFromTop}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Animated background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse opacity-50"></div>
-
-      <div className="relative flex justify-between items-center">
-        <motion.div
-          className="text-xl font-semibold"
-          variants={pulse}
-          animate="animate"
-        >
-          <a href="/" className="flex items-center gap-2 group">
-            <motion.img
+    <nav className="bg-slate-900 border-b border-slate-800 px-6 py-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-3 group">
+            <img
               src="/logoDB.png"
               alt="Logo"
-              className="h-10 inline-block drop-shadow-lg"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              className="h-8 w-auto"
             />
-            <span className="hidden md:inline text-white font-bold tracking-wide">
+            <span className="text-white font-semibold tracking-tight text-lg">
               DB Script Generator
             </span>
           </a>
-        </motion.div>
+        </div>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-8">
           <NavLink to="/" end className={linkClass}>
-            <motion.span
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative inline-block"
-            >
-              Home
-              <motion.span
-                className="absolute bottom-0 left-0 h-0.5 bg-white"
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.span>
+            Home
           </NavLink>
         </div>
       </div>
-
-      {/* Bottom glow effect */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-    </motion.nav>
+    </nav>
   );
 };
 

@@ -15,7 +15,6 @@ import TablesGuide from './pages/TablesGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
 
 const backupLinks = [
-  { name: 'Home', to: '/backup&rollback' },
   { name: 'Stored Procedure', to: '/backup&rollback/sp' },
   { name: 'Table', to: '/backup&rollback/table' },
 ];

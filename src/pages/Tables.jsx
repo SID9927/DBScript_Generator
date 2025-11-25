@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import SubNav from '../components/SubNav';
-import { motion } from 'framer-motion';
-import { fadeIn, staggerContainer, staggerItem } from '../utils/animations';
 
 const Tables = () => {
   const [tableName, setTableName] = useState('');
@@ -188,78 +186,59 @@ GO`);
   return (
     <>
       <SubNav />
-      <motion.div
-        className="p-8 max-w-7xl mx-auto"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1
-          className="text-3xl font-bold mb-6 gradient-text"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+      <div className="p-8 max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-slate-900">
           Table Backup & Rollback
-        </motion.h1>
+        </h1>
 
-        <motion.div
-          className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
+        <div className="bg-blue-50 border border-blue-200 p-4 mb-8 rounded-md">
           <p className="text-sm text-blue-800">
-            <strong>💡 How it works:</strong> Backup creates a complete copy of your table with all data using <code className="bg-blue-100 px-1 rounded">SELECT * INTO</code>.
+            <span className="font-semibold">How it works:</span> Backup creates a complete copy of your table with all data using <code className="bg-blue-100 px-1 rounded text-blue-900">SELECT * INTO</code>.
             Rollback restores the original table from the backup copy.
           </p>
-        </motion.div>
+        </div>
 
         {/* Mode Selector */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-1 mb-8 border-b border-slate-200">
           <button
             onClick={() => setMode('single')}
-            className={`px-6 py-3 font-semibold transition-all ${mode === 'single'
-                ? 'text-cyan-600 border-b-2 border-cyan-600'
-                : 'text-gray-600 hover:text-cyan-500'
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'single'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-slate-500 border-transparent hover:text-slate-700'
               }`}
           >
-            📝 Single Table
+            Single Table
           </button>
           <button
             onClick={() => setMode('bulk')}
-            className={`px-6 py-3 font-semibold transition-all ${mode === 'bulk'
-                ? 'text-cyan-600 border-b-2 border-cyan-600'
-                : 'text-gray-600 hover:text-cyan-500'
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'bulk'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-slate-500 border-transparent hover:text-slate-700'
               }`}
           >
-            📋 Bulk Tables
+            Bulk Tables
           </button>
         </div>
 
-        <motion.div
-          className="space-y-6"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="space-y-6">
           {mode === 'single' ? (
-            <>
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Table Name
                 </label>
                 <input
                   className="input-modern"
                   type="text"
-                  placeholder="Enter Table Name (e.g., Customers)"
+                  placeholder="e.g., Customers"
                   value={tableName}
                   onChange={(e) => setTableName(e.target.value)}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Backup Suffix (Optional)
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
                   className="input-modern"
@@ -268,155 +247,111 @@ GO`);
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Backup table will be named: <strong>{tableName || 'TableName'}_{suffix || defaultSuffix}</strong>
-                </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <motion.button
-                  className="btn-primary w-full md:w-auto"
+              <div className="md:col-span-2">
+                <p className="text-sm text-slate-500 mb-4">
+                  Backup table will be named: <strong className="text-slate-700">{tableName || 'TableName'}_{suffix || defaultSuffix}</strong>
+                </p>
+                <button
+                  className="btn-primary"
                   onClick={generateSingleScript}
                   disabled={!tableName || isGenerating}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        ⚙️
-                      </motion.span>
-                      Generating...
-                    </span>
-                  ) : (
-                    'Generate Scripts'
-                  )}
-                </motion.button>
-              </motion.div>
-            </>
+                  {isGenerating ? 'Generating...' : 'Generate Scripts'}
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Table Names (One per line)
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Table Names <span className="text-slate-400 font-normal">(One per line)</span>
                 </label>
                 <textarea
-                  className="input-modern h-48 font-mono text-sm custom-scrollbar"
-                  placeholder={`Enter multiple table names, one per line:\n\nCustomers\nOrders\nProducts\nInventory\nOrderDetails`}
+                  className="input-modern h-48 font-mono text-sm"
+                  placeholder={`Customers\nOrders\nProducts`}
                   value={bulkInput}
                   onChange={(e) => setBulkInput(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Enter one table name per line
-                </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Backup Suffix (Optional)
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
-                  className="input-modern"
+                  className="input-modern max-w-md"
                   type="text"
                   placeholder={`Default: ${defaultSuffix}`}
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-slate-500 mt-1">
                   Same suffix will be applied to all tables. Default: {defaultSuffix}
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <motion.button
-                  className="btn-primary w-full md:w-auto"
+              <div>
+                <button
+                  className="btn-primary"
                   onClick={generateBulkScripts}
                   disabled={!bulkInput.trim() || isGenerating}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        ⚙️
-                      </motion.span>
-                      Generating...
-                    </span>
-                  ) : (
-                    'Generate Bulk Scripts'
-                  )}
-                </motion.button>
-              </motion.div>
-            </>
+                  {isGenerating ? 'Generating...' : 'Generate Bulk Scripts'}
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Scripts Output */}
           {(backupScript || rollbackScript) && (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-slate-200">
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-cyan-700">
-                  📝 Backup Script
-                </h3>
-                <p className="text-xs text-gray-600 mb-2">
-                  Creates a complete copy of the table with all data
-                </p>
-                <div className="relative">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    Backup Script
+                  </h3>
+                  <button
+                    className={`text-xs px-2 py-1 rounded border ${copiedBackup ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    onClick={() => copyToClipboard(backupScript, 'backup')}
+                  >
+                    {copiedBackup ? 'Copied!' : 'Copy to Clipboard'}
+                  </button>
+                </div>
+                <div className="code-block">
                   <textarea
-                    className="w-full h-96 p-4 border-2 border-cyan-200 rounded-xl font-mono text-sm bg-gradient-to-br from-gray-50 to-cyan-50 focus:outline-none focus:border-cyan-400 transition-colors custom-scrollbar"
+                    className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
                     value={backupScript}
                     readOnly
                   />
-                  <motion.button
-                    className={`absolute top-2 right-2 px-3 py-1 text-white text-xs rounded-lg transition-colors ${copiedBackup ? 'bg-green-600' : 'bg-cyan-600 hover:bg-cyan-700'
-                      }`}
-                    onClick={() => copyToClipboard(backupScript, 'backup')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {copiedBackup ? '✓ Copied!' : '📋 Copy'}
-                  </motion.button>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-blue-700">
-                  🔄 Rollback Script
-                </h3>
-                <p className="text-xs text-gray-600 mb-2">
-                  Restores the original table from backup
-                </p>
-                <div className="relative">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    Rollback Script
+                  </h3>
+                  <button
+                    className={`text-xs px-2 py-1 rounded border ${copiedRollback ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    onClick={() => copyToClipboard(rollbackScript, 'rollback')}
+                  >
+                    {copiedRollback ? 'Copied!' : 'Copy to Clipboard'}
+                  </button>
+                </div>
+                <div className="code-block">
                   <textarea
-                    className="w-full h-96 p-4 border-2 border-blue-200 rounded-xl font-mono text-sm bg-gradient-to-br from-gray-50 to-blue-50 focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar"
+                    className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
                     value={rollbackScript}
                     readOnly
                   />
-                  <motion.button
-                    className={`absolute top-2 right-2 px-3 py-1 text-white text-xs rounded-lg transition-colors ${copiedRollback ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
-                      }`}
-                    onClick={() => copyToClipboard(rollbackScript, 'rollback')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {copiedRollback ? '✓ Copied!' : '📋 Copy'}
-                  </motion.button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </>
   );
 };

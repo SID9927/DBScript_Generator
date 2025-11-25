@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import SubNav from '../components/SubNav';
-import { motion } from 'framer-motion';
-import { fadeIn, staggerContainer, staggerItem } from '../utils/animations';
 
 const StoredProcedure = () => {
   const [spName, setSpName] = useState('');
@@ -122,52 +120,38 @@ GO`);
   return (
     <>
       <SubNav />
-      <motion.div
-        className="p-8 max-w-7xl mx-auto"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1
-          className="text-3xl font-bold mb-6 gradient-text"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+      <div className="p-8 max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-slate-900">
           Stored Procedure Backup & Rollback
-        </motion.h1>
+        </h1>
 
         {/* Mode Selector */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-1 mb-8 border-b border-slate-200">
           <button
             onClick={() => setMode('single')}
-            className={`px-6 py-3 font-semibold transition-all ${mode === 'single'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-600 hover:text-indigo-500'
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'single'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-slate-500 border-transparent hover:text-slate-700'
               }`}
           >
-            📝 Single SP
+            Single SP
           </button>
           <button
             onClick={() => setMode('bulk')}
-            className={`px-6 py-3 font-semibold transition-all ${mode === 'bulk'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-600 hover:text-indigo-500'
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'bulk'
+              ? 'text-blue-600 border-blue-600'
+              : 'text-slate-500 border-transparent hover:text-slate-700'
               }`}
           >
-            📋 Bulk SPs
+            Bulk SPs
           </button>
         </div>
 
-        <motion.div
-          className="space-y-6"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="space-y-6">
           {mode === 'single' ? (
-            <>
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Stored Procedure Name
                 </label>
                 <input
@@ -177,11 +161,11 @@ GO`);
                   value={spName}
                   onChange={(e) => setSpName(e.target.value)}
                 />
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Backup Suffix (Optional)
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
                   className="input-modern"
@@ -190,149 +174,111 @@ GO`);
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-slate-500 mt-1">
                   Leave empty to use default: {defaultSuffix}
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <motion.button
-                  className="btn-primary w-full md:w-auto"
+              <div className="md:col-span-2">
+                <button
+                  className="btn-primary"
                   onClick={generateSingleScript}
                   disabled={!spName || isGenerating}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        ⚙️
-                      </motion.span>
-                      Generating...
-                    </span>
-                  ) : (
-                    'Generate Scripts'
-                  )}
-                </motion.button>
-              </motion.div>
-            </>
+                  {isGenerating ? 'Generating...' : 'Generate Scripts'}
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Stored Procedure Names (One per line)
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Stored Procedure Names <span className="text-slate-400 font-normal">(One per line)</span>
                 </label>
                 <textarea
-                  className="input-modern h-48 font-mono text-sm custom-scrollbar"
-                  placeholder={`Enter multiple SP names, one per line:\n\nUSP_GetCustomers\nUSP_GetOrders\nUSP_GetProducts\nUSP_UpdateInventory`}
+                  className="input-modern h-48 font-mono text-sm"
+                  placeholder={`USP_GetCustomers\nUSP_GetOrders\nUSP_GetProducts`}
                   value={bulkInput}
                   onChange={(e) => setBulkInput(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Enter one stored procedure name per line
-                </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Backup Suffix (Optional)
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
-                  className="input-modern"
+                  className="input-modern max-w-md"
                   type="text"
                   placeholder={`Default: ${defaultSuffix}`}
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-slate-500 mt-1">
                   Same suffix will be applied to all SPs. Default: {defaultSuffix}
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div variants={staggerItem}>
-                <motion.button
-                  className="btn-primary w-full md:w-auto"
+              <div>
+                <button
+                  className="btn-primary"
                   onClick={generateBulkScripts}
                   disabled={!bulkInput.trim() || isGenerating}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        ⚙️
-                      </motion.span>
-                      Generating...
-                    </span>
-                  ) : (
-                    'Generate Bulk Scripts'
-                  )}
-                </motion.button>
-              </motion.div>
-            </>
+                  {isGenerating ? 'Generating...' : 'Generate Bulk Scripts'}
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Scripts Output */}
           {(backupScript || rollbackScript) && (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-slate-200">
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-indigo-700">
-                  📝 Backup Script
-                </h3>
-                <div className="relative">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    Backup Script
+                  </h3>
+                  <button
+                    className={`text-xs px-2 py-1 rounded border ${copiedBackup ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    onClick={() => copyToClipboard(backupScript, 'backup')}
+                  >
+                    {copiedBackup ? 'Copied!' : 'Copy to Clipboard'}
+                  </button>
+                </div>
+                <div className="code-block">
                   <textarea
-                    className="w-full h-80 p-4 border-2 border-indigo-200 rounded-xl font-mono text-sm bg-gradient-to-br from-gray-50 to-indigo-50 focus:outline-none focus:border-indigo-400 transition-colors custom-scrollbar"
+                    className="w-full h-80 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
                     value={backupScript}
                     readOnly
                   />
-                  <motion.button
-                    className={`absolute top-2 right-2 px-3 py-1 text-white text-xs rounded-lg transition-colors ${copiedBackup ? 'bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'
-                      }`}
-                    onClick={() => copyToClipboard(backupScript, 'backup')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {copiedBackup ? '✓ Copied!' : '📋 Copy'}
-                  </motion.button>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-purple-700">
-                  🔄 Rollback Script
-                </h3>
-                <div className="relative">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    Rollback Script
+                  </h3>
+                  <button
+                    className={`text-xs px-2 py-1 rounded border ${copiedRollback ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    onClick={() => copyToClipboard(rollbackScript, 'rollback')}
+                  >
+                    {copiedRollback ? 'Copied!' : 'Copy to Clipboard'}
+                  </button>
+                </div>
+                <div className="code-block">
                   <textarea
-                    className="w-full h-80 p-4 border-2 border-purple-200 rounded-xl font-mono text-sm bg-gradient-to-br from-gray-50 to-purple-50 focus:outline-none focus:border-purple-400 transition-colors custom-scrollbar"
+                    className="w-full h-80 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
                     value={rollbackScript}
                     readOnly
                   />
-                  <motion.button
-                    className={`absolute top-2 right-2 px-3 py-1 text-white text-xs rounded-lg transition-colors ${copiedRollback ? 'bg-green-600' : 'bg-purple-600 hover:bg-purple-700'
-                      }`}
-                    onClick={() => copyToClipboard(rollbackScript, 'rollback')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {copiedRollback ? '✓ Copied!' : '📋 Copy'}
-                  </motion.button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </>
   );
 };

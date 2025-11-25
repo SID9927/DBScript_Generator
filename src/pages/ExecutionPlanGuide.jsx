@@ -1,343 +1,400 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { fadeIn, staggerContainer, staggerItem } from '../utils/animations';
+import React, { useState, useRef } from 'react';
+import { parseAndAnalyzePlan } from '../utils/executionPlanParser';
 
-const ExecutionPlanGuide = () => {
+// --- Reusable Components ---
+const CodeBlock = ({ children }) => {
+    const [copied, setCopied] = useState(false);
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(children).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
+    return (
+        <div className="relative my-4">
+            <button
+                onClick={copyToClipboard}
+                className="absolute top-2 right-2 bg-slate-700 text-white px-2 py-1 text-xs rounded hover:bg-slate-600 transition-colors"
+            >
+                {copied ? "✅ Copied!" : "Copy"}
+            </button>
+            <pre className="bg-slate-900 text-blue-200 p-4 rounded-lg overflow-x-auto text-sm border border-slate-700">
+                <code>{children}</code>
+            </pre>
+        </div>
+    );
+};
+
+const SectionTitle = ({ children }) => (
+    <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+        {children}
+    </h2>
+);
+
+const SubSectionTitle = ({ children }) => (
+    <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+        {children}
+    </h3>
+);
+
+const InfoCard = ({ type = "info", children }) => {
+    const styles = {
+        info: "bg-blue-50 border-blue-500 text-blue-800",
+        success: "bg-green-50 border-green-500 text-green-800",
+        warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
+        danger: "bg-red-50 border-red-500 text-red-800",
+    };
+    return (
+        <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
+            {children}
+        </div>
+    );
+};
+
+// --- Analyzer Component (Playground) ---
+const ExecutionPlanAnalyzer = () => {
     const [executionPlan, setExecutionPlan] = useState('');
     const [analysis, setAnalysis] = useState(null);
-    const [activeTab, setActiveTab] = useState('guide');
+    const [fileName, setFileName] = useState(null);
+    const fileInputRef = useRef(null);
 
-    // Analyze execution plan and provide suggestions
-    const analyzeExecutionPlan = () => {
-        const suggestions = [];
-        const warnings = [];
-        const info = [];
-
-        const planLower = executionPlan.toLowerCase();
-
-        // Check for common performance issues
-        if (planLower.includes('table scan') || planLower.includes('clustered index scan')) {
-            warnings.push({
-                title: 'Table/Index Scan Detected',
-                description: 'Full table or index scans can be slow on large tables.',
-                suggestion: 'Consider adding appropriate indexes on columns used in WHERE, JOIN, or ORDER BY clauses.',
-                severity: 'high'
-            });
+    // Handle File Upload
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setFileName(file.name);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                setExecutionPlan(content); // Store raw content
+                try {
+                    const result = parseAndAnalyzePlan(content);
+                    setAnalysis(result);
+                } catch (error) {
+                    console.error("Parsing error:", error);
+                    alert("Failed to parse the execution plan. Ensure it is a valid .sqlplan (XML) file.");
+                }
+            };
+            reader.readAsText(file);
         }
+    };
 
-        if (planLower.includes('key lookup') || planLower.includes('rid lookup')) {
-            warnings.push({
-                title: 'Lookup Operations Found',
-                description: 'Key/RID lookups indicate the index doesn\'t cover all required columns.',
-                suggestion: 'Create a covering index that includes all columns needed by the query.',
-                severity: 'medium'
-            });
+    // Manual Analysis (Text Paste)
+    const analyzeManual = () => {
+        if (!executionPlan.trim()) return;
+        // Try to detect if it's XML or just text
+        if (executionPlan.trim().startsWith('<')) {
+            try {
+                const result = parseAndAnalyzePlan(executionPlan);
+                setAnalysis(result);
+            } catch (error) {
+                alert("Invalid XML format.");
+            }
+        } else {
+            // Fallback to simple text analysis (legacy)
+            analyzeLegacyText(executionPlan);
         }
+    };
 
-        if (planLower.includes('sort')) {
-            info.push({
-                title: 'Sort Operation Detected',
-                description: 'Sorting can be expensive, especially on large datasets.',
-                suggestion: 'If sorting by indexed columns, ensure the index order matches the ORDER BY clause.',
-                severity: 'low'
-            });
-        }
-
-        if (planLower.includes('hash match')) {
-            info.push({
-                title: 'Hash Match Operation',
-                description: 'Hash joins are used when no suitable indexes exist.',
-                suggestion: 'Consider adding indexes on join columns to enable merge or nested loop joins.',
-                severity: 'medium'
-            });
-        }
-
-        if (planLower.includes('nested loops')) {
-            suggestions.push({
-                title: 'Nested Loops Join',
-                description: 'Efficient for small datasets or when one table is small.',
-                suggestion: 'Good performance if inner table has an index on join column.',
-                severity: 'info'
-            });
-        }
-
-        if (planLower.includes('merge join')) {
-            suggestions.push({
-                title: 'Merge Join Detected',
-                description: 'Very efficient when both inputs are sorted.',
-                suggestion: 'This is generally a good sign - both tables have appropriate indexes.',
-                severity: 'info'
-            });
-        }
-
-        if (planLower.includes('index seek')) {
-            suggestions.push({
-                title: 'Index Seek Found',
-                description: 'Excellent! Index seeks are very efficient.',
-                suggestion: 'This indicates proper index usage. Keep these indexes maintained.',
-                severity: 'info'
-            });
-        }
-
-        if (planLower.includes('parallelism') || planLower.includes('parallel')) {
-            info.push({
-                title: 'Parallel Execution',
-                description: 'Query is using multiple CPU cores.',
-                suggestion: 'Good for large datasets, but may indicate missing indexes if unexpected.',
-                severity: 'low'
-            });
-        }
-
-        if (planLower.includes('spool')) {
-            warnings.push({
-                title: 'Spool Operation Detected',
-                description: 'Spools store intermediate results, which can be memory-intensive.',
-                suggestion: 'Review query logic - sometimes indicates suboptimal query design.',
-                severity: 'medium'
-            });
-        }
-
-        if (planLower.includes('missing index')) {
-            warnings.push({
-                title: 'Missing Index Hint',
-                description: 'SQL Server suggests creating an index.',
-                suggestion: 'Review the missing index details and create appropriate indexes.',
-                severity: 'high'
-            });
-        }
-
+    const analyzeLegacyText = (text) => {
+        // Basic text analysis fallback
         setAnalysis({
-            warnings,
-            suggestions,
-            info,
-            totalIssues: warnings.length,
-            hasIssues: warnings.length > 0
+            legacy: true,
+            summary: { cost: 0, cachedPlanSize: 0, compileCPU: 0, compileMemory: 0 },
+            warnings: [],
+            recommendations: ["Text analysis is limited. Please upload a .sqlplan (XML) file for deep analysis."],
+            missingIndexes: [],
+            expensiveOperations: []
         });
     };
 
-    const executionPlanTerms = [
-        {
-            category: 'Scan Operations',
-            terms: [
-                {
-                    name: 'Table Scan',
-                    description: 'Reads every row in the table',
-                    impact: 'High cost on large tables',
-                    color: 'red',
-                    icon: '🔴'
-                },
-                {
-                    name: 'Clustered Index Scan',
-                    description: 'Scans all rows in clustered index order',
-                    impact: 'Better than table scan but still reads all rows',
-                    color: 'orange',
-                    icon: '🟠'
-                },
-                {
-                    name: 'Index Scan',
-                    description: 'Scans all rows in a non-clustered index',
-                    impact: 'Moderate cost, reads entire index',
-                    color: 'yellow',
-                    icon: '🟡'
-                }
-            ]
-        },
-        {
-            category: 'Seek Operations',
-            terms: [
-                {
-                    name: 'Index Seek',
-                    description: 'Efficiently finds specific rows using an index',
-                    impact: 'Very efficient - best case scenario',
-                    color: 'green',
-                    icon: '🟢'
-                },
-                {
-                    name: 'Clustered Index Seek',
-                    description: 'Seeks specific rows using clustered index',
-                    impact: 'Excellent performance',
-                    color: 'green',
-                    icon: '🟢'
-                }
-            ]
-        },
-        {
-            category: 'Join Operations',
-            terms: [
-                {
-                    name: 'Nested Loops',
-                    description: 'Iterates outer table, seeks inner table for each row',
-                    impact: 'Good for small datasets or when inner has index',
-                    color: 'green',
-                    icon: '🔄'
-                },
-                {
-                    name: 'Hash Match',
-                    description: 'Builds hash table from one input, probes with other',
-                    impact: 'Good for large datasets without indexes',
-                    color: 'yellow',
-                    icon: '⚡'
-                },
-                {
-                    name: 'Merge Join',
-                    description: 'Merges two sorted inputs',
-                    impact: 'Very efficient when both inputs are sorted',
-                    color: 'green',
-                    icon: '🔀'
-                }
-            ]
-        },
-        {
-            category: 'Lookup Operations',
-            terms: [
-                {
-                    name: 'Key Lookup',
-                    description: 'Looks up additional columns from clustered index',
-                    impact: 'Indicates non-covering index, can be expensive',
-                    color: 'orange',
-                    icon: '🔍'
-                },
-                {
-                    name: 'RID Lookup',
-                    description: 'Looks up row by Row ID (heap table)',
-                    impact: 'Similar to Key Lookup, indicates missing coverage',
-                    color: 'orange',
-                    icon: '🔍'
-                }
-            ]
-        },
-        {
-            category: 'Other Operations',
-            terms: [
-                {
-                    name: 'Sort',
-                    description: 'Sorts data (ORDER BY, GROUP BY, DISTINCT)',
-                    impact: 'Can be expensive on large datasets',
-                    color: 'yellow',
-                    icon: '📊'
-                },
-                {
-                    name: 'Filter',
-                    description: 'Applies WHERE clause conditions',
-                    impact: 'Low cost, but check if can be pushed to index',
-                    color: 'blue',
-                    icon: '🔽'
-                },
-                {
-                    name: 'Compute Scalar',
-                    description: 'Calculates computed columns or expressions',
-                    impact: 'Usually low cost',
-                    color: 'blue',
-                    icon: '🧮'
-                },
-                {
-                    name: 'Stream Aggregate',
-                    description: 'Aggregates sorted input (COUNT, SUM, etc.)',
-                    impact: 'Efficient when input is sorted',
-                    color: 'green',
-                    icon: '📈'
-                },
-                {
-                    name: 'Table Spool',
-                    description: 'Stores intermediate results in tempdb',
-                    impact: 'Can be memory/IO intensive',
-                    color: 'orange',
-                    icon: '💾'
-                },
-                {
-                    name: 'Parallelism',
-                    description: 'Distributes work across multiple CPU cores',
-                    impact: 'Good for large operations, overhead for small',
-                    color: 'blue',
-                    icon: '⚙️'
-                }
-            ]
-        }
-    ];
+    return (
+        <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
+            <h2 className="text-2xl font-bold mb-4 text-slate-800">
+                🔍 Execution Plan Analyzer
+            </h2>
 
-    const bestPractices = [
+            {/* Upload Section */}
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-dashed border-slate-300 mb-6 text-center hover:border-blue-400 transition-colors">
+                <div className="mb-4">
+                    <span className="text-4xl">📂</span>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                    Upload .sqlplan File
+                </h3>
+                <p className="text-slate-500 mb-4 text-sm">
+                    Drag and drop or click to upload your XML Execution Plan
+                </p>
+                <input
+                    type="file"
+                    accept=".sqlplan,.xml"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    ref={fileInputRef}
+                />
+                <button
+                    onClick={() => fileInputRef.current.click()}
+                    className="btn-primary"
+                >
+                    Select File
+                </button>
+                {fileName && <p className="mt-2 text-green-600 font-medium">Selected: {fileName}</p>}
+            </div>
+
+            <div className="text-center text-slate-400 mb-6">- OR -</div>
+
+            {/* Text Area Fallback */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 mb-6">
+                <p className="text-slate-600 mb-4">
+                    Paste raw XML execution plan content here:
+                </p>
+                <textarea
+                    className="w-full h-32 p-4 border border-slate-300 rounded-lg font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-slate-50"
+                    placeholder="<ShowPlanXML ...>"
+                    value={executionPlan}
+                    onChange={(e) => setExecutionPlan(e.target.value)}
+                />
+                <button
+                    className="btn-primary mt-4"
+                    onClick={analyzeManual}
+                    disabled={!executionPlan.trim()}
+                >
+                    Analyze Text
+                </button>
+            </div>
+
+            {/* Analysis Results */}
+            {analysis && !analysis.legacy && (
+                <div className="space-y-6 animate-fade-in">
+                    {/* Summary Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="text-slate-500 text-xs uppercase font-bold">Total Cost</div>
+                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.cost.toFixed(2)}</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="text-slate-500 text-xs uppercase font-bold">Cached Size</div>
+                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.cachedPlanSize} KB</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="text-slate-500 text-xs uppercase font-bold">Compile CPU</div>
+                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.compileCPU} ms</div>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="text-slate-500 text-xs uppercase font-bold">Compile Memory</div>
+                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.compileMemory} KB</div>
+                        </div>
+                    </div>
+
+                    {/* Recommendations */}
+                    {analysis.recommendations.length > 0 && (
+                        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                            <h3 className="text-lg font-bold text-blue-800 mb-3">🚀 Top Recommendations</h3>
+                            <ul className="space-y-2">
+                                {analysis.recommendations.map((rec, idx) => (
+                                    <li key={idx} className="flex gap-2 text-blue-900">
+                                        <span>•</span>
+                                        <span>{rec}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* Missing Indexes */}
+                    {analysis.missingIndexes.length > 0 && (
+                        <div>
+                            <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center gap-2">
+                                ⚡ Missing Indexes ({analysis.missingIndexes.length})
+                            </h3>
+                            <div className="space-y-4">
+                                {analysis.missingIndexes.map((idx, i) => (
+                                    <div key={i} className="bg-white rounded-lg p-6 shadow-sm border border-red-200">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h4 className="font-bold text-slate-800 text-lg">{idx.table}</h4>
+                                                <p className="text-red-600 font-medium">Impact: {idx.impact.toFixed(1)}% Improvement</p>
+                                            </div>
+                                            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">High Priority</span>
+                                        </div>
+                                        <CodeBlock>{idx.createScript}</CodeBlock>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Warnings */}
+                    {analysis.warnings.length > 0 && (
+                        <div>
+                            <h3 className="text-xl font-bold text-orange-600 mb-4">⚠️ Warnings</h3>
+                            <div className="grid gap-4">
+                                {analysis.warnings.map((w, i) => (
+                                    <div key={i} className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                                        <h4 className="font-bold text-orange-800">{w.type}</h4>
+                                        <p className="text-orange-900">{w.message}</p>
+                                        {w.details && <p className="text-xs text-orange-700 mt-1 font-mono">{w.details}</p>}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Expensive Operations */}
+                    {analysis.expensiveOperations.length > 0 && (
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-4">🐢 Most Expensive Operations</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-100 text-slate-600 text-sm">
+                                            <th className="p-3 rounded-tl-lg">Operation</th>
+                                            <th className="p-3">Cost %</th>
+                                            <th className="p-3">Est. Rows</th>
+                                            <th className="p-3">Issue</th>
+                                            <th className="p-3 rounded-tr-lg">Suggestion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-sm">
+                                        {analysis.expensiveOperations.map((op, i) => (
+                                            <tr key={i} className="border-b border-slate-200 hover:bg-slate-50">
+                                                <td className="p-3 font-medium text-slate-800">
+                                                    {op.op}
+                                                    {op.parallel && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1 rounded">Parallel</span>}
+                                                </td>
+                                                <td className="p-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                            <div className={`h-full ${parseFloat(op.costPercent) > 50 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${op.costPercent}%` }}></div>
+                                                        </div>
+                                                        <span>{op.costPercent}%</span>
+                                                    </div>
+                                                </td>
+                                                <td className="p-3">{op.rows.toLocaleString()}</td>
+                                                <td className="p-3 text-red-600 font-medium">{op.issue}</td>
+                                                <td className="p-3 text-slate-600">{op.suggestion}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Legacy/Fallback Result */}
+            {analysis && analysis.legacy && (
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-4">
+                    <h3 className="font-bold text-yellow-800">Text Analysis Mode</h3>
+                    <p className="text-yellow-700">Basic text analysis is limited. For full insights, please upload a .sqlplan file.</p>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// --- Main Guide Component ---
+const ExecutionPlanGuide = () => {
+    const [activeTab, setActiveTab] = useState('guide');
+    const [expandedTerm, setExpandedTerm] = useState(null);
+
+    const toggleTerm = (index) => {
+        setExpandedTerm(expandedTerm === index ? null : index);
+    };
+
+    const terms = [
         {
-            title: 'How to Get Execution Plan',
-            icon: '📋',
-            steps: [
-                'In SQL Server Management Studio (SSMS), press Ctrl+M to enable "Include Actual Execution Plan"',
-                'Or click "Include Actual Execution Plan" button in toolbar',
-                'Execute your query',
-                'View the execution plan in the "Execution Plan" tab',
-                'Alternatively, use "Display Estimated Execution Plan" (Ctrl+L) without running the query'
-            ]
+            name: 'Table Scan',
+            description: 'Reads every single row in the table.',
+            impact: 'Very High Cost',
+            color: 'red',
+            icon: '🔴',
+            basics: 'Imagine looking for a specific page in a book by reading every single page from start to finish. That is a Table Scan. It is the slowest way to find data.',
+            details: 'Occurs when no suitable index exists. The engine must read all data pages. Performance degrades linearly with table size.',
+            scenario: 'SELECT * FROM Users WHERE LastName = "Smith" (and no index on LastName).',
+            code: `SELECT * FROM LargeTable`
         },
         {
-            title: 'Reading Execution Plans',
-            icon: '👁️',
-            steps: [
-                'Read from RIGHT to LEFT - data flows from right to left',
-                'Look at the thickness of arrows - thicker = more rows',
-                'Check the percentage cost of each operation',
-                'Identify operations with high cost (> 10-20%)',
-                'Look for warnings (yellow exclamation marks)',
-                'Hover over operations to see detailed statistics'
-            ]
+            name: 'Index Seek',
+            description: 'Uses an index to jump directly to specific rows.',
+            impact: 'Very Efficient',
+            color: 'green',
+            icon: '🟢',
+            basics: 'Imagine using the index at the back of a book to find a topic. You jump straight to page 42. That is an Index Seek. It is the fastest way to find data.',
+            details: 'The engine traverses the B-Tree index structure to find the specific key(s). Number of reads is proportional to the tree depth (usually 3-4 reads).',
+            scenario: 'SELECT * FROM Users WHERE UserID = 105 (with PK on UserID).',
+            code: `SELECT * FROM Users WHERE UserID = 123`
         },
         {
-            title: 'Key Metrics to Check',
+            name: 'Key Lookup',
+            description: 'Found the row in an index, but had to go back to the main table for more columns.',
+            impact: 'Moderate to High Cost',
+            color: 'orange',
+            icon: '🔍',
+            basics: 'You found "Smith" in the index, but the index doesn\'t list his Phone Number. So you have to go find his actual file in the cabinet. If you do this for one person, it\'s fine. If you do it for 1,000 people, it\'s slow.',
+            details: 'Occurs when a non-clustered index matches the WHERE clause but doesn\'t cover all selected columns. The engine performs a random I/O to the Clustered Index for each row.',
+            scenario: 'SELECT Phone FROM Users WHERE LastName = "Smith" (Index on LastName, but Phone is not included).',
+            code: `SELECT * FROM Users WHERE LastName = 'Smith'`
+        },
+        {
+            name: 'Nested Loops Join',
+            description: 'For every row in Table A, scan Table B.',
+            impact: 'Good for small data, bad for large',
+            color: 'blue',
+            icon: '🔄',
+            basics: 'Pick up a file from pile A. Go through pile B to find matches. Repeat for every file in pile A. Fast if pile A is small.',
+            details: 'Efficient when one input is small (outer) and the other has an index (inner). Complexity is O(N*M).',
+            scenario: 'Joining a small table (e.g., "Status") to a large table.',
+            code: `SELECT * 
+FROM SmallTable s 
+JOIN LargeTable l ON s.ID = l.SmallID`
+        },
+        {
+            name: 'Hash Match',
+            description: 'Builds a hash table in memory to join unsorted large inputs.',
+            impact: 'High Memory Usage',
+            color: 'yellow',
+            icon: '⚡',
+            basics: 'Take all items from pile A and put them in buckets based on a hash. Then take items from pile B, hash them, and check the buckets. Good for heavy lifting when nothing is sorted.',
+            details: 'Used for large, unsorted inputs. Requires memory grant. If memory is insufficient, it spills to TempDB (very slow).',
+            scenario: 'Joining two very large tables with no useful indexes.',
+            code: `SELECT * 
+FROM LargeTable1 t1 
+JOIN LargeTable2 t2 ON t1.Col = t2.Col`
+        },
+        {
+            name: 'Sort',
+            description: 'Sorts the data in memory.',
+            impact: 'Expensive',
+            color: 'orange',
             icon: '📊',
-            steps: [
-                'Estimated vs Actual Rows - large differences indicate stale statistics',
-                'Estimated Subtree Cost - higher = more expensive',
-                'Number of Executions - operations executed multiple times',
-                'I/O Cost vs CPU Cost - identifies bottleneck type',
-                'Warnings - missing indexes, implicit conversions, etc.'
-            ]
-        },
-        {
-            title: 'Common Optimization Strategies',
-            icon: '🚀',
-            steps: [
-                'Add indexes on columns in WHERE, JOIN, ORDER BY clauses',
-                'Create covering indexes to eliminate lookups',
-                'Update statistics if estimated rows differ significantly from actual',
-                'Avoid functions on indexed columns in WHERE clause',
-                'Use appropriate data types to avoid implicit conversions',
-                'Consider indexed views for complex aggregations',
-                'Partition large tables if appropriate'
-            ]
+            basics: 'Putting a shuffled deck of cards in order. It takes time and space.',
+            details: 'Triggered by ORDER BY, GROUP BY, or Merge Joins. Can spill to TempDB if memory grant is too small.',
+            scenario: 'SELECT * FROM Users ORDER BY LastName (with no index on LastName).',
+            code: `SELECT * FROM Users ORDER BY NonIndexedColumn`
         }
     ];
 
     return (
-        <motion.div
-            className="p-8 max-w-7xl mx-auto"
-            variants={fadeIn}
-            initial="hidden"
-            animate="visible"
-        >
-            <motion.h1
-                className="text-4xl font-bold mb-3 gradient-text"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-            >
+        <div className="p-8 max-w-7xl mx-auto">
+            <h1 className="text-4xl font-bold mb-3 text-slate-900">
                 SQL Execution Plan Guide
-            </motion.h1>
+            </h1>
 
-            <motion.p
-                className="text-gray-600 mb-8 text-lg"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-            >
-                Learn how to read and optimize SQL Server execution plans
-            </motion.p>
+            <p className="text-slate-600 mb-8 text-lg">
+                Learn how to read and optimize SQL Server execution plans.
+            </p>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b border-gray-200">
+            <div className="flex gap-2 mb-6 border-b border-slate-200">
                 {['guide', 'terms', 'analyzer'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-                                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                : 'text-gray-600 hover:text-indigo-500'
+                            ? 'text-blue-600 border-b-2 border-blue-600'
+                            : 'text-slate-600 hover:text-blue-500'
                             }`}
                     >
                         {tab === 'guide' && '📚 Guide'}
@@ -349,220 +406,153 @@ const ExecutionPlanGuide = () => {
 
             {/* Guide Tab */}
             {activeTab === 'guide' && (
-                <motion.div
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {bestPractices.map((practice, index) => (
-                            <motion.div
-                                key={index}
-                                variants={staggerItem}
-                                className="bg-white rounded-xl p-6 shadow-lg border-2 border-gray-100 hover:border-indigo-200 transition-all"
-                            >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-4xl">{practice.icon}</span>
-                                    <h3 className="text-xl font-bold text-gray-800">
-                                        {practice.title}
-                                    </h3>
-                                </div>
-                                <ol className="space-y-2">
-                                    {practice.steps.map((step, idx) => (
-                                        <li key={idx} className="flex gap-2 text-gray-700">
-                                            <span className="font-semibold text-indigo-600 min-w-[24px]">
-                                                {idx + 1}.
-                                            </span>
-                                            <span>{step}</span>
-                                        </li>
-                                    ))}
-                                </ol>
-                            </motion.div>
-                        ))}
+                <div className="space-y-8">
+                    <InfoCard type="info">
+                        <strong>Definition:</strong> An execution plan is a roadmap that SQL Server generates to show exactly how it intends to execute your query.
+                    </InfoCard>
+
+                    <SectionTitle>📖 Basics: How to Read a Plan</SectionTitle>
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                        <p className="text-slate-700 leading-relaxed mb-4">
+                            Reading an execution plan is like reading a map, but with one golden rule:
+                        </p>
+                        <h4 className="text-xl font-bold text-slate-800 mb-2">Always Read from Right to Left</h4>
+                        <p className="text-slate-700 leading-relaxed mb-4">
+                            Data flows from right to left. The operations on the far right happen first (fetching data), and the operations on the left happen last (aggregating or sending results to you).
+                        </p>
+
+                        <SubSectionTitle>Key Indicators</SubSectionTitle>
+                        <ul className="list-disc list-inside text-slate-700 space-y-2">
+                            <li><strong>Arrow Thickness:</strong> Thicker arrows mean more rows are moving. If you see a thick arrow going into a filter and a thin arrow coming out, that filter is doing a lot of work.</li>
+                            <li><strong>Cost %:</strong> Each operator shows a percentage. Look for the big numbers (e.g., 80% cost). That's your bottleneck.</li>
+                            <li><strong>Warnings:</strong> Look for yellow exclamation marks ⚠️. These indicate missing statistics, implicit conversions, or spills to TempDB.</li>
+                        </ul>
                     </div>
-                </motion.div>
+
+                    <SectionTitle>Common Operators</SectionTitle>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 className="text-lg font-bold text-green-700 mb-2">✅ The Good</h3>
+                            <ul className="space-y-2">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-2xl">🟢</span>
+                                    <div>
+                                        <strong>Index Seek:</strong> Pinpoint precision. The engine knows exactly where the data is.
+                                    </div>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-2xl">🔄</span>
+                                    <div>
+                                        <strong>Nested Loops (with Index):</strong> Very fast for joining small datasets to indexed large ones.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-red-700 mb-2">❌ The Bad</h3>
+                            <ul className="space-y-2">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-2xl">🔴</span>
+                                    <div>
+                                        <strong>Table Scan:</strong> Reading the entire book. Avoid on large tables.
+                                    </div>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-2xl">🔍</span>
+                                    <div>
+                                        <strong>Key Lookup:</strong> Double work. Found the index, but had to fetch more data from the table. Fix with Covering Index.
+                                    </div>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-2xl">💾</span>
+                                    <div>
+                                        <strong>Spool:</strong> Saving data to disk (TempDB) because it ran out of memory. Very slow.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <SectionTitle>Optimization Strategy</SectionTitle>
+                    <InfoCard type="success">
+                        <strong>Workflow:</strong>
+                        <ol className="list-decimal list-inside mt-2 space-y-1">
+                            <li>Identify the operator with the highest cost %.</li>
+                            <li>Check if it's a Scan or a Seek. If Scan, can you add an index?</li>
+                            <li>Check for Key Lookups. Can you add <code>INCLUDE</code> columns to your index?</li>
+                            <li>Check for thick arrows. Are you selecting too many rows?</li>
+                        </ol>
+                    </InfoCard>
+                </div>
             )}
 
             {/* Terms Dictionary Tab */}
             {activeTab === 'terms' && (
-                <motion.div
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate="visible"
-                    className="space-y-8"
-                >
-                    {executionPlanTerms.map((category, catIndex) => (
-                        <motion.div key={catIndex} variants={staggerItem}>
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                <span className="w-1 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded"></span>
-                                {category.category}
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {category.terms.map((term, termIndex) => (
-                                    <div
-                                        key={termIndex}
-                                        className="bg-white rounded-lg p-4 shadow-md border-l-4 hover:shadow-lg transition-all"
-                                        style={{
-                                            borderLeftColor:
-                                                term.color === 'red' ? '#ef4444' :
-                                                    term.color === 'orange' ? '#f97316' :
-                                                        term.color === 'yellow' ? '#eab308' :
-                                                            term.color === 'green' ? '#22c55e' :
-                                                                '#3b82f6'
-                                        }}
-                                    >
-                                        <div className="flex items-start gap-2 mb-2">
-                                            <span className="text-2xl">{term.icon}</span>
-                                            <h3 className="font-bold text-gray-800">{term.name}</h3>
-                                        </div>
-                                        <p className="text-sm text-gray-600 mb-2">{term.description}</p>
-                                        <p className="text-xs text-gray-500 italic">
-                                            Impact: {term.impact}
-                                        </p>
+                <div className="grid grid-cols-1 gap-4">
+                    {terms.map((term, index) => (
+                        <div
+                            key={index}
+                            className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+                        >
+                            <div
+                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                                onClick={() => toggleTerm(index)}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl">{term.icon}</span>
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
+                                        <p className="text-sm text-slate-600">{term.description}</p>
                                     </div>
-                                ))}
+                                </div>
+                                <div className="text-slate-400">
+                                    {expandedTerm === index ? "▲" : "▼"}
+                                </div>
                             </div>
-                        </motion.div>
+
+                            {expandedTerm === index && (
+                                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                                    <div className="mb-4">
+                                        <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
+                                        <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
+                                        <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
+                                        <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                                    </div>
+
+                                    <div className="mb-2">
+                                        <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                                        <CodeBlock>{term.code}</CodeBlock>
+                                    </div>
+
+                                    <div className="mt-4 pt-2 border-t border-slate-200">
+                                        <span className="text-sm font-medium text-slate-500">Impact: </span>
+                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
+                                            term.color === 'orange' ? 'text-orange-600' :
+                                                term.color === 'yellow' ? 'text-yellow-600' :
+                                                    term.color === 'green' ? 'text-green-600' :
+                                                        'text-blue-600'
+                                            }`}>{term.impact}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     ))}
-                </motion.div>
+                </div>
             )}
 
             {/* Analyzer Tab */}
             {activeTab === 'analyzer' && (
-                <motion.div
-                    variants={fadeIn}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <div className="bg-white rounded-xl p-6 shadow-lg mb-6">
-                        <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                            Paste Your Execution Plan
-                        </h2>
-                        <p className="text-gray-600 mb-4">
-                            Copy the execution plan text from SSMS and paste it here for analysis and optimization suggestions.
-                        </p>
-                        <textarea
-                            className="w-full h-64 p-4 border-2 border-gray-200 rounded-lg font-mono text-sm focus:outline-none focus:border-indigo-400 transition-colors custom-scrollbar"
-                            placeholder="Paste execution plan text here...&#10;&#10;Example:&#10;|--Nested Loops(Inner Join)&#10;    |--Index Seek(OBJECT:([dbo].[Customers].[IX_CustomerID]))&#10;    |--Key Lookup(OBJECT:([dbo].[Orders].[PK_Orders]))&#10;&#10;Or paste XML execution plan..."
-                            value={executionPlan}
-                            onChange={(e) => setExecutionPlan(e.target.value)}
-                        />
-                        <motion.button
-                            className="btn-primary mt-4"
-                            onClick={analyzeExecutionPlan}
-                            disabled={!executionPlan.trim()}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            🔍 Analyze Execution Plan
-                        </motion.button>
-                    </div>
-
-                    {/* Analysis Results */}
-                    {analysis && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-6"
-                        >
-                            {/* Summary */}
-                            <div className={`rounded-xl p-6 ${analysis.hasIssues
-                                    ? 'bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200'
-                                    : 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200'
-                                }`}>
-                                <h3 className="text-2xl font-bold mb-2">
-                                    {analysis.hasIssues ? '⚠️ Issues Found' : '✅ Looking Good!'}
-                                </h3>
-                                <p className="text-gray-700">
-                                    {analysis.hasIssues
-                                        ? `Found ${analysis.totalIssues} potential performance issue(s) that need attention.`
-                                        : 'No major performance issues detected. Review the suggestions below for optimization opportunities.'}
-                                </p>
-                            </div>
-
-                            {/* Warnings */}
-                            {analysis.warnings.length > 0 && (
-                                <div>
-                                    <h3 className="text-xl font-bold text-red-600 mb-4">
-                                        🔴 Performance Warnings
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {analysis.warnings.map((warning, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="bg-white rounded-lg p-5 shadow-md border-l-4 border-red-500"
-                                            >
-                                                <h4 className="font-bold text-gray-800 mb-2">
-                                                    {warning.title}
-                                                </h4>
-                                                <p className="text-gray-600 mb-2">{warning.description}</p>
-                                                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                                                    <p className="text-sm font-semibold text-blue-800">
-                                                        💡 Suggestion: {warning.suggestion}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Info */}
-                            {analysis.info.length > 0 && (
-                                <div>
-                                    <h3 className="text-xl font-bold text-yellow-600 mb-4">
-                                        🟡 Additional Information
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {analysis.info.map((item, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="bg-white rounded-lg p-5 shadow-md border-l-4 border-yellow-500"
-                                            >
-                                                <h4 className="font-bold text-gray-800 mb-2">
-                                                    {item.title}
-                                                </h4>
-                                                <p className="text-gray-600 mb-2">{item.description}</p>
-                                                <p className="text-sm text-gray-700">
-                                                    💡 {item.suggestion}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Suggestions */}
-                            {analysis.suggestions.length > 0 && (
-                                <div>
-                                    <h3 className="text-xl font-bold text-green-600 mb-4">
-                                        🟢 Good Practices Detected
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {analysis.suggestions.map((suggestion, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="bg-white rounded-lg p-4 shadow-md border-l-4 border-green-500"
-                                            >
-                                                <h4 className="font-bold text-gray-800 mb-2">
-                                                    {suggestion.title}
-                                                </h4>
-                                                <p className="text-sm text-gray-600 mb-2">
-                                                    {suggestion.description}
-                                                </p>
-                                                <p className="text-xs text-gray-700">
-                                                    {suggestion.suggestion}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </motion.div>
-                    )}
-                </motion.div>
+                <ExecutionPlanAnalyzer />
             )}
-        </motion.div>
+        </div>
     );
 };
 
