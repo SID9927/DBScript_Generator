@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
+import ScrollToTopButton from './components/ScrollToTopButton';
 import Navbar from './components/Navbar';
 import SubNav from './components/SubNav';
 import Home from './components/Home';
@@ -13,6 +15,7 @@ import StoredProceduresGuide from './pages/StoredProceduresGuide';
 import BackupRollbackHome from './pages/BackupRollbackHome';
 import TablesGuide from './pages/TablesGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
+import Footer from './components/Footer';
 
 const backupLinks = [
   { name: 'Stored Procedure', to: '/backup&rollback/sp' },
@@ -22,6 +25,8 @@ const backupLinks = [
 const App = () => {
   return (
     <Router>
+      <ScrollToTop />
+      <ScrollToTopButton />
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <SubNav basePath="/backup&rollback" links={backupLinks} />
@@ -41,6 +46,7 @@ const App = () => {
           <Route path="*" element={<Home title="Select a Module" />} />
         </Routes>
       </div>
+      <Footer/>
     </Router>
   );
 };

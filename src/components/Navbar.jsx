@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-slate-900 border-b border-slate-800 px-6 py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-8xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <a href="/" className="flex items-center gap-3 group">
             <img
@@ -18,7 +18,7 @@ const Navbar = () => {
               className="h-8 w-auto"
             />
             <span className="text-white font-semibold tracking-tight text-lg">
-              DB Script Generator
+              DB Playground
             </span>
           </a>
         </div>

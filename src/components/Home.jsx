@@ -69,7 +69,7 @@ const Home = () => {
         <h1 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">
           DB Script Generator
         </h1>
-        <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+        <p className="text-xl text-slate-500 max-w-3xl mx-auto">
           Your comprehensive toolkit for database script generation and management.
         </p>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { analyzeSP } from "../utils/sqlStaticAnalyzer";
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -50,458 +51,179 @@ const InfoCard = ({ type = "info", children }) => {
   );
 };
 
-// --- NoLock Playground (Original Logic) ---
-const NoLockPlayground = () => {
+// --- SP Performance Analyzer & Suggestion Tool ---
+const SPPerformanceAnalyzer = () => {
   const [inputSP, setInputSP] = useState("");
-  const [outputSP, setOutputSP] = useState("");
-  const [mode, setMode] = useState("enforce"); // "enforce" | "remove"
-  const [copied, setCopied] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
-  // ------------ Low-level helpers (lexing-ish) ------------
-  const isIdentStart = (ch) => /[A-Za-z_]/.test(ch) || ch === "[" || ch === '"';
-  const isIdentChar = (ch) => /[A-Za-z0-9_$]/.test(ch);
-  const isWordBoundary = (prev, next) =>
-    !(prev && /[A-Za-z0-9_$]/.test(prev)) && !(next && /[A-Za-z0-9_$]/.test(next));
-
-  const skipSpaces = (s, i) => {
-    while (i < s.length && /\s/.test(s[i])) i++;
-    return i;
-  };
-
-  const readLineEnd = (s, i) => {
-    while (i < s.length && s[i] !== "\n" && s[i] !== "\r") i++;
-    return i;
-  };
-
-  const readBlockCommentEnd = (s, i) => {
-    while (i < s.length) {
-      if (s[i] === "*" && s[i + 1] === "/") return i + 2;
-      i++;
-    }
-    return s.length;
-  };
-
-  const readSingleQuoted = (s, i) => {
-    while (i < s.length) {
-      if (s[i] === "'") {
-        if (s[i + 1] === "'") {
-          i += 2;
-          continue;
-        }
-        return i + 1;
-      }
-      i++;
-    }
-    return s.length;
-  };
-
-  const readBracketIdent = (s, i) => {
-    while (i < s.length) {
-      if (s[i] === "]") {
-        if (s[i + 1] === "]") {
-          i += 2;
-          continue;
-        }
-        return i + 1;
-      }
-      i++;
-    }
-    return s.length;
-  };
-
-  const readQuotedIdent = (s, i) => {
-    while (i < s.length) {
-      if (s[i] === '"') return i + 1;
-      i++;
-    }
-    return s.length;
-  };
-
-  const readBalanced = (s, i) => {
-    let depth = 0;
-    while (i < s.length) {
-      const ch = s[i];
-      if (ch === "(") {
-        depth++;
-        i++;
-        continue;
-      } else if (ch === ")") {
-        depth--;
-        i++;
-        if (depth === 0) return i;
-        continue;
-      } else if (ch === "'") {
-        i = readSingleQuoted(s, i + 1);
-        continue;
-      } else if (ch === "[") {
-        i = readBracketIdent(s, i + 1);
-        continue;
-      } else if (ch === '"') {
-        i = readQuotedIdent(s, i + 1);
-        continue;
-      } else if (ch === "-" && s[i + 1] === "-") {
-        i = readLineEnd(s, i + 2);
-        continue;
-      } else if (ch === "/" && s[i + 1] === "*") {
-        i = readBlockCommentEnd(s, i + 2);
-        continue;
-      }
-      i++;
-    }
-    return s.length;
-  };
-
-  const ciMatchWord = (s, i, word) => {
-    if (s.substring(i, i + word.length).toUpperCase() === word.toUpperCase()) {
-      const prev = i > 0 ? s[i - 1] : "";
-      const next = s[i + word.length];
-      if (isWordBoundary(prev, next)) return word.length;
-    }
-    return 0;
-  };
-
-  const ciMatchTokens = (s, i, tokens) => {
-    let pos = i;
-    for (let t = 0; t < tokens.length; t++) {
-      pos = skipSpaces(s, pos);
-      const len = ciMatchWord(s, pos, tokens[t]);
-      if (!len) return 0;
-      pos += len;
-      if (t < tokens.length - 1) {
-        const after = s[pos];
-        if (after && !/\s/.test(after)) return 0;
-      }
-    }
-    return pos - i;
-  };
-
-  const anyKeywordAt = (s, i, patterns) => {
-    for (const p of patterns) {
-      const len = ciMatchTokens(s, i, p);
-      if (len) return { len, tokens: p };
-    }
-    return null;
-  };
-
-  const KW_FROM = [["FROM"]];
-  const KW_JOINS = [
-    ["JOIN"], ["LEFT", "JOIN"], ["RIGHT", "JOIN"], ["INNER", "JOIN"],
-    ["FULL", "JOIN"], ["OUTER", "JOIN"], ["CROSS", "JOIN"],
-    ["CROSS", "APPLY"], ["OUTER", "APPLY"],
-  ];
-  const TERMINATORS = [
-    ["ON"], ["WHERE"], ["GROUP"], ["ORDER"], ["HAVING"],
-    ["UNION"], ["EXCEPT"], ["INTERSECT"], ["OPTION"],
-  ];
-
-  const isTerminatorAt = (s, i) => anyKeywordAt(s, i, TERMINATORS);
-
-  const stripNoLockEverywhere = (txt) =>
-    txt.replace(/\bWITH\s*\(\s*NOLOCK\s*\)/gi, "");
-
-  const readMultipartNameEnd = (s, i0) => {
-    let i = skipSpaces(s, i0);
-    let seenPart = false;
-    while (i < s.length) {
-      if (s[i] === "[") {
-        i = readBracketIdent(s, i + 1);
-        seenPart = true;
-      } else if (s[i] === '"') {
-        i = readQuotedIdent(s, i + 1);
-        seenPart = true;
-      } else if (isIdentChar(s[i])) {
-        let j = i + 1;
-        while (j < s.length && isIdentChar(s[j])) j++;
-        i = j;
-        seenPart = true;
-      } else {
-        break;
-      }
-      let k = i;
-      k = skipSpaces(s, k);
-      if (s[k] === ".") {
-        i = k + 1;
-        i = skipSpaces(s, i);
-        continue;
-      } else {
-        break;
-      }
-    }
-    return seenPart ? i : i0;
-  };
-
-  const looksFunctionLikeAt = (s, start, end) => {
-    const i = skipSpaces(s, end);
-    return s[i] === "(";
-  };
-
-  const parseOneTableRef = (sql, start, action) => {
-    let i = skipSpaces(sql, start);
-    const leading = sql.substring(start, i);
-
-    if (sql[i] === "(") {
-      const closeAfter = readBalanced(sql, i);
-      const inner = sql.substring(i + 1, closeAfter - 1);
-      const processedInner = transform(inner, action);
-      let out = leading + "(" + processedInner + ")";
-
-      let p = skipSpaces(sql, closeAfter);
-      let aliasText = "";
-      const asLen = ciMatchWord(sql, p, "AS");
-      if (asLen) {
-        const aliasStart = p;
-        p += asLen;
-        const afterAs = skipSpaces(sql, p);
-        let aliasEnd = afterAs;
-        if (sql[aliasEnd] === "[") aliasEnd = readBracketIdent(sql, aliasEnd + 1);
-        else if (sql[aliasEnd] === '"') aliasEnd = readQuotedIdent(sql, aliasEnd + 1);
-        else if (isIdentStart(sql[aliasEnd])) {
-          let j = aliasEnd + 1;
-          while (isIdentChar(sql[j])) j++;
-          aliasEnd = j;
-        }
-        aliasText = sql.substring(aliasStart, aliasEnd);
-        p = aliasEnd;
-      } else if (isIdentStart(sql[p])) {
-        let aliasEnd = p + 1;
-        while (isIdentChar(sql[aliasEnd])) aliasEnd++;
-        aliasText = sql.substring(p, aliasEnd);
-        p = aliasEnd;
-      }
-
-      let tail = sql.substring(p);
-      tail = tail.replace(/^\s*\bWITH\s*\(\s*NOLOCK\s*\)/i, "");
-      out += aliasText + tail;
-      return { text: out, nextPos: sql.length - tail.length };
-    }
-
-    const nameStart = i;
-    const nameEnd = readMultipartNameEnd(sql, i);
-    if (nameEnd === i) {
-      return { text: sql[start], nextPos: start + 1 };
-    }
-
-    if (looksFunctionLikeAt(sql, nameStart, nameEnd)) {
-      const argsEnd = readBalanced(sql, skipSpaces(sql, nameEnd));
-      let segment = sql.substring(start, argsEnd);
-      segment = stripNoLockEverywhere(segment);
-      return { text: segment, nextPos: argsEnd };
-    }
-
-    let q = nameEnd;
-    let localDepth = 0;
-    while (q < sql.length) {
-      if (sql[q] === "(") { localDepth++; q++; continue; }
-      if (sql[q] === ")") { if (localDepth === 0) break; localDepth--; q++; continue; }
-      if (sql[q] === "'" || sql[q] === "[" || sql[q] === '"' ||
-        (sql[q] === "-" && sql[q + 1] === "-") || (sql[q] === "/" && sql[q + 1] === "*")) {
-        if (sql[q] === "'") q = readSingleQuoted(sql, q + 1);
-        else if (sql[q] === "[") q = readBracketIdent(sql, q + 1);
-        else if (sql[q] === '"') q = readQuotedIdent(sql, q + 1);
-        else if (sql[q] === "-" && sql[q + 1] === "-") q = readLineEnd(sql, q + 2);
-        else if (sql[q] === "/" && sql[q + 1] === "*") q = readBlockCommentEnd(sql, q + 2);
-        continue;
-      }
-      if (localDepth === 0) {
-        if (isTerminatorAt(sql, q) || sql[q] === ",") break;
-      }
-      q++;
-    }
-
-    let slice = sql.substring(nameStart, q);
-    const relNameEnd = readMultipartNameEnd(slice, 0);
-    const tableText = slice.substring(0, relNameEnd);
-    let afterTable = slice.substring(relNameEnd);
-
-    const existingNolockMatch = afterTable.match(/^\s*WITH\s*\(\s*NOLOCK\s*\)/i);
-    const hasExistingNolock = existingNolockMatch !== null;
-
-    afterTable = afterTable.replace(/\bWITH\s*\(\s*NOLOCK\s*\)/gi, "");
-
-    let aliasMatch = afterTable.match(/^\s*(AS\s+)?(\[?[A-Za-z0-9_]+\]?)/i);
-    let aliasPart = "";
-    let afterAlias = "";
-
-    if (aliasMatch) {
-      aliasPart = afterTable.substring(0, aliasMatch[0].length);
-      afterAlias = afterTable.substring(aliasMatch[0].length);
-    } else {
-      afterAlias = afterTable;
-    }
-
-    let out = leading + tableText;
-
-    if (action === "remove") {
-      out += aliasPart + afterAlias;
-    } else {
-      if (!hasExistingNolock) {
-        out += " WITH(NOLOCK)";
-      } else {
-        out += " WITH(NOLOCK)";
-      }
-      out += aliasPart + afterAlias;
-    }
-
-    return { text: out, nextPos: q };
-  };
-
-  const parseFromSources = (sql, start, action) => {
-    let out = "";
-    let i = start;
-    while (i < sql.length) {
-      const { text, nextPos } = parseOneTableRef(sql, i, action);
-      out += text;
-      i = skipSpaces(sql, nextPos);
-      if (sql[i] === ",") {
-        out += ",";
-        i = skipSpaces(sql, i + 1);
-        continue;
-      }
-      break;
-    }
-    return { text: out, nextPos: i };
-  };
-
-  const transform = (sql, action) => {
-    let out = "";
-    let i = 0;
-    while (i < sql.length) {
-      const ch = sql[i];
-      if (ch === "-" && sql[i + 1] === "-") {
-        const end = readLineEnd(sql, i + 2);
-        out += sql.substring(i, end);
-        i = end;
-        continue;
-      }
-      if (ch === "/" && sql[i + 1] === "*") {
-        const end = readBlockCommentEnd(sql, i + 2);
-        out += sql.substring(i, end);
-        i = end;
-        continue;
-      }
-      if (ch === "'") {
-        const end = readSingleQuoted(sql, i + 1);
-        out += sql.substring(i, end);
-        i = end;
-        continue;
-      }
-      if (ch === "[") {
-        const end = readBracketIdent(sql, i + 1);
-        out += sql.substring(i, end);
-        i = end;
-        continue;
-      }
-      if (ch === '"') {
-        const end = readQuotedIdent(sql, i + 1);
-        out += sql.substring(i, end);
-        i = end;
-        continue;
-      }
-      if (ch === "(") {
-        const end = readBalanced(sql, i);
-        const inner = sql.substring(i + 1, end - 1);
-        out += "(" + transform(inner, action) + ")";
-        i = end;
-        continue;
-      }
-      const fromHit = anyKeywordAt(sql, i, KW_FROM);
-      if (fromHit) {
-        const kw = sql.substring(i, i + fromHit.len);
-        out += kw;
-        i += fromHit.len;
-        const { text, nextPos } = parseFromSources(sql, i, action);
-        out += text;
-        i = nextPos;
-        continue;
-      }
-      const joinHit = anyKeywordAt(sql, i, KW_JOINS);
-      if (joinHit) {
-        const kw = sql.substring(i, i + joinHit.len);
-        out += kw;
-        i += joinHit.len;
-        const { text, nextPos } = parseOneTableRef(sql, i, action);
-        out += text;
-        i = nextPos;
-        continue;
-      }
-      out += ch;
-      i++;
-    }
-    return out;
-  };
-
-  const handleRun = () => {
-    const action = mode === "enforce" ? "enhance" : "remove";
-    const result = transform(inputSP, action);
-    setOutputSP(result);
-    setCopied(false);
-  };
-
-  const handleCopy = async () => {
-    if (!outputSP) return;
-    await navigator.clipboard.writeText(outputSP);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
+  const handleAnalyze = () => {
+    if (!inputSP.trim()) return;
+    const analysis = analyzeSP(inputSP);
+    setAnalysisResult(analysis);
   };
 
   return (
     <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">🛠 Try It Yourself: NOLOCK Enhancer</h2>
-      <div className="flex flex-col md:flex-row gap-6 h-[600px]">
-        {/* Left */}
-        <div className="w-full md:w-1/2 flex flex-col">
-          <label className="block mb-2 font-semibold text-slate-700">Paste Stored Procedure (T-SQL)</label>
+      <h2 className="text-2xl font-bold mb-4 text-slate-800 flex items-center gap-2">
+        🔍 SP Performance Analyzer
+      </h2>
+
+      <div className="flex flex-col gap-6">
+        {/* Input Area */}
+        <div className="w-full">
+          <label className="block mb-2 font-semibold text-slate-700">Paste Your Stored Procedure (T-SQL)</label>
           <textarea
-            className="w-full flex-grow p-4 border border-slate-300 rounded-lg resize-none font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-white"
+            className="w-full h-96 p-4 border border-slate-300 rounded-lg resize-none font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-white"
             value={inputSP}
             onChange={(e) => setInputSP(e.target.value)}
-            placeholder={`SELECT * 
-FROM Users u
-JOIN Orders o ON u.ID = o.UserID
--- Will become:
--- FROM Users u WITH(NOLOCK)
--- JOIN Orders o WITH(NOLOCK) ...`}
+            placeholder={`CREATE PROCEDURE GetOrders
+AS
+BEGIN
+    SELECT * 
+    FROM Orders o
+    JOIN Customers c ON o.CustomerID = c.ID
+    WHERE YEAR(o.OrderDate) = 2023
+END`}
           />
 
           <div className="mt-4 flex items-center gap-3">
-            <label className="text-sm font-medium text-slate-700">Mode:</label>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
-              className="input-modern w-auto"
-            >
-              <option value="enforce">Enforce WITH (NOLOCK)</option>
-              <option value="remove">Remove WITH (NOLOCK)</option>
-            </select>
-
             <button
-              onClick={handleRun}
-              className="btn-primary"
+              onClick={handleAnalyze}
+              disabled={!inputSP.trim()}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-md font-medium transition-colors shadow-sm"
             >
-              Run
+              🚀 Analyze Performance
             </button>
+            {analysisResult && (
+              <button
+                onClick={() => { setInputSP(''); setAnalysisResult(null); }}
+                className="text-slate-600 hover:text-slate-800 px-4 py-2 text-sm"
+              >
+                Clear
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Right */}
-        <div className="w-full md:w-1/2 flex flex-col">
-          <div className="flex justify-between items-center mb-2">
-            <label className="font-semibold text-slate-700">Transformed SP</label>
-            <button
-              onClick={handleCopy}
-              disabled={!outputSP}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${copied ? "bg-green-600 text-white" : "bg-slate-700 text-white hover:bg-slate-800"
-                }`}
-            >
-              {copied ? "Copied!" : "Copy"}
-            </button>
+        {/* Analysis Results */}
+        {analysisResult && (
+          <div className="space-y-4 animate-fade-in">
+
+            {/* Score Card */}
+            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-bold text-indigo-900 text-lg flex items-center gap-2">
+                  <span>🤖</span> Performance Analysis
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-indigo-700 font-medium">Score:</span>
+                  <span className={`px-4 py-2 rounded-lg text-2xl font-bold ${analysisResult.score >= 90 ? 'bg-green-100 text-green-700' :
+                      analysisResult.score >= 70 ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                    }`}>
+                    {analysisResult.score}/100
+                  </span>
+                </div>
+              </div>
+              <p className="text-indigo-800 leading-relaxed mb-4">{analysisResult.summary}</p>
+
+              {/* Metrics */}
+              <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-indigo-100">
+                <div className="text-center">
+                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Lines of Code</div>
+                  <div className="text-lg font-bold text-indigo-900">{analysisResult.metrics.linesOfCode}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Complexity</div>
+                  <div className="text-lg font-bold text-indigo-900">{analysisResult.metrics.complexity}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Execution Risk</div>
+                  <div className={`text-lg font-bold ${analysisResult.metrics.estimatedExecutionRisk === 'Low' ? 'text-green-700' :
+                      analysisResult.metrics.estimatedExecutionRisk === 'Medium' ? 'text-yellow-700' :
+                        'text-red-700'
+                    }`}>{analysisResult.metrics.estimatedExecutionRisk}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Critical Issues */}
+            {analysisResult.issues.length > 0 && (
+              <div className="bg-white rounded-lg border border-red-200 shadow-sm overflow-hidden">
+                <div className="bg-red-50 p-4 border-b border-red-100">
+                  <h3 className="font-bold text-red-900 flex items-center gap-2">
+                    <span>⚠️</span> Critical Issues Found ({analysisResult.issues.length})
+                  </h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  {analysisResult.issues.map((issue, idx) => (
+                    <div key={idx} className="bg-red-50 p-4 rounded-lg border border-red-100">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🔴</span>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="px-2 py-1 bg-red-200 text-red-900 rounded text-xs font-bold uppercase">
+                              {issue.type}
+                            </span>
+                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs font-bold">
+                              {issue.severity} Severity
+                            </span>
+                            {issue.line && (
+                              <span className="text-xs text-red-600 font-mono">
+                                Line {issue.line}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-red-900 font-medium mb-2">{issue.message}</p>
+                          {issue.suggestion && (
+                            <div className="mt-2 p-3 bg-white rounded border border-red-100">
+                              <p className="text-sm text-slate-700">
+                                <strong className="text-green-700">💡 Fix:</strong> {issue.suggestion}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Suggestions */}
+            {analysisResult.suggestions.length > 0 && (
+              <div className="bg-white rounded-lg border border-blue-200 shadow-sm overflow-hidden">
+                <div className="bg-blue-50 p-4 border-b border-blue-100">
+                  <h3 className="font-bold text-blue-900 flex items-center gap-2">
+                    <span>💡</span> Optimization Suggestions ({analysisResult.suggestions.length})
+                  </h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  {analysisResult.suggestions.map((sugg, idx) => (
+                    <div key={idx} className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
+                      <span className="text-xl">💡</span>
+                      <div className="flex-1">
+                        <span className="px-2 py-1 bg-blue-200 text-blue-900 rounded text-xs font-bold uppercase block w-fit mb-2">
+                          {sugg.type}
+                        </span>
+                        <p className="text-blue-900">{sugg.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* No Issues */}
+            {analysisResult.issues.length === 0 && analysisResult.suggestions.length === 0 && (
+              <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center">
+                <span className="text-4xl block mb-2">✅</span>
+                <p className="text-green-800 font-bold text-lg">Excellent! No performance issues detected.</p>
+                <p className="text-green-700 text-sm mt-1">Your stored procedure follows best practices.</p>
+              </div>
+            )}
           </div>
-          <textarea
-            className="w-full flex-grow p-4 border border-slate-300 rounded-lg resize-none bg-slate-900 text-blue-200 font-mono text-sm custom-scrollbar"
-            value={outputSP}
-            readOnly
-          />
-        </div>
+        )}
       </div>
     </div>
   );
@@ -602,7 +324,7 @@ SET READ_COMMITTED_SNAPSHOT ON;`
           >
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
-            {tab === 'playground' && '🛠 Enhancer Tool'}
+            {tab === 'playground' && '� Performance Analyzer'}
           </button>
         ))}
       </div>
@@ -636,6 +358,45 @@ SET READ_COMMITTED_SNAPSHOT ON;`
               <li>Transaction fails (error). Rollback happens. Money is put back.</li>
               <li><strong>Your report is wrong.</strong> You reported that Alice has $500 less than she actually does.</li>
             </ol>
+          </div>
+
+          <SectionTitle>🚀 Advanced Performance Optimization</SectionTitle>
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800 mb-3">1. SARGable Queries</h3>
+              <p className="text-slate-600 mb-2">
+                <strong>SARGable</strong> (Search ARGumentable) means writing queries so SQL Server can use indexes.
+              </p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-red-50 p-3 rounded border border-red-100">
+                  <span className="text-red-700 font-bold block mb-1">❌ Bad (Index Scan)</span>
+                  <code className="text-sm">WHERE YEAR(OrderDate) = 2023</code>
+                  <p className="text-xs text-red-600 mt-1">Applying a function to a column hides the column from the index.</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded border border-green-100">
+                  <span className="text-green-700 font-bold block mb-1">✅ Good (Index Seek)</span>
+                  <code className="text-sm">WHERE OrderDate &gt;= '2023-01-01' AND OrderDate &lt; '2024-01-01'</code>
+                  <p className="text-xs text-green-600 mt-1">Range comparison allows direct index usage.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800 mb-3">2. Avoid SELECT *</h3>
+              <p className="text-slate-600 mb-2">
+                Always specify columns. <code>SELECT *</code> forces the engine to read more data than needed (increasing I/O) and prevents the use of Covering Indexes.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800 mb-3">3. Parameter Sniffing</h3>
+              <p className="text-slate-600 mb-2">
+                If a query runs fast sometimes and slow other times, it might be Parameter Sniffing. SQL Server caches a plan for the first parameter it sees (e.g., a small date range), which might be terrible for a large date range.
+              </p>
+              <p className="text-sm text-slate-500">
+                <strong>Fix:</strong> Use <code>OPTION (RECOMPILE)</code> or optimize for the most common case.
+              </p>
+            </div>
           </div>
 
           <SectionTitle>When to Use NOLOCK</SectionTitle>
@@ -734,7 +495,7 @@ SET READ_COMMITTED_SNAPSHOT ON;`
 
       {/* Playground Tab */}
       {activeTab === 'playground' && (
-        <NoLockPlayground />
+        <SPPerformanceAnalyzer />
       )}
     </div>
   );

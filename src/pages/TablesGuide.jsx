@@ -264,6 +264,344 @@ const TablePlaygroundDynamic = () => {
   );
 };
 
+// --- ALTER TABLE Generator Component ---
+const AlterTableGenerator = () => {
+  const [mode, setMode] = useState('single'); // 'single' or 'bulk'
+  const [tableName, setTableName] = useState('');
+  const [columns, setColumns] = useState('');
+  const [bulkInput, setBulkInput] = useState('');
+  const [generatedScript, setGeneratedScript] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const generateScriptForTable = (table, columnLines) => {
+    let scriptParts = [];
+
+    // Header
+    scriptParts.push(`-- ============================================`);
+    scriptParts.push(`-- ALTER TABLE: ${table}`);
+    scriptParts.push(`-- Generated: ${new Date().toLocaleString()}`);
+    scriptParts.push(`-- Total Columns: ${columnLines.length}`);
+    scriptParts.push(`-- ============================================`);
+    scriptParts.push(``);
+
+    // Process each column
+    columnLines.forEach((columnDef, index) => {
+      const parts = columnDef.trim().split(/\s+/);
+      const columnName = parts[0];
+      const dataType = parts.slice(1).join(' ');
+
+      scriptParts.push(`-- Column ${index + 1}: ${columnName}`);
+      scriptParts.push(`IF NOT EXISTS (`);
+      scriptParts.push(`    SELECT 1 FROM sys.columns `);
+      scriptParts.push(`    WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') `);
+      scriptParts.push(`    AND name = '${columnName}'`);
+      scriptParts.push(`)`);
+      scriptParts.push(`BEGIN`);
+      scriptParts.push(`    ALTER TABLE [dbo].[${table}]`);
+      scriptParts.push(`    ADD [${columnName}] ${dataType};`);
+      scriptParts.push(`    PRINT 'Column ${columnName} added to ${table} successfully';`);
+      scriptParts.push(`END`);
+      scriptParts.push(`ELSE`);
+      scriptParts.push(`BEGIN`);
+      scriptParts.push(`    PRINT 'Column ${columnName} already exists in ${table} - skipping';`);
+      scriptParts.push(`END`);
+      scriptParts.push(`GO`);
+      scriptParts.push(``);
+    });
+
+    // Verification Query
+    scriptParts.push(`-- Verification Query for ${table}`);
+    scriptParts.push(`SELECT `);
+    scriptParts.push(`    COLUMN_NAME,`);
+    scriptParts.push(`    DATA_TYPE,`);
+    scriptParts.push(`    IS_NULLABLE,`);
+    scriptParts.push(`    COLUMN_DEFAULT`);
+    scriptParts.push(`FROM INFORMATION_SCHEMA.COLUMNS`);
+    scriptParts.push(`WHERE TABLE_NAME = '${table}'`);
+    scriptParts.push(`ORDER BY ORDINAL_POSITION;`);
+    scriptParts.push(`GO`);
+
+    return scriptParts.join('\n');
+  };
+
+  const generateSingleAlterScript = () => {
+    if (!tableName.trim() || !columns.trim()) return;
+
+    const columnLines = columns
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
+
+    if (columnLines.length === 0) return;
+
+    return generateScriptForTable(tableName, columnLines);
+  };
+
+  const generateBulkAlterScript = () => {
+    if (!bulkInput.trim()) return;
+
+    const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let scriptParts = [];
+    let currentTable = null;
+    let currentColumns = [];
+
+    lines.forEach(line => {
+      // Check if line is a table name (format: [TableName] or TableName:)
+      if (line.startsWith('[') && line.endsWith(']')) {
+        // Process previous table if exists
+        if (currentTable && currentColumns.length > 0) {
+          scriptParts.push(generateScriptForTable(currentTable, currentColumns));
+          scriptParts.push('');
+        }
+        // Start new table
+        currentTable = line.slice(1, -1);
+        currentColumns = [];
+      } else if (line.endsWith(':')) {
+        // Process previous table if exists
+        if (currentTable && currentColumns.length > 0) {
+          scriptParts.push(generateScriptForTable(currentTable, currentColumns));
+          scriptParts.push('');
+        }
+        // Start new table
+        currentTable = line.slice(0, -1);
+        currentColumns = [];
+      } else {
+        // It's a column definition
+        if (currentTable) {
+          currentColumns.push(line);
+        }
+      }
+    });
+
+    // Process last table
+    if (currentTable && currentColumns.length > 0) {
+      scriptParts.push(generateScriptForTable(currentTable, currentColumns));
+    }
+
+    return scriptParts.join('\n\n');
+  };
+
+  const handleGenerate = () => {
+    let script = '';
+    if (mode === 'single') {
+      script = generateSingleAlterScript();
+    } else {
+      script = generateBulkAlterScript();
+    }
+    setGeneratedScript(script || '');
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedScript).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const clearAll = () => {
+    setTableName('');
+    setColumns('');
+    setBulkInput('');
+    setGeneratedScript('');
+  };
+
+  const countTables = () => {
+    if (mode === 'single') return 1;
+    const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    return lines.filter(l => (l.startsWith('[') && l.endsWith(']')) || l.endsWith(':')).length;
+  };
+
+  const countColumns = () => {
+    if (mode === 'single') {
+      return columns.split('\n').filter(l => l.trim()).length;
+    } else {
+      const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      return lines.filter(l => !l.startsWith('[') && !l.endsWith(':')).length;
+    }
+  };
+
+  return (
+    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-slate-800 flex items-center gap-2">
+        🔧 ALTER TABLE Generator
+      </h2>
+
+      <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-md mb-6">
+        <p className="text-sm text-indigo-800">
+          <span className="font-semibold">Smart Column Addition:</span> Generates ALTER TABLE scripts with automatic existence checks.
+          Each column is verified before being added to prevent errors in production deployments.
+        </p>
+        <p className="text-xs text-indigo-700 mt-2">
+          💡 <strong>Format:</strong> <code className="bg-indigo-100 px-1 rounded">ColumnName DataType [NULL/NOT NULL] [DEFAULT value]</code>
+        </p>
+      </div>
+
+      {/* Mode Selector */}
+      <div className="flex gap-1 mb-6 border-b border-slate-200">
+        <button
+          onClick={() => setMode('single')}
+          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'single'
+            ? 'text-blue-600 border-blue-600'
+            : 'text-slate-500 border-transparent hover:text-slate-700'
+            }`}
+        >
+          Single Table
+        </button>
+        <button
+          onClick={() => setMode('bulk')}
+          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'bulk'
+            ? 'text-blue-600 border-blue-600'
+            : 'text-slate-500 border-transparent hover:text-slate-700'
+            }`}
+        >
+          Bulk Tables
+        </button>
+      </div>
+
+      <div className="space-y-6">
+        {mode === 'single' ? (
+          <>
+            {/* Single Table Mode */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Table Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                className="input-modern max-w-md"
+                type="text"
+                placeholder="e.g., Customers"
+                value={tableName}
+                onChange={(e) => setTableName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Column Definitions <span className="text-slate-400 font-normal">(One per line)</span> <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                className="input-modern h-64 font-mono text-sm"
+                placeholder={`Email NVARCHAR(255) NULL\nPhoneNumber VARCHAR(20) NULL\nCreatedDate DATETIME NOT NULL\nIsActive BIT NOT NULL DEFAULT 1\nLastModifiedBy INT NULL\nModifiedDate DATETIME DEFAULT GETDATE()`}
+                value={columns}
+                onChange={(e) => setColumns(e.target.value)}
+              />
+              <div className="mt-2 space-y-1">
+                <p className="text-xs text-slate-500">
+                  ✅ <strong>Supports:</strong> All data types, NULL/NOT NULL constraints, DEFAULT values
+                </p>
+                <p className="text-xs text-slate-500">
+                  🔒 <strong>Safe:</strong> Each column is checked for existence before being added
+                </p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Bulk Mode */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Bulk Table Definitions <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                className="input-modern h-96 font-mono text-sm"
+                placeholder={`[Customers]\nEmail NVARCHAR(255) NULL\nPhoneNumber VARCHAR(20) NULL\nCreatedDate DATETIME NOT NULL\n\n[Orders]\nOrderStatus VARCHAR(50) NULL\nShippingAddress NVARCHAR(500) NULL\nTrackingNumber VARCHAR(100) NULL\n\n[Products]\nSKU VARCHAR(50) NOT NULL\nBarcode VARCHAR(100) NULL\nStockQuantity INT DEFAULT 0`}
+                value={bulkInput}
+                onChange={(e) => setBulkInput(e.target.value)}
+              />
+              <div className="mt-2 space-y-1">
+                <p className="text-xs text-slate-500">
+                  📋 <strong>Format:</strong> Use <code className="bg-slate-200 px-1 rounded">[TableName]</code> or <code className="bg-slate-200 px-1 rounded">TableName:</code> to start a new table
+                </p>
+                <p className="text-xs text-slate-500">
+                  📦 <strong>Bulk:</strong> Add columns to multiple tables in one script
+                </p>
+                <p className="text-xs text-slate-500">
+                  🔒 <strong>Safe:</strong> Each column in each table is checked for existence
+                </p>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          <button
+            className="btn-primary"
+            onClick={handleGenerate}
+            disabled={mode === 'single' ? (!tableName.trim() || !columns.trim()) : !bulkInput.trim()}
+          >
+            🚀 Generate ALTER Script
+          </button>
+          {generatedScript && (
+            <button
+              onClick={clearAll}
+              className="px-4 py-2 text-slate-600 hover:text-slate-800 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
+        {/* Generated Script Output */}
+        {generatedScript && (
+          <div className="mt-8 pt-6 border-t border-slate-200">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold text-slate-900">
+                📜 Generated ALTER TABLE Script
+              </h3>
+              <button
+                className={`text-xs px-3 py-2 rounded border transition-colors ${copied
+                  ? 'bg-green-50 text-green-700 border-green-200'
+                  : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                  }`}
+                onClick={copyToClipboard}
+              >
+                {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
+              </button>
+            </div>
+            <div className="code-block">
+              <textarea
+                className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
+                value={generatedScript}
+                readOnly
+              />
+            </div>
+
+            {/* Script Stats */}
+            <div className="mt-4 grid grid-cols-4 gap-4">
+              <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Tables</div>
+                <div className="text-2xl font-bold text-indigo-900">
+                  {countTables()}
+                </div>
+              </div>
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <div className="text-xs text-blue-600 uppercase font-bold mb-1">Total Columns</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {countColumns()}
+                </div>
+              </div>
+              <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                <div className="text-xs text-green-600 uppercase font-bold mb-1">Script Lines</div>
+                <div className="text-2xl font-bold text-green-900">
+                  {generatedScript.split('\n').length}
+                </div>
+              </div>
+              <div className="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                <div className="text-xs text-purple-600 uppercase font-bold mb-1">Safety Checks</div>
+                <div className="text-2xl font-bold text-purple-900">
+                  {countColumns()}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 // --- Main Tables Guide Component ---
 const TablesGuide = () => {
   const [activeTab, setActiveTab] = useState("guide");
@@ -370,7 +708,7 @@ ON Orders(OrderDate);`
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-200">
-        {['guide', 'terms', 'playground'].map((tab) => (
+        {['guide', 'terms', 'playground', 'alter'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -382,6 +720,7 @@ ON Orders(OrderDate);`
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
             {tab === 'playground' && '🛠 Playground'}
+            {tab === 'alter' && '🔧 ALTER TABLE'}
           </button>
         ))}
       </div>
@@ -612,6 +951,11 @@ WITH (DATA_COMPRESSION = PAGE);`}</CodeBlock>
       {/* Playground Tab */}
       {activeTab === 'playground' && (
         <TablePlaygroundDynamic />
+      )}
+
+      {/* ALTER TABLE Tab */}
+      {activeTab === 'alter' && (
+        <AlterTableGenerator />
       )}
     </div>
   );

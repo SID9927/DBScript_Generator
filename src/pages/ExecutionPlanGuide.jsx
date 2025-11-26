@@ -102,72 +102,110 @@ const ExecutionPlanAnalyzer = () => {
             legacy: true,
             summary: { cost: 0, cachedPlanSize: 0, compileCPU: 0, compileMemory: 0 },
             warnings: [],
-            recommendations: ["Text analysis is limited. Please upload a .sqlplan (XML) file for deep analysis."],
+            recommendations: [{ type: "Info", text: "Text analysis is limited. Please upload a .sqlplan (XML) file for deep analysis." }],
             missingIndexes: [],
-            expensiveOperations: []
+            expensiveOperations: [],
+            waitStats: [],
+            parameterAnalysis: [],
+            aiSummary: "Basic text analysis performed. For a deep AI-driven analysis, please upload a valid .sqlplan XML file."
         });
+    };
+
+    const clearAnalysis = () => {
+        setExecutionPlan('');
+        setAnalysis(null);
+        setFileName(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     return (
         <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-800">
-                🔍 Execution Plan Analyzer
-            </h2>
-
-            {/* Upload Section */}
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-dashed border-slate-300 mb-6 text-center hover:border-blue-400 transition-colors">
-                <div className="mb-4">
-                    <span className="text-4xl">📂</span>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                    Upload .sqlplan File
-                </h3>
-                <p className="text-slate-500 mb-4 text-sm">
-                    Drag and drop or click to upload your XML Execution Plan
-                </p>
-                <input
-                    type="file"
-                    accept=".sqlplan,.xml"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    ref={fileInputRef}
-                />
-                <button
-                    onClick={() => fileInputRef.current.click()}
-                    className="btn-primary"
-                >
-                    Select File
-                </button>
-                {fileName && <p className="mt-2 text-green-600 font-medium">Selected: {fileName}</p>}
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    🔍 Execution Plan Analyzer 
+                    {/* <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">AI Powered</span> */}
+                </h2>
+                {analysis && (
+                    <button onClick={clearAnalysis} className="text-sm text-red-600 hover:text-red-800 font-medium">
+                        Reset Analysis
+                    </button>
+                )}
             </div>
 
-            <div className="text-center text-slate-400 mb-6">- OR -</div>
+            {!analysis && (
+                <>
+                    {/* Upload Section */}
+                    <div className="bg-white rounded-xl p-8 shadow-sm border border-dashed border-slate-300 mb-6 text-center hover:border-blue-400 transition-colors group cursor-pointer" onClick={() => fileInputRef.current.click()}>
+                        <div className="mb-4 transform group-hover:scale-110 transition-transform duration-200">
+                            <span className="text-5xl">📂</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                            Upload .sqlplan File
+                        </h3>
+                        <p className="text-slate-500 mb-4 text-sm">
+                            Drag and drop or click to upload your XML Execution Plan
+                        </p>
+                        <input
+                            type="file"
+                            accept=".sqlplan,.xml"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                            ref={fileInputRef}
+                        />
+                        <button
+                            className="btn-primary"
+                        >
+                            Select File
+                        </button>
+                    </div>
 
-            {/* Text Area Fallback */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 mb-6">
-                <p className="text-slate-600 mb-4">
-                    Paste raw XML execution plan content here:
-                </p>
-                <textarea
-                    className="w-full h-32 p-4 border border-slate-300 rounded-lg font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-slate-50"
-                    placeholder="<ShowPlanXML ...>"
-                    value={executionPlan}
-                    onChange={(e) => setExecutionPlan(e.target.value)}
-                />
-                <button
-                    className="btn-primary mt-4"
-                    onClick={analyzeManual}
-                    disabled={!executionPlan.trim()}
-                >
-                    Analyze Text
-                </button>
-            </div>
+                    <div className="text-center text-slate-400 mb-6">- OR -</div>
+
+                    {/* Text Area Fallback */}
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 mb-6">
+                        <p className="text-slate-600 mb-4">
+                            Paste raw XML execution plan content here:
+                        </p>
+                        <textarea
+                            className="w-full h-32 p-4 border border-slate-300 rounded-lg font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-slate-50"
+                            placeholder="<ShowPlanXML ...>"
+                            value={executionPlan}
+                            onChange={(e) => setExecutionPlan(e.target.value)}
+                        />
+                        <button
+                            className="btn-primary mt-4"
+                            onClick={analyzeManual}
+                            disabled={!executionPlan.trim()}
+                        >
+                            Analyze Text
+                        </button>
+                    </div>
+                </>
+            )}
 
             {/* Analysis Results */}
-            {analysis && !analysis.legacy && (
-                <div className="space-y-6 animate-fade-in">
-                    {/* Summary Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {analysis && (
+                <div className="space-y-8 animate-fade-in">
+
+                    {/* AI Summary Card */}
+                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <span className="text-9xl">🤖</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2">
+                            <span>🤖</span> AI Analysis Summary
+                        </h3>
+                        <div className="prose prose-indigo text-indigo-800 leading-relaxed">
+                            <React.Fragment>
+                                {analysis.aiSummary.split('\n').map((line, i) => (
+                                    <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></p>
+                                ))}
+                            </React.Fragment>
+                        </div>
+                    </div>
+
+                    {/* Summary Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
                             <div className="text-slate-500 text-xs uppercase font-bold">Total Cost</div>
                             <div className="text-2xl font-bold text-slate-800">{analysis.summary.cost.toFixed(2)}</div>
@@ -184,38 +222,58 @@ const ExecutionPlanAnalyzer = () => {
                             <div className="text-slate-500 text-xs uppercase font-bold">Compile Memory</div>
                             <div className="text-2xl font-bold text-slate-800">{analysis.summary.compileMemory} KB</div>
                         </div>
+                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                            <div className="text-slate-500 text-xs uppercase font-bold">Max DOP</div>
+                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.degreeOfParallelism}</div>
+                        </div>
                     </div>
 
                     {/* Recommendations */}
                     {analysis.recommendations.length > 0 && (
-                        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-                            <h3 className="text-lg font-bold text-blue-800 mb-3">🚀 Top Recommendations</h3>
-                            <ul className="space-y-2">
+                        <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r-lg shadow-sm">
+                            <h3 className="text-lg font-bold text-emerald-800 mb-4 flex items-center gap-2">
+                                🚀 Actionable Recommendations
+                            </h3>
+                            <div className="space-y-3">
                                 {analysis.recommendations.map((rec, idx) => (
-                                    <li key={idx} className="flex gap-2 text-blue-900">
-                                        <span>•</span>
-                                        <span>{rec}</span>
-                                    </li>
+                                    <div key={idx} className="flex gap-3 items-start bg-white/60 p-3 rounded-md">
+                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wide
+                                            ${rec.type === 'Index' ? 'bg-blue-100 text-blue-700' :
+                                                rec.type === 'Memory' ? 'bg-purple-100 text-purple-700' :
+                                                    rec.type === 'Code' ? 'bg-orange-100 text-orange-700' :
+                                                        'bg-slate-200 text-slate-700'}`}>
+                                            {rec.type}
+                                        </span>
+                                        <span className="text-emerald-900 font-medium">{rec.text}</span>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     )}
 
                     {/* Missing Indexes */}
                     {analysis.missingIndexes.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center gap-2">
-                                ⚡ Missing Indexes ({analysis.missingIndexes.length})
+                            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                ⚡ Missing Indexes <span className="bg-red-100 text-red-600 text-sm px-2 py-1 rounded-full">{analysis.missingIndexes.length}</span>
                             </h3>
                             <div className="space-y-4">
                                 {analysis.missingIndexes.map((idx, i) => (
-                                    <div key={i} className="bg-white rounded-lg p-6 shadow-sm border border-red-200">
-                                        <div className="flex justify-between items-start mb-4">
+                                    <div key={i} className="bg-white rounded-lg p-6 shadow-sm border border-red-200 relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                                        <div className="flex justify-between items-start mb-4 pl-2">
                                             <div>
                                                 <h4 className="font-bold text-slate-800 text-lg">{idx.table}</h4>
-                                                <p className="text-red-600 font-medium">Impact: {idx.impact.toFixed(1)}% Improvement</p>
+                                                <p className="text-red-600 font-medium flex items-center gap-1">
+                                                    <span className="text-xl">🔥</span> Impact: {idx.impact.toFixed(1)}% Improvement
+                                                </p>
                                             </div>
-                                            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">High Priority</span>
+                                            <button
+                                                onClick={() => navigator.clipboard.writeText(idx.createScript)}
+                                                className="text-sm bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded transition-colors"
+                                            >
+                                                Copy Script
+                                            </button>
                                         </div>
                                         <CodeBlock>{idx.createScript}</CodeBlock>
                                     </div>
@@ -230,12 +288,67 @@ const ExecutionPlanAnalyzer = () => {
                             <h3 className="text-xl font-bold text-orange-600 mb-4">⚠️ Warnings</h3>
                             <div className="grid gap-4">
                                 {analysis.warnings.map((w, i) => (
-                                    <div key={i} className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                                        <h4 className="font-bold text-orange-800">{w.type}</h4>
-                                        <p className="text-orange-900">{w.message}</p>
-                                        {w.details && <p className="text-xs text-orange-700 mt-1 font-mono">{w.details}</p>}
+                                    <div key={i} className="bg-orange-50 p-4 rounded-lg border border-orange-200 flex gap-4 items-start">
+                                        <span className="text-2xl">⚠️</span>
+                                        <div>
+                                            <h4 className="font-bold text-orange-800">{w.type}</h4>
+                                            <p className="text-orange-900">{w.message}</p>
+                                            {w.details && <p className="text-xs text-orange-700 mt-1 font-mono bg-orange-100/50 p-1 rounded">{w.details}</p>}
+                                        </div>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Wait Stats */}
+                    {analysis.waitStats && analysis.waitStats.length > 0 && (
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-4">⏳ Wait Statistics</h3>
+                            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                                        <tr>
+                                            <th className="p-3">Wait Type</th>
+                                            <th className="p-3">Time (ms)</th>
+                                            <th className="p-3">Count</th>
+                                            <th className="p-3">Explanation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {analysis.waitStats.map((wait, i) => (
+                                            <tr key={i} className="hover:bg-slate-50">
+                                                <td className="p-3 font-mono text-slate-700 font-semibold">{wait.type}</td>
+                                                <td className="p-3 text-slate-600">{wait.time.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-600">{wait.count.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-500 italic">{wait.explanation}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Parameter Sniffing */}
+                    {analysis.parameterAnalysis && analysis.parameterAnalysis.length > 0 && (
+                        <div>
+                            <h3 className="text-xl font-bold text-purple-700 mb-4">🔎 Parameter Analysis</h3>
+                            <div className="bg-purple-50 rounded-lg border border-purple-200 p-4">
+                                <p className="text-purple-900 mb-3 font-medium">
+                                    Discrepancies found between compiled and runtime values (Parameter Sniffing risk):
+                                </p>
+                                <div className="space-y-2">
+                                    {analysis.parameterAnalysis.map((param, i) => (
+                                        <div key={i} className="bg-white p-3 rounded border border-purple-100 text-sm">
+                                            <div className="font-mono font-bold text-slate-700">{param.name}</div>
+                                            <div className="grid grid-cols-2 gap-4 mt-1">
+                                                <div><span className="text-slate-500 text-xs">Compiled:</span> <span className="font-mono text-purple-700">{param.compiled}</span></div>
+                                                <div><span className="text-slate-500 text-xs">Runtime:</span> <span className="font-mono text-purple-700">{param.runtime}</span></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -244,20 +357,22 @@ const ExecutionPlanAnalyzer = () => {
                     {analysis.expensiveOperations.length > 0 && (
                         <div>
                             <h3 className="text-xl font-bold text-slate-800 mb-4">🐢 Most Expensive Operations</h3>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left border-collapse">
+                            <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+                                <table className="w-full text-left border-collapse bg-white">
                                     <thead>
                                         <tr className="bg-slate-100 text-slate-600 text-sm">
-                                            <th className="p-3 rounded-tl-lg">Operation</th>
+                                            <th className="p-3">Operation</th>
                                             <th className="p-3">Cost %</th>
                                             <th className="p-3">Est. Rows</th>
+                                            <th className="p-3">Est. IO</th>
+                                            <th className="p-3">Est. CPU</th>
                                             <th className="p-3">Issue</th>
-                                            <th className="p-3 rounded-tr-lg">Suggestion</th>
+                                            <th className="p-3">Suggestion</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="text-sm">
+                                    <tbody className="text-sm divide-y divide-slate-100">
                                         {analysis.expensiveOperations.map((op, i) => (
-                                            <tr key={i} className="border-b border-slate-200 hover:bg-slate-50">
+                                            <tr key={i} className="hover:bg-slate-50">
                                                 <td className="p-3 font-medium text-slate-800">
                                                     {op.op}
                                                     {op.parallel && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1 rounded">Parallel</span>}
@@ -270,9 +385,11 @@ const ExecutionPlanAnalyzer = () => {
                                                         <span>{op.costPercent}%</span>
                                                     </div>
                                                 </td>
-                                                <td className="p-3">{op.rows.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-600">{op.rows.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-600">{op.io.toFixed(4)}</td>
+                                                <td className="p-3 text-slate-600">{op.cpu.toFixed(4)}</td>
                                                 <td className="p-3 text-red-600 font-medium">{op.issue}</td>
-                                                <td className="p-3 text-slate-600">{op.suggestion}</td>
+                                                <td className="p-3 text-slate-600 text-xs">{op.suggestion}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -280,14 +397,6 @@ const ExecutionPlanAnalyzer = () => {
                             </div>
                         </div>
                     )}
-                </div>
-            )}
-
-            {/* Legacy/Fallback Result */}
-            {analysis && analysis.legacy && (
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-4">
-                    <h3 className="font-bold text-yellow-800">Text Analysis Mode</h3>
-                    <p className="text-yellow-700">Basic text analysis is limited. For full insights, please upload a .sqlplan file.</p>
                 </div>
             )}
         </div>
