@@ -8,7 +8,8 @@ import {
   IconChart,
   IconLightning,
   IconEye,
-  IconRocket
+  IconRocket,
+  IconCompare
 } from './Icons';
 
 const Home = () => {
@@ -60,6 +61,12 @@ const Home = () => {
       to: '/withnolock',
       description: 'Enhance stored procedures with NOLOCK hints.',
       icon: <IconRocket className="w-8 h-8 text-blue-600" />
+    },
+    {
+      name: 'Diff Viewer',
+      to: '/diff-viewer',
+      description: 'Compare text files line-by-line with a futuristic interface. (WIP)',
+      icon: <IconCompare className="w-8 h-8 text-blue-600" />
     }
   ];
 

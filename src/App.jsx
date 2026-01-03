@@ -15,6 +15,7 @@ import StoredProceduresGuide from './pages/StoredProceduresGuide';
 import BackupRollbackHome from './pages/BackupRollbackHome';
 import TablesGuide from './pages/TablesGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
+import DiffViewer from './pages/DiffViewer';
 import Footer from './components/Footer';
 
 const backupLinks = [
@@ -43,10 +44,11 @@ const App = () => {
           <Route path="/stored-procedures-guide" element={<StoredProceduresGuide />} />
           <Route path='/table-guide' element={<TablesGuide />} />
           <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
+          <Route path='/diff-viewer' element={<DiffViewer />} />
           <Route path="*" element={<Home title="Select a Module" />} />
         </Routes>
       </div>
-      <Footer/>
+      <Footer />
     </Router>
   );
 };
