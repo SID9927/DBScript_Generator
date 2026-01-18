@@ -13,11 +13,11 @@ const CodeBlock = ({ children }) => {
     <div className="relative my-4">
       <button
         onClick={copyToClipboard}
-        className="absolute top-2 right-2 bg-slate-700 text-white px-2 py-1 text-xs rounded hover:bg-slate-600 transition-colors"
+        className="absolute top-2 right-2 bg-slate-700 text-slate-300 px-2 py-1 text-xs rounded hover:bg-slate-600 transition-colors"
       >
         {copied ? "✅ Copied!" : "Copy"}
       </button>
-      <pre className="bg-slate-900 text-blue-200 p-4 rounded-lg overflow-x-auto text-sm border border-slate-700">
+      <pre className="bg-slate-900 text-blue-300 p-4 rounded-lg overflow-x-auto text-sm border border-slate-700 shadow-md">
         <code>{children}</code>
       </pre>
     </div>
@@ -25,26 +25,26 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+  <h2 className="text-2xl font-bold text-slate-200 mt-10 mb-4 border-b border-slate-700 pb-2">
     {children}
   </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-  <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+  <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
     {children}
   </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
   const styles = {
-    info: "bg-blue-50 border-blue-500 text-blue-800",
-    success: "bg-green-50 border-green-500 text-green-800",
-    warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-    danger: "bg-red-50 border-red-500 text-red-800",
+    info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+    success: "bg-green-900/20 border-green-500/50 text-green-200",
+    warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+    danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
-    <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
+    <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]} shadow-sm`}>
       {children}
     </div>
   );
@@ -148,23 +148,23 @@ const TablePlaygroundDynamic = () => {
       case "CREATE":
         return (
           <div>
-            <label className="block mb-2 font-semibold text-slate-700">Table Name</label>
-            <input type="text" value={activeTable.tableName} onChange={(e) => updateTableName(activeTableIndex, e.target.value)} className="input-modern mb-4" />
-            <label className="block mb-2 font-semibold text-slate-700">Columns</label>
+            <label className="block mb-2 font-semibold text-slate-300">Table Name</label>
+            <input type="text" value={activeTable.tableName} onChange={(e) => updateTableName(activeTableIndex, e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-4" />
+            <label className="block mb-2 font-semibold text-slate-300">Columns</label>
             {activeTable.columns.map((col, index) => (
               <div key={index} className="flex gap-2 mb-2 flex-wrap items-center">
-                <input type="text" value={col.name} onChange={(e) => updateColumn(activeTableIndex, index, "name", e.target.value)} className="input-modern flex-1" />
-                <input type="text" value={col.type} onChange={(e) => updateColumn(activeTableIndex, index, "type", e.target.value)} className="input-modern w-32" />
-                <label className="flex items-center gap-1 text-sm text-slate-600">
+                <input type="text" value={col.name} onChange={(e) => updateColumn(activeTableIndex, index, "name", e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1" />
+                <input type="text" value={col.type} onChange={(e) => updateColumn(activeTableIndex, index, "type", e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 w-32" />
+                <label className="flex items-center gap-1 text-sm text-slate-400">
                   <input type="checkbox" checked={col.nullable} onChange={(e) => updateColumn(activeTableIndex, index, "nullable", e.target.checked)} /> Nullable
                 </label>
-                <label className="flex items-center gap-1 text-sm text-slate-600">
+                <label className="flex items-center gap-1 text-sm text-slate-400">
                   <input type="checkbox" checked={col.primaryKey} onChange={(e) => updateColumn(activeTableIndex, index, "primaryKey", e.target.checked)} /> Primary Key
                 </label>
-                <button onClick={() => removeColumn(activeTableIndex, index)} className="text-red-500 hover:text-red-700 px-2">×</button>
+                <button onClick={() => removeColumn(activeTableIndex, index)} className="text-red-400 hover:text-red-300 px-2">×</button>
               </div>
             ))}
-            <button onClick={() => addColumn(activeTableIndex)} className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium">+ Add Column</button>
+            <button onClick={() => addColumn(activeTableIndex)} className="mt-2 text-blue-400 hover:text-blue-300 text-sm font-medium">+ Add Column</button>
             <CodeBlock>{generateCreateSQL()}</CodeBlock>
           </div>
         );
@@ -173,8 +173,8 @@ const TablePlaygroundDynamic = () => {
           <div>
             {activeTable.columns.map(col => (
               <div key={col.name} className="flex gap-2 mb-2 items-center">
-                <span className="w-32 text-sm font-medium text-slate-700">{col.name}:</span>
-                <input type="text" value={insertValues[col.name] || ""} onChange={(e) => setInsertValues({ ...insertValues, [col.name]: e.target.value })} className="input-modern flex-1" />
+                <span className="w-32 text-sm font-medium text-slate-300">{col.name}:</span>
+                <input type="text" value={insertValues[col.name] || ""} onChange={(e) => setInsertValues({ ...insertValues, [col.name]: e.target.value })} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1" />
               </div>
             ))}
             <CodeBlock>{generateInsertSQL()}</CodeBlock>
@@ -185,37 +185,37 @@ const TablePlaygroundDynamic = () => {
           <div>
             {activeTable.columns.map(col => (
               <div key={col.name} className="flex gap-2 mb-2 items-center">
-                <span className="w-32 text-sm font-medium text-slate-700">{col.name}:</span>
-                <input type="text" value={updateValues[col.name] || ""} onChange={(e) => setUpdateValues({ ...updateValues, [col.name]: e.target.value })} className="input-modern flex-1" />
+                <span className="w-32 text-sm font-medium text-slate-300">{col.name}:</span>
+                <input type="text" value={updateValues[col.name] || ""} onChange={(e) => setUpdateValues({ ...updateValues, [col.name]: e.target.value })} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1" />
               </div>
             ))}
-            <label className="block mt-2 mb-1 text-sm font-medium text-slate-700">WHERE Condition</label>
-            <input type="text" value={updateCondition} onChange={(e) => setUpdateCondition(e.target.value)} className="input-modern mb-2" placeholder="e.g. EmployeeID = 1" />
+            <label className="block mt-2 mb-1 text-sm font-medium text-slate-300">WHERE Condition</label>
+            <input type="text" value={updateCondition} onChange={(e) => setUpdateCondition(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2 w-full" placeholder="e.g. EmployeeID = 1" />
             <CodeBlock>{generateUpdateSQL()}</CodeBlock>
           </div>
         );
       case "DELETE":
         return (
           <div>
-            <label className="block mb-2 font-semibold text-slate-700">WHERE Condition</label>
-            <input type="text" value={deleteCondition} onChange={(e) => setDeleteCondition(e.target.value)} className="input-modern mb-2" placeholder="e.g. EmployeeID = 1" />
+            <label className="block mb-2 font-semibold text-slate-300">WHERE Condition</label>
+            <input type="text" value={deleteCondition} onChange={(e) => setDeleteCondition(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2 w-full" placeholder="e.g. EmployeeID = 1" />
             <CodeBlock>{generateDeleteSQL()}</CodeBlock>
           </div>
         );
       case "SELECT":
         return (
           <div>
-            <label className="block mb-2 font-semibold text-slate-700">Columns</label>
-            <input type="text" value={selectColumns} onChange={(e) => setSelectColumns(e.target.value)} className="input-modern mb-2" placeholder="* or col1,col2" />
-            <label className="block mb-2 font-semibold text-slate-700">WHERE Condition</label>
-            <input type="text" value={selectCondition} onChange={(e) => setSelectCondition(e.target.value)} className="input-modern mb-2" placeholder="e.g. LastName='Smith'" />
+            <label className="block mb-2 font-semibold text-slate-300">Columns</label>
+            <input type="text" value={selectColumns} onChange={(e) => setSelectColumns(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2 w-full" placeholder="* or col1,col2" />
+            <label className="block mb-2 font-semibold text-slate-300">WHERE Condition</label>
+            <input type="text" value={selectCondition} onChange={(e) => setSelectCondition(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2 w-full" placeholder="e.g. LastName='Smith'" />
             <CodeBlock>{generateSelectSQL()}</CodeBlock>
           </div>
         );
       case "TRUNCATE":
         return (
           <div>
-            <p className="mb-2 text-slate-700">TRUNCATE TABLE removes all rows quickly without firing DELETE triggers.</p>
+            <p className="mb-2 text-slate-300">TRUNCATE TABLE removes all rows quickly without firing DELETE triggers.</p>
             <CodeBlock>{generateTruncateSQL()}</CodeBlock>
           </div>
         );
@@ -225,8 +225,8 @@ const TablePlaygroundDynamic = () => {
   };
 
   return (
-    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">🛠 SQL Playground</h2>
+    <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-white">🛠 SQL Playground</h2>
 
       {/* Table Buttons */}
       <div className="flex gap-2 flex-wrap mb-4">
@@ -234,25 +234,25 @@ const TablePlaygroundDynamic = () => {
           <div key={index} className="flex gap-1">
             <button
               onClick={() => setActiveTableIndex(index)}
-              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${activeTableIndex === index ? "bg-blue-600 text-white" : "bg-white text-slate-600 border border-slate-300 hover:bg-slate-50"}`}
+              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${activeTableIndex === index ? "bg-blue-600 text-white" : "bg-slate-800 text-slate-400 border border-slate-600 hover:bg-slate-700"}`}
             >
               {table.tableName}
             </button>
             {index !== 0 && (
-              <button onClick={() => removeTable(index)} className="text-red-500 hover:text-red-700 px-1">×</button>
+              <button onClick={() => removeTable(index)} className="text-red-500 hover:text-red-400 px-1">×</button>
             )}
           </div>
         ))}
-        <button onClick={addTable} className="px-3 py-1 rounded text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors">+ Add Table</button>
+        <button onClick={addTable} className="px-3 py-1 rounded text-sm font-medium bg-green-700/80 text-white hover:bg-green-600 transition-colors border border-green-600">+ Add Table</button>
       </div>
 
       {/* Operation Tabs */}
-      <div className="flex gap-2 flex-wrap mb-4 border-b border-slate-200 pb-2">
+      <div className="flex gap-2 flex-wrap mb-4 border-b border-slate-700 pb-2">
         {["CREATE", "INSERT", "UPDATE", "DELETE", "SELECT", "TRUNCATE"].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${activeTab === tab ? "bg-blue-600 text-white" : "text-slate-600 hover:text-blue-600 hover:bg-blue-50"}`}
+            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${activeTab === tab ? "bg-blue-600 text-white" : "text-slate-400 hover:text-blue-400 hover:bg-slate-800"}`}
           >
             {tab}
           </button>
@@ -264,342 +264,8 @@ const TablePlaygroundDynamic = () => {
   );
 };
 
-// --- ALTER TABLE Generator Component ---
-const AlterTableGenerator = () => {
-  const [mode, setMode] = useState('single'); // 'single' or 'bulk'
-  const [tableName, setTableName] = useState('');
-  const [columns, setColumns] = useState('');
-  const [bulkInput, setBulkInput] = useState('');
-  const [generatedScript, setGeneratedScript] = useState('');
-  const [copied, setCopied] = useState(false);
 
-  const generateScriptForTable = (table, columnLines) => {
-    let scriptParts = [];
 
-    // Header
-    scriptParts.push(`-- ============================================`);
-    scriptParts.push(`-- ALTER TABLE: ${table}`);
-    scriptParts.push(`-- Generated: ${new Date().toLocaleString()}`);
-    scriptParts.push(`-- Total Columns: ${columnLines.length}`);
-    scriptParts.push(`-- ============================================`);
-    scriptParts.push(``);
-
-    // Process each column
-    columnLines.forEach((columnDef, index) => {
-      const parts = columnDef.trim().split(/\s+/);
-      const columnName = parts[0];
-      const dataType = parts.slice(1).join(' ');
-
-      scriptParts.push(`-- Column ${index + 1}: ${columnName}`);
-      scriptParts.push(`IF NOT EXISTS (`);
-      scriptParts.push(`    SELECT 1 FROM sys.columns `);
-      scriptParts.push(`    WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') `);
-      scriptParts.push(`    AND name = '${columnName}'`);
-      scriptParts.push(`)`);
-      scriptParts.push(`BEGIN`);
-      scriptParts.push(`    ALTER TABLE [dbo].[${table}]`);
-      scriptParts.push(`    ADD [${columnName}] ${dataType};`);
-      scriptParts.push(`    PRINT 'Column ${columnName} added to ${table} successfully';`);
-      scriptParts.push(`END`);
-      scriptParts.push(`ELSE`);
-      scriptParts.push(`BEGIN`);
-      scriptParts.push(`    PRINT 'Column ${columnName} already exists in ${table} - skipping';`);
-      scriptParts.push(`END`);
-      scriptParts.push(`GO`);
-      scriptParts.push(``);
-    });
-
-    // Verification Query
-    scriptParts.push(`-- Verification Query for ${table}`);
-    scriptParts.push(`SELECT `);
-    scriptParts.push(`    COLUMN_NAME,`);
-    scriptParts.push(`    DATA_TYPE,`);
-    scriptParts.push(`    IS_NULLABLE,`);
-    scriptParts.push(`    COLUMN_DEFAULT`);
-    scriptParts.push(`FROM INFORMATION_SCHEMA.COLUMNS`);
-    scriptParts.push(`WHERE TABLE_NAME = '${table}'`);
-    scriptParts.push(`ORDER BY ORDINAL_POSITION;`);
-    scriptParts.push(`GO`);
-
-    return scriptParts.join('\n');
-  };
-
-  const generateSingleAlterScript = () => {
-    if (!tableName.trim() || !columns.trim()) return;
-
-    const columnLines = columns
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
-
-    if (columnLines.length === 0) return;
-
-    return generateScriptForTable(tableName, columnLines);
-  };
-
-  const generateBulkAlterScript = () => {
-    if (!bulkInput.trim()) return;
-
-    const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    let scriptParts = [];
-    let currentTable = null;
-    let currentColumns = [];
-
-    lines.forEach(line => {
-      // Check if line is a table name (format: [TableName] or TableName:)
-      if (line.startsWith('[') && line.endsWith(']')) {
-        // Process previous table if exists
-        if (currentTable && currentColumns.length > 0) {
-          scriptParts.push(generateScriptForTable(currentTable, currentColumns));
-          scriptParts.push('');
-        }
-        // Start new table
-        currentTable = line.slice(1, -1);
-        currentColumns = [];
-      } else if (line.endsWith(':')) {
-        // Process previous table if exists
-        if (currentTable && currentColumns.length > 0) {
-          scriptParts.push(generateScriptForTable(currentTable, currentColumns));
-          scriptParts.push('');
-        }
-        // Start new table
-        currentTable = line.slice(0, -1);
-        currentColumns = [];
-      } else {
-        // It's a column definition
-        if (currentTable) {
-          currentColumns.push(line);
-        }
-      }
-    });
-
-    // Process last table
-    if (currentTable && currentColumns.length > 0) {
-      scriptParts.push(generateScriptForTable(currentTable, currentColumns));
-    }
-
-    return scriptParts.join('\n\n');
-  };
-
-  const handleGenerate = () => {
-    let script = '';
-    if (mode === 'single') {
-      script = generateSingleAlterScript();
-    } else {
-      script = generateBulkAlterScript();
-    }
-    setGeneratedScript(script || '');
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedScript).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const clearAll = () => {
-    setTableName('');
-    setColumns('');
-    setBulkInput('');
-    setGeneratedScript('');
-  };
-
-  const countTables = () => {
-    if (mode === 'single') return 1;
-    const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    return lines.filter(l => (l.startsWith('[') && l.endsWith(']')) || l.endsWith(':')).length;
-  };
-
-  const countColumns = () => {
-    if (mode === 'single') {
-      return columns.split('\n').filter(l => l.trim()).length;
-    } else {
-      const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      return lines.filter(l => !l.startsWith('[') && !l.endsWith(':')).length;
-    }
-  };
-
-  return (
-    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800 flex items-center gap-2">
-        🔧 ALTER TABLE Generator
-      </h2>
-
-      <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-md mb-6">
-        <p className="text-sm text-indigo-800">
-          <span className="font-semibold">Smart Column Addition:</span> Generates ALTER TABLE scripts with automatic existence checks.
-          Each column is verified before being added to prevent errors in production deployments.
-        </p>
-        <p className="text-xs text-indigo-700 mt-2">
-          💡 <strong>Format:</strong> <code className="bg-indigo-100 px-1 rounded">ColumnName DataType [NULL/NOT NULL] [DEFAULT value]</code>
-        </p>
-      </div>
-
-      {/* Mode Selector */}
-      <div className="flex gap-1 mb-6 border-b border-slate-200">
-        <button
-          onClick={() => setMode('single')}
-          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'single'
-            ? 'text-blue-600 border-blue-600'
-            : 'text-slate-500 border-transparent hover:text-slate-700'
-            }`}
-        >
-          Single Table
-        </button>
-        <button
-          onClick={() => setMode('bulk')}
-          className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'bulk'
-            ? 'text-blue-600 border-blue-600'
-            : 'text-slate-500 border-transparent hover:text-slate-700'
-            }`}
-        >
-          Bulk Tables
-        </button>
-      </div>
-
-      <div className="space-y-6">
-        {mode === 'single' ? (
-          <>
-            {/* Single Table Mode */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Table Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                className="input-modern max-w-md"
-                type="text"
-                placeholder="e.g., Customers"
-                value={tableName}
-                onChange={(e) => setTableName(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Column Definitions <span className="text-slate-400 font-normal">(One per line)</span> <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                className="input-modern h-64 font-mono text-sm"
-                placeholder={`Email NVARCHAR(255) NULL\nPhoneNumber VARCHAR(20) NULL\nCreatedDate DATETIME NOT NULL\nIsActive BIT NOT NULL DEFAULT 1\nLastModifiedBy INT NULL\nModifiedDate DATETIME DEFAULT GETDATE()`}
-                value={columns}
-                onChange={(e) => setColumns(e.target.value)}
-              />
-              <div className="mt-2 space-y-1">
-                <p className="text-xs text-slate-500">
-                  ✅ <strong>Supports:</strong> All data types, NULL/NOT NULL constraints, DEFAULT values
-                </p>
-                <p className="text-xs text-slate-500">
-                  🔒 <strong>Safe:</strong> Each column is checked for existence before being added
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Bulk Mode */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Bulk Table Definitions <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                className="input-modern h-96 font-mono text-sm"
-                placeholder={`[Customers]\nEmail NVARCHAR(255) NULL\nPhoneNumber VARCHAR(20) NULL\nCreatedDate DATETIME NOT NULL\n\n[Orders]\nOrderStatus VARCHAR(50) NULL\nShippingAddress NVARCHAR(500) NULL\nTrackingNumber VARCHAR(100) NULL\n\n[Products]\nSKU VARCHAR(50) NOT NULL\nBarcode VARCHAR(100) NULL\nStockQuantity INT DEFAULT 0`}
-                value={bulkInput}
-                onChange={(e) => setBulkInput(e.target.value)}
-              />
-              <div className="mt-2 space-y-1">
-                <p className="text-xs text-slate-500">
-                  📋 <strong>Format:</strong> Use <code className="bg-slate-200 px-1 rounded">[TableName]</code> or <code className="bg-slate-200 px-1 rounded">TableName:</code> to start a new table
-                </p>
-                <p className="text-xs text-slate-500">
-                  📦 <strong>Bulk:</strong> Add columns to multiple tables in one script
-                </p>
-                <p className="text-xs text-slate-500">
-                  🔒 <strong>Safe:</strong> Each column in each table is checked for existence
-                </p>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <button
-            className="btn-primary"
-            onClick={handleGenerate}
-            disabled={mode === 'single' ? (!tableName.trim() || !columns.trim()) : !bulkInput.trim()}
-          >
-            🚀 Generate ALTER Script
-          </button>
-          {generatedScript && (
-            <button
-              onClick={clearAll}
-              className="px-4 py-2 text-slate-600 hover:text-slate-800 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
-            >
-              Clear All
-            </button>
-          )}
-        </div>
-
-        {/* Generated Script Output */}
-        {generatedScript && (
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-semibold text-slate-900">
-                📜 Generated ALTER TABLE Script
-              </h3>
-              <button
-                className={`text-xs px-3 py-2 rounded border transition-colors ${copied
-                  ? 'bg-green-50 text-green-700 border-green-200'
-                  : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                  }`}
-                onClick={copyToClipboard}
-              >
-                {copied ? '✅ Copied!' : '📋 Copy to Clipboard'}
-              </button>
-            </div>
-            <div className="code-block">
-              <textarea
-                className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
-                value={generatedScript}
-                readOnly
-              />
-            </div>
-
-            {/* Script Stats */}
-            <div className="mt-4 grid grid-cols-4 gap-4">
-              <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Tables</div>
-                <div className="text-2xl font-bold text-indigo-900">
-                  {countTables()}
-                </div>
-              </div>
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                <div className="text-xs text-blue-600 uppercase font-bold mb-1">Total Columns</div>
-                <div className="text-2xl font-bold text-blue-900">
-                  {countColumns()}
-                </div>
-              </div>
-              <div className="bg-green-50 p-3 rounded-lg border border-green-100">
-                <div className="text-xs text-green-600 uppercase font-bold mb-1">Script Lines</div>
-                <div className="text-2xl font-bold text-green-900">
-                  {generatedScript.split('\n').length}
-                </div>
-              </div>
-              <div className="bg-purple-50 p-3 rounded-lg border border-purple-100">
-                <div className="text-xs text-purple-600 uppercase font-bold mb-1">Safety Checks</div>
-                <div className="text-2xl font-bold text-purple-900">
-                  {countColumns()}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 
 // --- Main Tables Guide Component ---
@@ -701,26 +367,25 @@ ON Orders(OrderDate);`
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-slate-900">Tables Guide</h1>
-      <p className="text-slate-600 mb-8 text-lg">
+      <h1 className="text-4xl font-bold mb-3 text-white">Tables Guide</h1>
+      <p className="text-slate-400 mb-8 text-lg">
         Mastering table design, optimization, and manipulation in SQL Server.
       </p>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200">
-        {['guide', 'terms', 'playground', 'alter'].map((tab) => (
+      <div className="flex gap-2 mb-6 border-b border-slate-700">
+        {['guide', 'terms', 'playground'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-slate-600 hover:text-blue-500'
+              ? 'text-blue-400 border-b-2 border-blue-500'
+              : 'text-slate-400 hover:text-blue-300'
               }`}
           >
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
             {tab === 'playground' && '🛠 Playground'}
-            {tab === 'alter' && '🔧 ALTER TABLE'}
           </button>
         ))}
       </div>
@@ -733,18 +398,18 @@ ON Orders(OrderDate);`
           </InfoCard>
 
           <SectionTitle>📖 Basics: What is a Table?</SectionTitle>
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-            <p className="text-slate-700 leading-relaxed mb-4">
+          <div className="bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg">
+            <p className="text-slate-300 leading-relaxed mb-4">
               A <strong>table</strong> is the fundamental building block of a database. Think of it like an Excel spreadsheet with rows and columns:
             </p>
-            <ul className="list-disc list-inside text-slate-700 space-y-2 mb-4">
+            <ul className="list-disc list-inside text-slate-300 space-y-2 mb-4">
               <li><strong>Columns</strong> define what kind of data you store (e.g., Name, Age, Email)</li>
               <li><strong>Rows</strong> contain the actual data (e.g., one row per employee)</li>
               <li>Each column has a <strong>data type</strong> (INT for numbers, VARCHAR for text, etc.)</li>
             </ul>
 
             <SubSectionTitle>Creating Your First Table</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               Here's a simple example of creating an Employees table:
             </p>
             <CodeBlock>{`CREATE TABLE Employees (
@@ -757,10 +422,10 @@ ON Orders(OrderDate);`
 );`}</CodeBlock>
 
             <SubSectionTitle>Understanding Primary Keys</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               A <strong>Primary Key</strong> is a column (or combination of columns) that uniquely identifies each row. Rules:
             </p>
-            <ul className="list-disc list-inside text-slate-700 space-y-2 mb-4">
+            <ul className="list-disc list-inside text-slate-300 space-y-2 mb-4">
               <li>Must be unique (no duplicates)</li>
               <li>Cannot be NULL (must have a value)</li>
               <li>Each table should have exactly ONE primary key</li>
@@ -769,33 +434,33 @@ ON Orders(OrderDate);`
 
             <SubSectionTitle>Common Data Types</SubSectionTitle>
             <div className="grid md:grid-cols-2 gap-4 mt-4">
-              <div className="bg-white p-4 rounded border border-blue-200">
-                <h4 className="font-bold text-blue-700 mb-2">Numbers</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-blue-900/50">
+                <h4 className="font-bold text-blue-400 mb-2">Numbers</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li><code>INT</code> - Whole numbers (-2B to 2B)</li>
                   <li><code>BIGINT</code> - Very large numbers</li>
                   <li><code>DECIMAL(10,2)</code> - Money (10 digits, 2 after decimal)</li>
                 </ul>
               </div>
-              <div className="bg-white p-4 rounded border border-blue-200">
-                <h4 className="font-bold text-blue-700 mb-2">Text</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-blue-900/50">
+                <h4 className="font-bold text-blue-400 mb-2">Text</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li><code>VARCHAR(50)</code> - Variable text up to 50 chars</li>
                   <li><code>NVARCHAR(100)</code> - Unicode text (supports all languages)</li>
                   <li><code>TEXT</code> - Very long text</li>
                 </ul>
               </div>
-              <div className="bg-white p-4 rounded border border-blue-200">
-                <h4 className="font-bold text-blue-700 mb-2">Dates & Times</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-blue-900/50">
+                <h4 className="font-bold text-blue-400 mb-2">Dates & Times</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li><code>DATE</code> - Just the date (2024-01-15)</li>
                   <li><code>DATETIME</code> - Date and time</li>
                   <li><code>TIME</code> - Just the time</li>
                 </ul>
               </div>
-              <div className="bg-white p-4 rounded border border-blue-200">
-                <h4 className="font-bold text-blue-700 mb-2">Others</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-blue-900/50">
+                <h4 className="font-bold text-blue-400 mb-2">Others</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li><code>BIT</code> - True/False (1/0)</li>
                   <li><code>UNIQUEIDENTIFIER</code> - GUID</li>
                 </ul>
@@ -803,7 +468,7 @@ ON Orders(OrderDate);`
             </div>
 
             <SubSectionTitle>Basic Operations (CRUD)</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               Once you have a table, you perform these basic operations:
             </p>
             <CodeBlock>{`-- CREATE (Insert new data)
@@ -821,10 +486,10 @@ DELETE FROM Employees WHERE EmployeeID = 1;`}</CodeBlock>
           </div>
 
           <SectionTitle>1. Naming Conventions</SectionTitle>
-          <p className="text-slate-700 leading-relaxed">
+          <p className="text-slate-300 leading-relaxed">
             Consistency is key in enterprise environments.
           </p>
-          <ul className="list-disc list-inside text-slate-700 space-y-2 mt-2">
+          <ul className="list-disc list-inside text-slate-300 space-y-2 mt-2">
             <li><strong>Tables:</strong> Use PascalCase and plural nouns (e.g., <code>Employees</code>, <code>SalesOrders</code>).</li>
             <li><strong>Columns:</strong> Use PascalCase (e.g., <code>FirstName</code>, <code>OrderDate</code>). Avoid spaces.</li>
             <li><strong>Keys:</strong> Prefix with PK/FK (e.g., <code>PK_Employees</code>, <code>FK_Orders_Customers</code>).</li>
@@ -892,53 +557,53 @@ WITH (DATA_COMPRESSION = PAGE);`}</CodeBlock>
           {terms.map((term, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+              className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
             >
               <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                 onClick={() => toggleTerm(index)}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{term.icon}</span>
                   <div>
-                    <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                    <p className="text-sm text-slate-600">{term.description}</p>
+                    <h3 className="font-bold text-slate-200 text-lg">{term.name}</h3>
+                    <p className="text-sm text-slate-400">{term.description}</p>
                   </div>
                 </div>
-                <div className="text-slate-400">
+                <div className="text-slate-500">
                   {expandedTerm === index ? "▲" : "▼"}
                 </div>
               </div>
 
               {expandedTerm === index && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.details}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                   </div>
 
                   <div className="mb-2">
-                    <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                    <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                     <CodeBlock>{term.code}</CodeBlock>
                   </div>
 
-                  <div className="mt-4 pt-2 border-t border-slate-200">
+                  <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                      term.color === 'orange' ? 'text-orange-600' :
-                        term.color === 'yellow' ? 'text-yellow-600' :
-                          term.color === 'green' ? 'text-green-600' :
-                            'text-blue-600'
+                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                      term.color === 'orange' ? 'text-orange-400' :
+                        term.color === 'yellow' ? 'text-yellow-400' :
+                          term.color === 'green' ? 'text-green-400' :
+                            'text-blue-400'
                       }`}>{term.impact}</span>
                   </div>
                 </div>
@@ -951,11 +616,6 @@ WITH (DATA_COMPRESSION = PAGE);`}</CodeBlock>
       {/* Playground Tab */}
       {activeTab === 'playground' && (
         <TablePlaygroundDynamic />
-      )}
-
-      {/* ALTER TABLE Tab */}
-      {activeTab === 'alter' && (
-        <AlterTableGenerator />
       )}
     </div>
   );

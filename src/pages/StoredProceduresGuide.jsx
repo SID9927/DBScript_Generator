@@ -27,23 +27,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-    <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+    <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
         {children}
     </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-    <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+    <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
         {children}
     </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
     const styles = {
-        info: "bg-blue-50 border-blue-500 text-blue-800",
-        success: "bg-green-50 border-green-500 text-green-800",
-        warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-        danger: "bg-red-50 border-red-500 text-red-800",
+        info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+        success: "bg-green-900/20 border-green-500/50 text-green-200",
+        warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+        danger: "bg-red-900/20 border-red-500/50 text-red-200",
     };
     return (
         <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -112,22 +112,22 @@ END;`;
     };
 
     return (
-        <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-800">🛠 Try It Yourself: Stored Procedure Generator</h2>
+        <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+            <h2 className="text-2xl font-bold mb-4 text-white">🛠 Try It Yourself: Stored Procedure Generator</h2>
 
             <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block mb-2 font-semibold text-slate-700">Procedure Name</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Procedure Name</label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="input-modern w-full"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block mb-2 font-semibold text-slate-700">Parameters</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Parameters</label>
                     {parameters.map((param, index) => (
                         <div key={index} className="flex gap-2 mb-2 items-center flex-wrap">
                             <input
@@ -135,33 +135,33 @@ END;`;
                                 placeholder="Name"
                                 value={param.name}
                                 onChange={(e) => updateParameter(index, "name", e.target.value)}
-                                className="input-modern flex-1 min-w-[120px]"
+                                className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1 min-w-[120px]"
                             />
                             <input
                                 type="text"
                                 placeholder="Type"
                                 value={param.type}
                                 onChange={(e) => updateParameter(index, "type", e.target.value)}
-                                className="input-modern w-24"
+                                className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 w-24"
                             />
                             <input
                                 type="text"
                                 placeholder="Default"
                                 value={param.defaultValue}
                                 onChange={(e) => updateParameter(index, "defaultValue", e.target.value)}
-                                className="input-modern w-24"
+                                className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 w-24"
                             />
                             <select
                                 value={param.mode}
                                 onChange={(e) => updateParameter(index, "mode", e.target.value)}
-                                className="input-modern w-28"
+                                className="bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 w-28"
                             >
                                 <option value="INPUT">INPUT</option>
                                 <option value="OUTPUT">OUTPUT</option>
                             </select>
                             <button
                                 onClick={() => removeParameter(index)}
-                                className="text-red-500 hover:text-red-700 px-2"
+                                className="text-red-400 hover:text-red-300 px-2"
                             >
                                 Remove
                             </button>
@@ -169,48 +169,48 @@ END;`;
                     ))}
                     <button
                         onClick={addParameter}
-                        className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        className="mt-2 text-blue-400 hover:text-blue-300 text-sm font-medium"
                     >
                         + Add Parameter
                     </button>
                 </div>
 
                 <div className="md:col-span-2 flex flex-wrap gap-4 mt-2">
-                    <label className="flex items-center gap-2 text-slate-700">
+                    <label className="flex items-center gap-2 text-slate-300">
                         <input
                             type="checkbox"
                             checked={useTransaction}
                             onChange={(e) => setUseTransaction(e.target.checked)}
-                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500"
                         />
                         Use Transaction
                     </label>
-                    <label className="flex items-center gap-2 text-slate-700">
+                    <label className="flex items-center gap-2 text-slate-300">
                         <input
                             type="checkbox"
                             checked={useErrorHandling}
                             onChange={(e) => setUseErrorHandling(e.target.checked)}
-                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500"
                         />
                         Use Error Handling & Logging
                     </label>
-                    <label className="flex items-center gap-2 text-slate-700">
+                    <label className="flex items-center gap-2 text-slate-300">
                         <input
                             type="checkbox"
                             checked={noCount}
                             onChange={(e) => setNoCount(e.target.checked)}
-                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500"
                         />
                         SET NOCOUNT ON
                     </label>
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block mb-2 font-semibold text-slate-700">Transaction Isolation Level (Optional)</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Transaction Isolation Level (Optional)</label>
                     <select
                         value={isolationLevel}
                         onChange={(e) => setIsolationLevel(e.target.value)}
-                        className="input-modern w-full md:w-1/2"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 md:w-1/2"
                     >
                         <option value="">None</option>
                         <option value="READ UNCOMMITTED">READ UNCOMMITTED</option>
@@ -221,12 +221,12 @@ END;`;
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block mb-2 font-semibold text-slate-700">Procedure Body (SQL)</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Procedure Body (SQL)</label>
                     <textarea
                         rows="6"
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
-                        className="input-modern w-full font-mono text-sm"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-sm"
                     />
                 </div>
             </div>
@@ -355,20 +355,20 @@ END`
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-slate-900">Stored Procedures Guide</h1>
-            <p className="text-slate-600 mb-8 text-lg">
+            <h1 className="text-4xl font-bold mb-3 text-white">Stored Procedures Guide</h1>
+            <p className="text-slate-400 mb-8 text-lg">
                 Enterprise-grade development practices for SQL Server Stored Procedures.
             </p>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b border-slate-200">
+            <div className="flex gap-2 mb-6 border-b border-slate-700">
                 {['guide', 'terms', 'playground'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-                            ? 'text-blue-600 border-b-2 border-blue-600'
-                            : 'text-slate-600 hover:text-blue-500'
+                            ? 'text-blue-400 border-b-2 border-blue-500'
+                            : 'text-slate-400 hover:text-blue-300'
                             }`}
                     >
                         {tab === 'guide' && '📚 Guide'}
@@ -386,11 +386,11 @@ END`
                     </InfoCard>
 
                     <SectionTitle>📖 Basics: What is a Stored Procedure?</SectionTitle>
-                    <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
-                        <p className="text-slate-700 leading-relaxed mb-4">
+                    <div className="bg-green-900/20 border-l-4 border-green-500 p-6 rounded-r-lg">
+                        <p className="text-slate-300 leading-relaxed mb-4">
                             A <strong>Stored Procedure (SP)</strong> is a saved collection of SQL statements that you can run as a single unit. Think of it like a recipe or a function in programming:
                         </p>
-                        <ul className="list-disc list-inside text-slate-700 space-y-2 mb-4">
+                        <ul className="list-disc list-inside text-slate-300 space-y-2 mb-4">
                             <li>You write the SQL code once and save it in the database</li>
                             <li>You can call it by name whenever you need it</li>
                             <li>It can accept <strong>parameters</strong> (inputs) and return results</li>
@@ -399,18 +399,18 @@ END`
 
                         <SubSectionTitle>Why Use Stored Procedures?</SubSectionTitle>
                         <div className="grid md:grid-cols-2 gap-4 mb-4">
-                            <div className="bg-white p-4 rounded border border-green-200">
-                                <h4 className="font-bold text-green-700 mb-2">✅ Benefits</h4>
-                                <ul className="text-sm text-slate-700 space-y-1">
+                            <div className="bg-slate-800 p-4 rounded border border-green-500/30">
+                                <h4 className="font-bold text-green-400 mb-2">✅ Benefits</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
                                     <li>• Faster execution (pre-compiled)</li>
                                     <li>• Better security (hide SQL from users)</li>
                                     <li>• Reusable code (write once, use many times)</li>
                                     <li>• Reduced network traffic</li>
                                 </ul>
                             </div>
-                            <div className="bg-white p-4 rounded border border-green-200">
-                                <h4 className="font-bold text-orange-700 mb-2">⚠️ When NOT to Use</h4>
-                                <ul className="text-sm text-slate-700 space-y-1">
+                            <div className="bg-slate-800 p-4 rounded border border-green-500/30">
+                                <h4 className="font-bold text-orange-400 mb-2">⚠️ When NOT to Use</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
                                     <li>• Complex business logic (belongs in app)</li>
                                     <li>• Simple one-time queries</li>
                                     <li>• When debugging is critical</li>
@@ -449,11 +449,11 @@ END;
 EXEC GetEmployeesByDepartment @DepartmentID = 5;`}</CodeBlock>
 
                         <SubSectionTitle>Input vs Output Parameters</SubSectionTitle>
-                        <div className="bg-white p-4 rounded border border-green-200 mb-4">
-                            <p className="text-slate-700 mb-2">
+                        <div className="bg-slate-800 p-4 rounded border border-green-500/30 mb-4">
+                            <p className="text-slate-300 mb-2">
                                 <strong>INPUT parameters</strong> (default): You send data INTO the procedure
                             </p>
-                            <p className="text-slate-700">
+                            <p className="text-slate-300">
                                 <strong>OUTPUT parameters</strong>: The procedure sends data BACK to you
                             </p>
                         </div>
@@ -480,17 +480,17 @@ SELECT @NewID AS 'New Employee ID';`}</CodeBlock>
 
                         <SubSectionTitle>Common Patterns</SubSectionTitle>
                         <div className="space-y-3">
-                            <div className="bg-white p-3 rounded border border-green-200">
-                                <strong className="text-green-700">1. Always start with SET NOCOUNT ON</strong>
-                                <p className="text-sm text-slate-600 mt-1">Prevents unnecessary "rows affected" messages, improving performance</p>
+                            <div className="bg-slate-800 p-3 rounded border border-green-500/30">
+                                <strong className="text-green-400">1. Always start with SET NOCOUNT ON</strong>
+                                <p className="text-sm text-slate-300 mt-1">Prevents unnecessary "rows affected" messages, improving performance</p>
                             </div>
-                            <div className="bg-white p-3 rounded border border-green-200">
-                                <strong className="text-green-700">2. Use TRY...CATCH for error handling</strong>
-                                <p className="text-sm text-slate-600 mt-1">Gracefully handle errors instead of crashing</p>
+                            <div className="bg-slate-800 p-3 rounded border border-green-500/30">
+                                <strong className="text-green-400">2. Use TRY...CATCH for error handling</strong>
+                                <p className="text-sm text-slate-300 mt-1">Gracefully handle errors instead of crashing</p>
                             </div>
-                            <div className="bg-white p-3 rounded border border-green-200">
-                                <strong className="text-green-700">3. Use transactions for multiple operations</strong>
-                                <p className="text-sm text-slate-600 mt-1">Ensure all-or-nothing execution (atomicity)</p>
+                            <div className="bg-slate-800 p-3 rounded border border-green-500/30">
+                                <strong className="text-green-400">3. Use transactions for multiple operations</strong>
+                                <p className="text-sm text-slate-300 mt-1">Ensure all-or-nothing execution (atomicity)</p>
                             </div>
                         </div>
 
@@ -533,7 +533,7 @@ END;`}</CodeBlock>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                             <SubSectionTitle>Performance</SubSectionTitle>
-                            <ul className="list-disc list-inside text-slate-700 space-y-2">
+                            <ul className="list-disc list-inside text-slate-300 space-y-2">
                                 <li>Always use <code>SET NOCOUNT ON;</code> at the start.</li>
                                 <li>Specify column names in SELECTs (no <code>SELECT *</code>).</li>
                                 <li>Use <code>sp_executesql</code> for dynamic SQL to allow plan reuse.</li>
@@ -542,7 +542,7 @@ END;`}</CodeBlock>
                         </div>
                         <div>
                             <SubSectionTitle>Security & Maintenance</SubSectionTitle>
-                            <ul className="list-disc list-inside text-slate-700 space-y-2">
+                            <ul className="list-disc list-inside text-slate-300 space-y-2">
                                 <li>Use schema-qualified names (e.g., <code>dbo.Employees</code>).</li>
                                 <li>Validate parameters early.</li>
                                 <li>Use <code>TRY...CATCH</code> for robust error handling.</li>
@@ -551,7 +551,7 @@ END;`}</CodeBlock>
                     </div>
 
                     <SectionTitle>2. Handling Parameter Sniffing</SectionTitle>
-                    <p className="text-slate-700 leading-relaxed">
+                    <p className="text-slate-300 leading-relaxed">
                         When a procedure is compiled, SQL Server "sniffs" the parameter values to create an optimal plan.
                         If the first execution uses atypical values, the cached plan might be terrible for subsequent runs.
                     </p>
@@ -571,7 +571,7 @@ WHERE OrderDate >= @FromDate
 OPTION (RECOMPILE); -- Generates a new plan every time (CPU heavy)`}</CodeBlock>
 
                     <SectionTitle>3. Robust Error Handling</SectionTitle>
-                    <p className="text-slate-700 leading-relaxed">
+                    <p className="text-slate-300 leading-relaxed">
                         In production, unhandled errors can leave transactions open, causing locks and blocking.
                     </p>
                     <CodeBlock>{`CREATE PROCEDURE dbo.UpdateSalary
@@ -598,7 +598,7 @@ BEGIN
 END`}</CodeBlock>
 
                     <SectionTitle>4. Dynamic SQL Done Right</SectionTitle>
-                    <p className="text-slate-700 leading-relaxed">
+                    <p className="text-slate-300 leading-relaxed">
                         Dynamic SQL is powerful but dangerous. Never concatenate user input directly.
                     </p>
                     <InfoCard type="danger">
@@ -623,53 +623,53 @@ EXEC sp_executesql @SQL, @Params, @User = @InputName;`}</CodeBlock>
                     {terms.map((term, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+                            className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
                         >
                             <div
-                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                                 onClick={() => toggleTerm(index)}
                             >
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{term.icon}</span>
                                     <div>
-                                        <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                                        <p className="text-sm text-slate-600">{term.description}</p>
+                                        <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                                        <p className="text-sm text-slate-400">{term.description}</p>
                                     </div>
                                 </div>
-                                <div className="text-slate-400">
+                                <div className="text-slate-500">
                                     {expandedTerm === index ? "▲" : "▼"}
                                 </div>
                             </div>
 
                             {expandedTerm === index && (
-                                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.details}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                                     </div>
 
                                     <div className="mb-2">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                                         <CodeBlock>{term.code}</CodeBlock>
                                     </div>
 
-                                    <div className="mt-4 pt-2 border-t border-slate-200">
+                                    <div className="mt-4 pt-2 border-t border-slate-700">
                                         <span className="text-sm font-medium text-slate-500">Impact: </span>
-                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                                            term.color === 'orange' ? 'text-orange-600' :
-                                                term.color === 'yellow' ? 'text-yellow-600' :
-                                                    term.color === 'green' ? 'text-green-600' :
-                                                        'text-blue-600'
+                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                                            term.color === 'orange' ? 'text-orange-400' :
+                                                term.color === 'yellow' ? 'text-yellow-400' :
+                                                    term.color === 'green' ? 'text-green-400' :
+                                                        'text-blue-400'
                                             }`}>{term.impact}</span>
                                     </div>
                                 </div>

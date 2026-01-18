@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Breadcrumbs from './components/Breadcrumbs';
 import ScrollToTop from './components/ScrollToTop';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import Navbar from './components/Navbar';
@@ -12,10 +13,14 @@ import Indexes from './pages/Indexes';
 import TriggersGuide from './pages/TriggersGuide';
 import ViewsGuide from './pages/ViewsGuide';
 import StoredProceduresGuide from './pages/StoredProceduresGuide';
-import BackupRollbackHome from './pages/BackupRollbackHome';
+// import BackupRollbackHome from './pages/BackupRollbackHome'; // Removed
 import TablesGuide from './pages/TablesGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
 import DiffViewer from './pages/DiffViewer';
+import AlterTableGenerator from './pages/AlterTableGenerator';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Contact from './pages/Contact';
 import Footer from './components/Footer';
 
 const backupLinks = [
@@ -28,12 +33,13 @@ const App = () => {
     <Router>
       <ScrollToTop />
       <ScrollToTopButton />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-900 text-slate-200">
         <Navbar />
+        <Breadcrumbs />
         <SubNav basePath="/backup&rollback" links={backupLinks} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/backup&rollback" element={<BackupRollbackHome />} />
+          <Route path="/backup&rollback" element={<Navigate to="/backup&rollback/sp" replace />} />
           <Route path="/backup&rollback/sp" element={<StoredProcedure />} />
           <Route path="/backup&rollback/table" element={<Tables />} />
           <Route path="/table" element={<Tables />} />
@@ -45,6 +51,10 @@ const App = () => {
           <Route path='/table-guide' element={<TablesGuide />} />
           <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
           <Route path='/diff-viewer' element={<DiffViewer />} />
+          <Route path='/alter-table' element={<AlterTableGenerator />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Home title="Select a Module" />} />
         </Routes>
       </div>

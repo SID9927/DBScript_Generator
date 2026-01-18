@@ -25,23 +25,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+  <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
     {children}
   </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-  <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+  <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
     {children}
   </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
   const styles = {
-    info: "bg-blue-50 border-blue-500 text-blue-800",
-    success: "bg-green-50 border-green-500 text-green-800",
-    warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-    danger: "bg-red-50 border-red-500 text-red-800",
+    info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+    success: "bg-green-900/20 border-green-500/50 text-green-200",
+    warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+    danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
     <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -68,35 +68,35 @@ END;`;
   };
 
   return (
-    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">🛠 Try It Yourself: Trigger Generator</h2>
+    <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-white">🛠 Try It Yourself: Trigger Generator</h2>
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-2 font-semibold text-slate-700">Trigger Name</label>
+          <label className="block mb-2 font-semibold text-slate-300">Trigger Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold text-slate-700">Table Name</label>
+          <label className="block mb-2 font-semibold text-slate-300">Table Name</label>
           <input
             type="text"
             value={table}
             onChange={(e) => setTable(e.target.value)}
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold text-slate-700">Trigger Event</label>
+          <label className="block mb-2 font-semibold text-slate-300">Trigger Event</label>
           <select
             value={event}
             onChange={(e) => setEvent(e.target.value)}
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="AFTER INSERT">AFTER INSERT</option>
             <option value="AFTER UPDATE">AFTER UPDATE</option>
@@ -108,12 +108,12 @@ END;`;
         </div>
 
         <div className="md:col-span-2">
-          <label className="block mb-2 font-semibold text-slate-700">Trigger Body (SQL)</label>
+          <label className="block mb-2 font-semibold text-slate-300">Trigger Body (SQL)</label>
           <textarea
             rows="4"
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            className="input-modern w-full font-mono text-sm"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-sm"
           />
         </div>
       </div>
@@ -214,20 +214,20 @@ SET RECURSIVE_TRIGGERS ON;`
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-slate-900">Triggers Guide</h1>
-      <p className="text-slate-600 mb-8 text-lg">
+      <h1 className="text-4xl font-bold mb-3 text-white">Triggers Guide</h1>
+      <p className="text-slate-400 mb-8 text-lg">
         Automating database actions with SQL Server Triggers.
       </p>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200">
+      <div className="flex gap-2 mb-6 border-b border-slate-700">
         {['guide', 'terms', 'playground'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-slate-600 hover:text-blue-500'
+              ? 'text-blue-400 border-b-2 border-blue-500'
+              : 'text-slate-400 hover:text-blue-300'
               }`}
           >
             {tab === 'guide' && '📚 Guide'}
@@ -245,18 +245,18 @@ SET RECURSIVE_TRIGGERS ON;`
           </InfoCard>
 
           <SectionTitle>📖 Basics: What is a Trigger?</SectionTitle>
-          <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
-            <p className="text-slate-700 leading-relaxed mb-4">
+          <div className="bg-orange-900/20 border-l-4 border-orange-500 p-6 rounded-r-lg">
+            <p className="text-slate-300 leading-relaxed mb-4">
               A <strong>Trigger</strong> is like an automatic alarm that goes off when something happens to your data. When you INSERT, UPDATE, or DELETE a row in a table, the trigger automatically runs code in response. You don't have to call it - it just fires automatically.
             </p>
 
             <SubSectionTitle>Real-World Analogy</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-4">
+            <p className="text-slate-300 leading-relaxed mb-4">
               Think of a trigger like a motion-sensor light. When you walk past (the event), the light automatically turns on (the trigger fires). You didn't flip a switch - it just happened automatically. Similarly, when you modify data in a table, the trigger automatically executes.
             </p>
 
             <SubSectionTitle>Your First Trigger</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               Let's create a trigger that logs every time someone deletes an employee:
             </p>
             <CodeBlock>{`-- Create an audit log table first
@@ -285,18 +285,18 @@ DELETE FROM Employees WHERE EmployeeID = 5;
 
             <SubSectionTitle>When to Use Triggers</SubSectionTitle>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-white p-4 rounded border border-green-200">
-                <h4 className="font-bold text-green-700 mb-2">✅ Good Use Cases</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-green-500/30">
+                <h4 className="font-bold text-green-400 mb-2">✅ Good Use Cases</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li>• Audit logging (who changed what, when)</li>
                   <li>• Enforcing complex business rules</li>
                   <li>• Maintaining calculated/derived data</li>
                   <li>• Preventing invalid data changes</li>
                 </ul>
               </div>
-              <div className="bg-white p-4 rounded border border-red-200">
-                <h4 className="font-bold text-red-700 mb-2">❌ Avoid Triggers For</h4>
-                <ul className="text-sm text-slate-700 space-y-1">
+              <div className="bg-slate-800 p-4 rounded border border-red-500/30">
+                <h4 className="font-bold text-red-400 mb-2">❌ Avoid Triggers For</h4>
+                <ul className="text-sm text-slate-300 space-y-1">
                   <li>• Complex business logic (use SPs instead)</li>
                   <li>• Things that can be done with constraints</li>
                   <li>• Performance-critical operations</li>
@@ -307,24 +307,24 @@ DELETE FROM Employees WHERE EmployeeID = 5;
 
             <SubSectionTitle>AFTER vs INSTEAD OF Triggers</SubSectionTitle>
             <div className="space-y-3 mb-4">
-              <div className="bg-white p-4 rounded border border-orange-200">
-                <h4 className="font-bold text-orange-700">AFTER Trigger</h4>
-                <p className="text-sm text-slate-700 mt-1">Runs AFTER the INSERT/UPDATE/DELETE completes. The data is already changed.</p>
-                <p className="text-sm text-slate-700 mt-1"><strong>Example:</strong> Log the change after it happens</p>
+              <div className="bg-slate-800 p-4 rounded border border-orange-500/30">
+                <h4 className="font-bold text-orange-400">AFTER Trigger</h4>
+                <p className="text-sm text-slate-300 mt-1">Runs AFTER the INSERT/UPDATE/DELETE completes. The data is already changed.</p>
+                <p className="text-sm text-slate-300 mt-1"><strong>Example:</strong> Log the change after it happens</p>
               </div>
-              <div className="bg-white p-4 rounded border border-orange-200">
-                <h4 className="font-bold text-orange-700">INSTEAD OF Trigger</h4>
-                <p className="text-sm text-slate-700 mt-1">Runs INSTEAD of the INSERT/UPDATE/DELETE. The original operation doesn't happen unless you do it in the trigger.</p>
-                <p className="text-sm text-slate-700 mt-1"><strong>Example:</strong> Prevent deletion, or redirect it to an archive table</p>
+              <div className="bg-slate-800 p-4 rounded border border-orange-500/30">
+                <h4 className="font-bold text-orange-400">INSTEAD OF Trigger</h4>
+                <p className="text-sm text-slate-300 mt-1">Runs INSTEAD of the INSERT/UPDATE/DELETE. The original operation doesn't happen unless you do it in the trigger.</p>
+                <p className="text-sm text-slate-300 mt-1"><strong>Example:</strong> Prevent deletion, or redirect it to an archive table</p>
               </div>
             </div>
 
             <SubSectionTitle>Special Tables: 'inserted' and 'deleted'</SubSectionTitle>
-            <div className="bg-white p-4 rounded border border-orange-200 mb-4">
-              <p className="text-slate-700 mb-2">Inside a trigger, you have access to two special tables:</p>
-              <ul className="text-sm text-slate-700 space-y-1 ml-4">
-                <li>• <strong className="text-orange-700">inserted</strong> - Contains the NEW values (for INSERT and UPDATE)</li>
-                <li>• <strong className="text-orange-700">deleted</strong> - Contains the OLD values (for DELETE and UPDATE)</li>
+            <div className="bg-slate-800 p-4 rounded border border-orange-500/30 mb-4">
+              <p className="text-slate-300 mb-2">Inside a trigger, you have access to two special tables:</p>
+              <ul className="text-sm text-slate-300 space-y-1 ml-4">
+                <li>• <strong className="text-orange-400">inserted</strong> - Contains the NEW values (for INSERT and UPDATE)</li>
+                <li>• <strong className="text-orange-400">deleted</strong> - Contains the OLD values (for DELETE and UPDATE)</li>
               </ul>
             </div>
 
@@ -347,8 +347,8 @@ BEGIN
 END;`}</CodeBlock>
 
             <SubSectionTitle>⚠️ Important Warnings</SubSectionTitle>
-            <div className="bg-yellow-50 border border-yellow-300 p-4 rounded">
-              <ul className="text-sm text-slate-700 space-y-2">
+            <div className="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded">
+              <ul className="text-sm text-slate-300 space-y-2">
                 <li>• <strong>Triggers are invisible</strong> - Developers might not know they exist, causing confusion</li>
                 <li>• <strong>Can slow down operations</strong> - Every INSERT/UPDATE/DELETE now has extra work</li>
                 <li>• <strong>Hard to debug</strong> - Errors in triggers can be tricky to trace</li>
@@ -368,7 +368,7 @@ FROM sys.triggers;`}</CodeBlock>
           <SectionTitle>Types of Triggers</SectionTitle>
 
           <SubSectionTitle>1. AFTER Triggers</SubSectionTitle>
-          <p className="text-slate-700 leading-relaxed">
+          <p className="text-slate-300 leading-relaxed">
             These triggers run after an operation (INSERT, UPDATE, DELETE) is completed successfully.
           </p>
           <CodeBlock>{`CREATE TRIGGER TR_AfterInsert
@@ -381,7 +381,7 @@ BEGIN
 END;`}</CodeBlock>
 
           <SubSectionTitle>2. INSTEAD OF Triggers</SubSectionTitle>
-          <p className="text-slate-700 leading-relaxed">
+          <p className="text-slate-300 leading-relaxed">
             These triggers override the normal behavior of an operation. For example, you can stop a DELETE or
             replace it with custom logic.
           </p>
@@ -396,7 +396,7 @@ BEGIN
 END;`}</CodeBlock>
 
           <SectionTitle>When to Use Triggers?</SectionTitle>
-          <ul className="list-disc list-inside text-slate-700 space-y-2">
+          <ul className="list-disc list-inside text-slate-300 space-y-2">
             <li>For audit logging (track who made changes and when).</li>
             <li>To enforce complex business rules that constraints cannot handle.</li>
             <li>To prevent unwanted operations (like accidental deletes).</li>
@@ -415,53 +415,53 @@ END;`}</CodeBlock>
           {terms.map((term, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+              className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
             >
               <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                 onClick={() => toggleTerm(index)}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{term.icon}</span>
                   <div>
-                    <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                    <p className="text-sm text-slate-600">{term.description}</p>
+                    <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                    <p className="text-sm text-slate-400">{term.description}</p>
                   </div>
                 </div>
-                <div className="text-slate-400">
+                <div className="text-slate-500">
                   {expandedTerm === index ? "▲" : "▼"}
                 </div>
               </div>
 
               {expandedTerm === index && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.details}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                   </div>
 
                   <div className="mb-2">
-                    <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                    <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                     <CodeBlock>{term.code}</CodeBlock>
                   </div>
 
-                  <div className="mt-4 pt-2 border-t border-slate-200">
+                  <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                      term.color === 'orange' ? 'text-orange-600' :
-                        term.color === 'yellow' ? 'text-yellow-600' :
-                          term.color === 'green' ? 'text-green-600' :
-                            'text-blue-600'
+                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                      term.color === 'orange' ? 'text-orange-400' :
+                        term.color === 'yellow' ? 'text-yellow-400' :
+                          term.color === 'green' ? 'text-green-400' :
+                            'text-blue-400'
                       }`}>{term.impact}</span>
                   </div>
                 </div>

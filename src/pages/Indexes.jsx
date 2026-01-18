@@ -25,23 +25,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-    <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+    <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
         {children}
     </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-    <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+    <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
         {children}
     </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
     const styles = {
-        info: "bg-blue-50 border-blue-500 text-blue-800",
-        success: "bg-green-50 border-green-500 text-green-800",
-        warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-        danger: "bg-red-50 border-red-500 text-red-800",
+        info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+        success: "bg-green-900/20 border-green-500/50 text-green-200",
+        warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+        danger: "bg-red-900/20 border-red-500/50 text-red-200",
     };
     return (
         <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -84,17 +84,17 @@ ON ${table};`;
     };
 
     return (
-        <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-800">
+        <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+            <h2 className="text-2xl font-bold mb-4 text-white">
                 🛠 Try It Yourself: Index Syntax Generator
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block mb-2 font-semibold text-slate-700">Index Type</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Index Type</label>
                     <select
                         value={type}
                         onChange={(e) => setType(e.target.value)}
-                        className="input-modern w-full"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                         <option value="clustered">Clustered Index</option>
                         <option value="nonclustered">Non-Clustered Index</option>
@@ -105,48 +105,48 @@ ON ${table};`;
                 </div>
 
                 <div>
-                    <label className="block mb-2 font-semibold text-slate-700">Table Name</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Table Name</label>
                     <input
                         type="text"
                         value={table}
                         onChange={(e) => setTable(e.target.value)}
-                        className="input-modern w-full"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </div>
 
                 <div>
-                    <label className="block mb-2 font-semibold text-slate-700">Key Column(s)</label>
+                    <label className="block mb-2 font-semibold text-slate-300">Key Column(s)</label>
                     <input
                         type="text"
                         value={columns}
                         onChange={(e) => setColumns(e.target.value)}
                         placeholder="e.g., LastName, FirstName"
-                        className="input-modern w-full"
+                        className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </div>
 
                 {type === "nonclustered" && (
                     <div>
-                        <label className="block mb-2 font-semibold text-slate-700">Included Columns (Optional)</label>
+                        <label className="block mb-2 font-semibold text-slate-300">Included Columns (Optional)</label>
                         <input
                             type="text"
                             value={includeColumns}
                             onChange={(e) => setIncludeColumns(e.target.value)}
                             placeholder="e.g., Email, Phone"
-                            className="input-modern w-full"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                     </div>
                 )}
 
                 {type === "filtered" && (
                     <div>
-                        <label className="block mb-2 font-semibold text-slate-700">Filter Condition</label>
+                        <label className="block mb-2 font-semibold text-slate-300">Filter Condition</label>
                         <input
                             type="text"
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
                             placeholder="e.g., IsActive = 1"
-                            className="input-modern w-full"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                     </div>
                 )}
@@ -247,20 +247,20 @@ INCLUDE (FirstName, LastName);`
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-slate-900">Indexes Guide</h1>
-            <p className="text-slate-600 mb-8 text-lg">
+            <h1 className="text-4xl font-bold mb-3 text-white">Indexes Guide</h1>
+            <p className="text-slate-400 mb-8 text-lg">
                 Mastering performance optimization with SQL Server Indexes.
             </p>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b border-slate-200">
+            <div className="flex gap-2 mb-6 border-b border-slate-700">
                 {['guide', 'terms', 'playground'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-                            ? 'text-blue-600 border-b-2 border-blue-600'
-                            : 'text-slate-600 hover:text-blue-500'
+                            ? 'text-blue-400 border-b-2 border-blue-500'
+                            : 'text-slate-400 hover:text-blue-300'
                             }`}
                     >
                         {tab === 'guide' && '📚 Guide'}
@@ -279,20 +279,20 @@ INCLUDE (FirstName, LastName);`
                     </InfoCard>
 
                     <SectionTitle>📖 Basics: What is an Index?</SectionTitle>
-                    <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-lg">
-                        <p className="text-slate-700 leading-relaxed mb-4">
+                    <div className="bg-purple-900/20 border-l-4 border-purple-500 p-6 rounded-r-lg">
+                        <p className="text-slate-300 leading-relaxed mb-4">
                             An <strong>index</strong> is like the index at the back of a textbook. Instead of reading every page to find "SQL Server", you look it up in the index and jump directly to page 247. Similarly, database indexes help SQL Server find data quickly without scanning every row.
                         </p>
 
                         <SubSectionTitle>Why Do We Need Indexes?</SubSectionTitle>
                         <div className="grid md:grid-cols-2 gap-4 mb-4">
-                            <div className="bg-white p-4 rounded border border-purple-200">
-                                <h4 className="font-bold text-green-700 mb-2">✅ With Index</h4>
-                                <p className="text-sm text-slate-700">Finding "John Smith" in 1 million employees: <strong>Instant</strong> (uses index)</p>
+                            <div className="bg-slate-800 p-4 rounded border border-purple-500/30">
+                                <h4 className="font-bold text-green-400 mb-2">✅ With Index</h4>
+                                <p className="text-sm text-slate-300">Finding "John Smith" in 1 million employees: <strong>Instant</strong> (uses index)</p>
                             </div>
-                            <div className="bg-white p-4 rounded border border-purple-200">
-                                <h4 className="font-bold text-red-700 mb-2">❌ Without Index</h4>
-                                <p className="text-sm text-slate-700">Finding "John Smith" in 1 million employees: <strong>Scans all 1M rows</strong> (slow!)</p>
+                            <div className="bg-slate-800 p-4 rounded border border-purple-500/30">
+                                <h4 className="font-bold text-red-400 mb-2">❌ Without Index</h4>
+                                <p className="text-sm text-slate-300">Finding "John Smith" in 1 million employees: <strong>Scans all 1M rows</strong> (slow!)</p>
                             </div>
                         </div>
 
@@ -311,16 +311,16 @@ SELECT * FROM Employees WHERE Email = 'john@example.com';`}</CodeBlock>
                     <SectionTitle>Why and When to Use Indexes?</SectionTitle>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                            <h3 className="text-lg font-bold text-green-700 mb-2">✅ Pros</h3>
-                            <ul className="list-disc list-inside text-slate-700 space-y-2">
+                            <h3 className="text-lg font-bold text-green-400 mb-2">✅ Pros</h3>
+                            <ul className="list-disc list-inside text-slate-300 space-y-2">
                                 <li>Speeds up <code>SELECT</code> queries and <code>WHERE</code> clauses.</li>
                                 <li>Improves <code>JOIN</code> and <code>ORDER BY</code> performance.</li>
                                 <li>Can enforce uniqueness (e.g., <code>Unique Index</code>).</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-red-700 mb-2">⚠️ Cons</h3>
-                            <ul className="list-disc list-inside text-slate-700 space-y-2">
+                            <h3 className="text-lg font-bold text-red-400 mb-2">⚠️ Cons</h3>
+                            <ul className="list-disc list-inside text-slate-300 space-y-2">
                                 <li>Slows down modification operations like <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> because the index also needs to be updated.</li>
                                 <li>Consumes disk space (sometimes bigger than table itself).</li>
                                 <li>Badly designed indexes can degrade performance instead of improving it.</li>
@@ -365,53 +365,53 @@ WHERE LastName = 'Smith';`}</CodeBlock>
                     {terms.map((term, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+                            className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
                         >
                             <div
-                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                                 onClick={() => toggleTerm(index)}
                             >
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{term.icon}</span>
                                     <div>
-                                        <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                                        <p className="text-sm text-slate-600">{term.description}</p>
+                                        <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                                        <p className="text-sm text-slate-400">{term.description}</p>
                                     </div>
                                 </div>
-                                <div className="text-slate-400">
+                                <div className="text-slate-500">
                                     {expandedTerm === index ? "▲" : "▼"}
                                 </div>
                             </div>
 
                             {expandedTerm === index && (
-                                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.details}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                                     </div>
 
                                     <div className="mb-2">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                                         <CodeBlock>{term.code}</CodeBlock>
                                     </div>
 
-                                    <div className="mt-4 pt-2 border-t border-slate-200">
+                                    <div className="mt-4 pt-2 border-t border-slate-700">
                                         <span className="text-sm font-medium text-slate-500">Impact: </span>
-                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                                            term.color === 'orange' ? 'text-orange-600' :
-                                                term.color === 'yellow' ? 'text-yellow-600' :
-                                                    term.color === 'green' ? 'text-green-600' :
-                                                        'text-blue-600'
+                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                                            term.color === 'orange' ? 'text-orange-400' :
+                                                term.color === 'yellow' ? 'text-yellow-400' :
+                                                    term.color === 'green' ? 'text-green-400' :
+                                                        'text-blue-400'
                                             }`}>{term.impact}</span>
                                     </div>
                                 </div>

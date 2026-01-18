@@ -9,11 +9,11 @@ const SubNav = ({ basePath, links }) => {
 
   const linkClass = ({ isActive }) =>
     isActive
-      ? 'text-slate-900 font-medium border-b-2 border-blue-600 pb-2'
-      : 'text-slate-500 hover:text-slate-700 pb-2 transition-colors duration-200';
+      ? 'text-white font-medium border-b-2 border-blue-500 pb-2'
+      : 'text-slate-400 hover:text-slate-200 pb-2 transition-colors duration-200';
 
   return (
-    <nav className="bg-white border-b border-slate-200 px-6 pt-4 mb-6">
+    <nav className="bg-slate-900 border-b border-slate-800 px-6 pt-4 mb-6">
       <div className="max-w-7xl mx-auto flex gap-8">
         {links.map((link) => (
           <NavLink

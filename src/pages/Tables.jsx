@@ -183,28 +183,36 @@ GO`);
     }
   };
 
+  const clearAll = () => {
+    setTableName('');
+    setSuffix('');
+    setBackupScript('');
+    setRollbackScript('');
+    setBulkInput('');
+  };
+
   return (
     <>
       <SubNav />
       <div className="p-8 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-slate-900">
+        <h1 className="text-3xl font-bold mb-6 text-white">
           Table Backup & Rollback
         </h1>
 
-        <div className="bg-blue-50 border border-blue-200 p-4 mb-8 rounded-md">
-          <p className="text-sm text-blue-800">
-            <span className="font-semibold">How it works:</span> Backup creates a complete copy of your table with all data using <code className="bg-blue-100 px-1 rounded text-blue-900">SELECT * INTO</code>.
+        <div className="bg-blue-900/20 border border-blue-900/50 p-4 mb-8 rounded-md">
+          <p className="text-sm text-blue-200">
+            <span className="font-semibold">How it works:</span> Backup creates a complete copy of your table with all data using <code className="bg-blue-900/50 px-1 rounded text-blue-100">SELECT * INTO</code>.
             Rollback restores the original table from the backup copy.
           </p>
         </div>
 
         {/* Mode Selector */}
-        <div className="flex gap-1 mb-8 border-b border-slate-200">
+        <div className="flex gap-1 mb-8 border-b border-slate-700">
           <button
             onClick={() => setMode('single')}
             className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'single'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-slate-500 border-transparent hover:text-slate-700'
+              ? 'text-blue-400 border-blue-500'
+              : 'text-slate-400 border-transparent hover:text-slate-200'
               }`}
           >
             Single Table
@@ -212,8 +220,8 @@ GO`);
           <button
             onClick={() => setMode('bulk')}
             className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${mode === 'bulk'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-slate-500 border-transparent hover:text-slate-700'
+              ? 'text-blue-400 border-blue-500'
+              : 'text-slate-400 border-transparent hover:text-slate-200'
               }`}
           >
             Bulk Tables
@@ -224,11 +232,11 @@ GO`);
           {mode === 'single' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   Table Name
                 </label>
                 <input
-                  className="input-modern"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 warning-transition"
                   type="text"
                   placeholder="e.g., Customers"
                   value={tableName}
@@ -237,11 +245,11 @@ GO`);
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Backup Suffix <span className="text-slate-500 font-normal">(Optional)</span>
                 </label>
                 <input
-                  className="input-modern"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   type="text"
                   placeholder={`Default: ${defaultSuffix}`}
                   value={suffix}
@@ -251,25 +259,35 @@ GO`);
 
               <div className="md:col-span-2">
                 <p className="text-sm text-slate-500 mb-4">
-                  Backup table will be named: <strong className="text-slate-700">{tableName || 'TableName'}_{suffix || defaultSuffix}</strong>
+                  Backup table will be named: <strong className="text-slate-300">{tableName || 'TableName'}_{suffix || defaultSuffix}</strong>
                 </p>
-                <button
-                  className="btn-primary"
-                  onClick={generateSingleScript}
-                  disabled={!tableName || isGenerating}
-                >
-                  {isGenerating ? 'Generating...' : 'Generate Scripts'}
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    className="btn-primary"
+                    onClick={generateSingleScript}
+                    disabled={!tableName || isGenerating}
+                  >
+                    {isGenerating ? 'Generating...' : 'Generate Scripts'}
+                  </button>
+                  {(backupScript || rollbackScript) && (
+                    <button
+                      onClick={clearAll}
+                      className="px-4 py-2 text-red-600 hover:text-red-800 border border-slate-200 rounded-md hover:bg-red-50 transition-colors"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ) : (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Table Names <span className="text-slate-400 font-normal">(One per line)</span>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Table Names <span className="text-slate-500 font-normal">(One per line)</span>
                 </label>
                 <textarea
-                  className="input-modern h-48 font-mono text-sm"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono text-sm h-48"
                   placeholder={`Customers\nOrders\nProducts`}
                   value={bulkInput}
                   onChange={(e) => setBulkInput(e.target.value)}
@@ -277,11 +295,11 @@ GO`);
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Backup Suffix <span className="text-slate-400 font-normal">(Optional)</span>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Backup Suffix <span className="text-slate-500 font-normal">(Optional)</span>
                 </label>
                 <input
-                  className="input-modern max-w-md"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-md"
                   type="text"
                   placeholder={`Default: ${defaultSuffix}`}
                   value={suffix}
@@ -292,7 +310,7 @@ GO`);
                 </p>
               </div>
 
-              <div>
+              <div className="flex gap-3">
                 <button
                   className="btn-primary"
                   onClick={generateBulkScripts}
@@ -300,52 +318,106 @@ GO`);
                 >
                   {isGenerating ? 'Generating...' : 'Generate Bulk Scripts'}
                 </button>
+                {(backupScript || rollbackScript) && (
+                  <button
+                    onClick={clearAll}
+                    className="px-4 py-2 text-red-600 hover:text-red-800 border border-slate-200 rounded-md hover:bg-red-50 transition-colors"
+                  >
+                    Reset
+                  </button>
+                )}
               </div>
             </div>
           )}
 
           {/* Scripts Output */}
           {(backupScript || rollbackScript) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-slate-200">
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    Backup Script
-                  </h3>
-                  <button
-                    className={`text-xs px-2 py-1 rounded border ${copiedBackup ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
-                    onClick={() => copyToClipboard(backupScript, 'backup')}
-                  >
-                    {copiedBackup ? 'Copied!' : 'Copy to Clipboard'}
-                  </button>
+            <div className="mt-12 pt-8 border-t border-slate-700">
+              {/* Summary Dashboard */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-blue-900/10 border border-blue-500/20 rounded-lg p-4">
+                  <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">
+                    Tables
+                  </div>
+                  <div className="text-2xl font-bold text-slate-200">
+                    {mode === 'single' ? (tableName ? 1 : 0) : bulkInput.split('\n').filter(l => l.trim()).length}
+                  </div>
                 </div>
-                <div className="code-block">
-                  <textarea
-                    className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
-                    value={backupScript}
-                    readOnly
-                  />
+
+                <div className="bg-blue-900/10 border border-blue-500/20 rounded-lg p-4">
+                  <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">
+                    Total Objects
+                  </div>
+                  <div className="text-2xl font-bold text-slate-200">
+                    {mode === 'single' ? (tableName ? 1 : 0) : bulkInput.split('\n').filter(l => l.trim()).length}
+                  </div>
+                </div>
+
+                <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-lg p-4">
+                  <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">
+                    Script Lines
+                  </div>
+                  <div className="text-2xl font-bold text-slate-200">
+                    {backupScript.split('\n').length + rollbackScript.split('\n').length}
+                  </div>
+                </div>
+
+                <div className="bg-purple-900/10 border border-purple-500/20 rounded-lg p-4">
+                  <div className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
+                    Safety Checks
+                  </div>
+                  <div className="text-2xl font-bold text-slate-200">
+                    {
+                      ((backupScript.match(/IF EXISTS/g) || []).length +
+                        (backupScript.match(/IF NOT EXISTS/g) || []).length +
+                        (rollbackScript.match(/IF EXISTS/g) || []).length +
+                        (rollbackScript.match(/IF NOT EXISTS/g) || []).length)
+                    }
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    Rollback Script
-                  </h3>
-                  <button
-                    className={`text-xs px-2 py-1 rounded border ${copiedRollback ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
-                    onClick={() => copyToClipboard(rollbackScript, 'rollback')}
-                  >
-                    {copiedRollback ? 'Copied!' : 'Copy to Clipboard'}
-                  </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold text-slate-300">
+                      Backup Script
+                    </h3>
+                    <button
+                      className={`text-xs px-2 py-1 rounded border transition-colors ${copiedBackup ? 'bg-green-900/20 text-green-400 border-green-800' : 'bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700'}`}
+                      onClick={() => copyToClipboard(backupScript, 'backup')}
+                    >
+                      {copiedBackup ? 'Copied!' : 'Copy to Clipboard'}
+                    </button>
+                  </div>
+                  <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
+                    <textarea
+                      className="w-full h-96 p-4 bg-transparent text-blue-300 font-mono text-sm focus:outline-none resize-none"
+                      value={backupScript}
+                      readOnly
+                    />
+                  </div>
                 </div>
-                <div className="code-block">
-                  <textarea
-                    className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
-                    value={rollbackScript}
-                    readOnly
-                  />
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold text-slate-300">
+                      Rollback Script
+                    </h3>
+                    <button
+                      className={`text-xs px-2 py-1 rounded border transition-colors ${copiedRollback ? 'bg-green-900/20 text-green-400 border-green-800' : 'bg-slate-800 text-slate-400 border-slate-600 hover:bg-slate-700'}`}
+                      onClick={() => copyToClipboard(rollbackScript, 'rollback')}
+                    >
+                      {copiedRollback ? 'Copied!' : 'Copy to Clipboard'}
+                    </button>
+                  </div>
+                  <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
+                    <textarea
+                      className="w-full h-96 p-4 bg-transparent text-slate-300 font-mono text-sm focus:outline-none resize-none"
+                      value={rollbackScript}
+                      readOnly
+                    />
+                  </div>
                 </div>
               </div>
             </div>

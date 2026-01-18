@@ -71,17 +71,17 @@ const DiffViewer = () => {
     };
 
     return (
-        <div className="h-screen bg-slate-950 text-slate-200 flex flex-col font-sans overflow-hidden">
+        <div className="h-screen bg-slate-900 text-slate-200 flex flex-col font-sans overflow-hidden">
             {/* Header */}
-            <header className="h-14 border-b border-slate-800 bg-slate-900 flex items-center px-4 justify-between z-20 shadow-sm">
+            <header className="h-14 border-b border-slate-700 bg-slate-800/50 backdrop-blur-md flex items-center px-4 justify-between z-20 shadow-sm">
                 <div className="flex items-center gap-6">
                     <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                        Quantum Diff <span className="text-xs bg-slate-800 text-slate-400 px-1 py-0.5 rounded ml-2 font-mono">PRO</span>
+                        Quantum Diff <span className="text-xs bg-slate-700 text-slate-300 px-1 py-0.5 rounded ml-2 font-mono">PRO</span>
                     </h1>
 
-                    <div className="flex bg-slate-800/50 rounded p-1 gap-1 border border-slate-700/50">
-                        <button onClick={() => setMode('text')} className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-all ${mode === 'text' ? 'bg-blue-600 text-white shadow' : 'text-slate-500 hover:text-slate-300'}`}>Text</button>
-                        <button onClick={() => setMode('folder')} className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-all ${mode === 'folder' ? 'bg-purple-600 text-white shadow' : 'text-slate-500 hover:text-slate-300'}`}>Folder</button>
+                    <div className="flex bg-slate-700/50 rounded p-1 gap-1 border border-slate-600/50">
+                        <button onClick={() => setMode('text')} className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-all ${mode === 'text' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}>Text</button>
+                        <button onClick={() => setMode('folder')} className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-all ${mode === 'folder' ? 'bg-purple-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}>Folder</button>
                     </div>
                 </div>
 
@@ -89,18 +89,18 @@ const DiffViewer = () => {
                     {mode === 'text' && (
                         <>
                             {/* Bi-directional Actions */}
-                            <div className="flex bg-slate-800/50 rounded p-1 mr-2 border border-slate-700/50">
+                            <div className="flex bg-slate-700/50 rounded p-1 mr-2 border border-slate-600/50">
                                 <button
                                     onClick={() => setLeftText(rightText)}
-                                    className="p-1.5 rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                                    className="p-1.5 rounded hover:bg-slate-600 text-slate-400 hover:text-white transition-colors"
                                     title="Copy All to Left (←)"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
                                 </button>
-                                <div className="w-px bg-slate-700 mx-1"></div>
+                                <div className="w-px bg-slate-600 mx-1"></div>
                                 <button
                                     onClick={() => setRightText(leftText)}
-                                    className="p-1.5 rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                                    className="p-1.5 rounded hover:bg-slate-600 text-slate-400 hover:text-white transition-colors"
                                     title="Copy All to Right (→)"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
@@ -108,15 +108,15 @@ const DiffViewer = () => {
                             </div>
 
                             {/* View Toggle */}
-                            <div className="flex bg-slate-800/50 rounded p-1 mr-2 border border-slate-700/50">
-                                <button onClick={() => setViewMode('raw')} className={`px-3 py-1 rounded text-xs font-medium transition-all ${viewMode === 'raw' ? 'bg-slate-700 text-white' : 'text-slate-500'}`}>Raw Source</button>
-                                <button onClick={() => setViewMode('normalized')} className={`px-3 py-1 rounded text-xs font-medium transition-all ${viewMode === 'normalized' ? 'bg-teal-700 text-white' : 'text-slate-500'}`}>Normalized</button>
+                            <div className="flex bg-slate-700/50 rounded p-1 mr-2 border border-slate-600/50">
+                                <button onClick={() => setViewMode('raw')} className={`px-3 py-1 rounded text-xs font-medium transition-all ${viewMode === 'raw' ? 'bg-slate-600 text-white' : 'text-slate-400'}`}>Raw Source</button>
+                                <button onClick={() => setViewMode('normalized')} className={`px-3 py-1 rounded text-xs font-medium transition-all ${viewMode === 'normalized' ? 'bg-teal-600 text-white' : 'text-slate-400'}`}>Normalized</button>
                             </div>
 
                             {/* Settings Toggle */}
                             <button
                                 onClick={() => setSettingsOpen(!settingsOpen)}
-                                className={`p-2 rounded hover:bg-slate-800 transition-colors ${settingsOpen ? 'text-blue-400 bg-slate-800' : 'text-slate-400'}`}
+                                className={`p-2 rounded hover:bg-slate-700 transition-colors ${settingsOpen ? 'text-blue-400 bg-slate-700' : 'text-slate-400'}`}
                                 title="Session Settings"
                             >
                                 <IconSettings />
@@ -133,7 +133,7 @@ const DiffViewer = () => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="bg-slate-900 border-b border-slate-800 overflow-hidden"
+                        className="bg-slate-800 border-b border-slate-700 overflow-hidden"
                     >
                         <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                             {/* Group 1: Comparison Rules */}
@@ -141,20 +141,20 @@ const DiffViewer = () => {
                                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Display & Rules</h3>
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300 hover:text-white">
-                                        <input type="checkbox" checked={options.wordWrap} onChange={e => setOptions({ ...options, wordWrap: e.target.checked })} className="rounded bg-slate-800 border-slate-700 accent-blue-500" />
+                                        <input type="checkbox" checked={options.wordWrap} onChange={e => setOptions({ ...options, wordWrap: e.target.checked })} className="rounded bg-slate-900 border-slate-600 accent-blue-500" />
                                         Word Wrap
                                     </label>
-                                    <div className="h-px bg-slate-800 my-2"></div>
+                                    <div className="h-px bg-slate-700 my-2"></div>
                                     <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300 hover:text-white">
-                                        <input type="checkbox" checked={options.ignoreWhitespace} onChange={e => setOptions({ ...options, ignoreWhitespace: e.target.checked })} className="rounded bg-slate-800 border-slate-700 accent-blue-500" />
+                                        <input type="checkbox" checked={options.ignoreWhitespace} onChange={e => setOptions({ ...options, ignoreWhitespace: e.target.checked })} className="rounded bg-slate-900 border-slate-600 accent-blue-500" />
                                         Ignore Whitespace
                                     </label>
                                     <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300 hover:text-white">
-                                        <input type="checkbox" checked={options.ignoreCase} onChange={e => setOptions({ ...options, ignoreCase: e.target.checked })} className="rounded bg-slate-800 border-slate-700 accent-blue-500" />
+                                        <input type="checkbox" checked={options.ignoreCase} onChange={e => setOptions({ ...options, ignoreCase: e.target.checked })} className="rounded bg-slate-900 border-slate-600 accent-blue-500" />
                                         Ignore Case
                                     </label>
                                     <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300 hover:text-white">
-                                        <input type="checkbox" checked={options.ignoreComments} onChange={e => setOptions({ ...options, ignoreComments: e.target.checked })} className="rounded bg-slate-800 border-slate-700 accent-blue-500" />
+                                        <input type="checkbox" checked={options.ignoreComments} onChange={e => setOptions({ ...options, ignoreComments: e.target.checked })} className="rounded bg-slate-900 border-slate-600 accent-blue-500" />
                                         Ignore Comments
                                     </label>
                                 </div>
@@ -166,20 +166,20 @@ const DiffViewer = () => {
                                 <select
                                     value={options.format}
                                     onChange={e => setOptions({ ...options, format: e.target.value })}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-slate-300 outline-none focus:border-blue-500"
+                                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-300 outline-none focus:border-blue-500"
                                 >
                                     <option value="none">None (Plain Text)</option>
                                     <option value="sql">SQL Query (T-SQL)</option>
                                     <option value="json">JSON</option>
                                     <option value="xml">XML</option>
                                 </select>
-                                <p className="text-xs text-slate-500 mt-2">
+                                <p className="text-xs text-slate-400 mt-2">
                                     Select a grammar to enable structural formatting in "Normalized View".
                                 </p>
                             </div>
 
                             {/* Group 3: Info */}
-                            <div className="text-xs text-slate-500 border-l border-slate-800 pl-4">
+                            <div className="text-xs text-slate-500 border-l border-slate-700 pl-4">
                                 <p className="mb-2"><strong className="text-slate-400">Raw Source:</strong> Compares text exactly as pasting.</p>
                                 <p><strong className="text-slate-400">Normalized:</strong> Applies formatting and rules before comparison to show logical differences.</p>
                             </div>

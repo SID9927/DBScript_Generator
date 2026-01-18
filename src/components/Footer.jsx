@@ -4,7 +4,7 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-300 mt-auto">
+        <footer className="bg-slate-900 border-t border-slate-800 text-slate-300 mt-auto">
             {/* Main Footer Content */}
             <div className="max-w-8xl mx-auto px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -16,9 +16,9 @@ const Footer = () => {
                                 alt="DB Playground Logo"
                                 className="h-10 w-auto"
                             />
-                            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                            {/* <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                                 DB Playground
-                            </h3>
+                            </h3> */}
                         </div>
                         <p className="text-slate-400 leading-relaxed mb-4 max-w-md">
                             Your comprehensive SQL Server toolkit for database developers. Generate scripts, analyze performance, and optimize queries with intelligent AI-powered tools.
@@ -35,7 +35,7 @@ const Footer = () => {
                                 </svg>
                             </a>
                             <a
-                                href="https://siddharth-dev.netlify.app/"
+                                href="https://dsiddharth.in/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-all hover:scale-110 hover:shadow-lg hover:shadow-blue-500/20"
@@ -160,13 +160,13 @@ const Footer = () => {
 
                         {/* Additional Links */}
                         <div className="flex gap-6 text-sm">
-                            <a href="#" className="text-slate-500 hover:text-slate-300 transition-colors">
+                            <a href="/privacy-policy" className="text-slate-500 hover:text-slate-300 transition-colors">
                                 Privacy Policy
                             </a>
-                            <a href="#" className="text-slate-500 hover:text-slate-300 transition-colors">
+                            <a href="/terms-of-service" className="text-slate-500 hover:text-slate-300 transition-colors">
                                 Terms of Service
                             </a>
-                            <a href="#" className="text-slate-500 hover:text-slate-300 transition-colors">
+                            <a href="/contact" className="text-slate-500 hover:text-slate-300 transition-colors">
                                 Contact
                             </a>
                         </div>

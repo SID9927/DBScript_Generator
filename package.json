@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "framer-motion": "^12.23.24",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.1",
-    "@monaco-editor/react": "^4.6.0",
     "sql-formatter": "^15.0.0",
     "xml-formatter": "^3.6.0"
   },

@@ -26,23 +26,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+  <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
     {children}
   </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-  <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+  <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
     {children}
   </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
   const styles = {
-    info: "bg-blue-50 border-blue-500 text-blue-800",
-    success: "bg-green-50 border-green-500 text-green-800",
-    warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-    danger: "bg-red-50 border-red-500 text-red-800",
+    info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+    success: "bg-green-900/20 border-green-500/50 text-green-200",
+    warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+    danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
     <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -63,17 +63,17 @@ const SPPerformanceAnalyzer = () => {
   };
 
   return (
-    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800 flex items-center gap-2">
+    <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-white flex items-center gap-2">
         🔍 SP Performance Analyzer
       </h2>
 
       <div className="flex flex-col gap-6">
         {/* Input Area */}
         <div className="w-full">
-          <label className="block mb-2 font-semibold text-slate-700">Paste Your Stored Procedure (T-SQL)</label>
+          <label className="block mb-2 font-semibold text-slate-300">Paste Your Stored Procedure (T-SQL)</label>
           <textarea
-            className="w-full h-96 p-4 border border-slate-300 rounded-lg resize-none font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-white"
+            className="w-full h-96 p-4 border border-slate-700 rounded-lg resize-none font-mono text-sm focus:outline-none focus:border-blue-500 transition-colors custom-scrollbar bg-slate-900 text-slate-200"
             value={inputSP}
             onChange={(e) => setInputSP(e.target.value)}
             placeholder={`CREATE PROCEDURE GetOrders
@@ -97,7 +97,7 @@ END`}
             {analysisResult && (
               <button
                 onClick={() => { setInputSP(''); setAnalysisResult(null); }}
-                className="text-slate-600 hover:text-slate-800 px-4 py-2 text-sm"
+                className="text-slate-400 hover:text-slate-200 px-4 py-2 text-sm"
               >
                 Clear
               </button>
@@ -110,75 +110,76 @@ END`}
           <div className="space-y-4 animate-fade-in">
 
             {/* Score Card */}
-            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
+            <div className="bg-gradient-to-r from-indigo-900/40 to-blue-900/40 p-6 rounded-xl border border-indigo-500/30 shadow-sm">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold text-indigo-900 text-lg flex items-center gap-2">
+                <h3 className="font-bold text-indigo-200 text-lg flex items-center gap-2">
                   <span>🤖</span> Performance Analysis
                 </h3>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-indigo-700 font-medium">Score:</span>
-                  <span className={`px-4 py-2 rounded-lg text-2xl font-bold ${analysisResult.score >= 90 ? 'bg-green-100 text-green-700' :
-                      analysisResult.score >= 70 ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
+                  <span className="text-sm text-indigo-300 font-medium">Score:</span>
+                  <span className={`px-4 py-2 rounded-lg text-2xl font-bold ${analysisResult.score >= 90 ? 'bg-green-900/30 text-green-400' :
+                    analysisResult.score >= 70 ? 'bg-yellow-900/30 text-yellow-400' :
+                      'bg-red-900/30 text-red-400'
                     }`}>
                     {analysisResult.score}/100
                   </span>
                 </div>
               </div>
-              <p className="text-indigo-800 leading-relaxed mb-4">{analysisResult.summary}</p>
+              <p className="text-indigo-200/80 leading-relaxed mb-4">{analysisResult.summary}</p>
 
               {/* Metrics */}
-              <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-indigo-100">
+              <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-indigo-500/30">
                 <div className="text-center">
-                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Lines of Code</div>
-                  <div className="text-lg font-bold text-indigo-900">{analysisResult.metrics.linesOfCode}</div>
+                  <div className="text-xs text-indigo-400 uppercase font-bold mb-1">Lines of Code</div>
+                  <div className="text-lg font-bold text-indigo-100">{analysisResult.metrics.linesOfCode}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Complexity</div>
-                  <div className="text-lg font-bold text-indigo-900">{analysisResult.metrics.complexity}</div>
+                  <div className="text-xs text-indigo-400 uppercase font-bold mb-1">Complexity</div>
+                  <div className="text-lg font-bold text-indigo-100">{analysisResult.metrics.complexity}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xs text-indigo-600 uppercase font-bold mb-1">Execution Risk</div>
-                  <div className={`text-lg font-bold ${analysisResult.metrics.estimatedExecutionRisk === 'Low' ? 'text-green-700' :
-                      analysisResult.metrics.estimatedExecutionRisk === 'Medium' ? 'text-yellow-700' :
-                        'text-red-700'
+                  <div className="text-xs text-indigo-400 uppercase font-bold mb-1">Execution Risk</div>
+                  <div className={`text-lg font-bold ${analysisResult.metrics.estimatedExecutionRisk === 'Low' ? 'text-green-400' :
+                    analysisResult.metrics.estimatedExecutionRisk === 'Medium' ? 'text-yellow-400' :
+                      'text-red-400'
                     }`}>{analysisResult.metrics.estimatedExecutionRisk}</div>
                 </div>
               </div>
             </div>
 
             {/* Critical Issues */}
+            {/* Critical Issues */}
             {analysisResult.issues.length > 0 && (
-              <div className="bg-white rounded-lg border border-red-200 shadow-sm overflow-hidden">
-                <div className="bg-red-50 p-4 border-b border-red-100">
-                  <h3 className="font-bold text-red-900 flex items-center gap-2">
+              <div className="bg-slate-900 rounded-lg border border-red-900/50 shadow-sm overflow-hidden">
+                <div className="bg-red-900/20 p-4 border-b border-red-900/30">
+                  <h3 className="font-bold text-red-400 flex items-center gap-2">
                     <span>⚠️</span> Critical Issues Found ({analysisResult.issues.length})
                   </h3>
                 </div>
                 <div className="p-4 space-y-3">
                   {analysisResult.issues.map((issue, idx) => (
-                    <div key={idx} className="bg-red-50 p-4 rounded-lg border border-red-100">
+                    <div key={idx} className="bg-red-900/10 p-4 rounded-lg border border-red-900/30">
                       <div className="flex items-start gap-3">
                         <span className="text-2xl">🔴</span>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-1 bg-red-200 text-red-900 rounded text-xs font-bold uppercase">
+                            <span className="px-2 py-1 bg-red-900/40 text-red-200 rounded text-xs font-bold uppercase">
                               {issue.type}
                             </span>
-                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs font-bold">
+                            <span className="px-2 py-1 bg-orange-900/40 text-orange-200 rounded text-xs font-bold">
                               {issue.severity} Severity
                             </span>
                             {issue.line && (
-                              <span className="text-xs text-red-600 font-mono">
+                              <span className="text-xs text-red-400 font-mono">
                                 Line {issue.line}
                               </span>
                             )}
                           </div>
-                          <p className="text-red-900 font-medium mb-2">{issue.message}</p>
+                          <p className="text-red-200 font-medium mb-2">{issue.message}</p>
                           {issue.suggestion && (
-                            <div className="mt-2 p-3 bg-white rounded border border-red-100">
-                              <p className="text-sm text-slate-700">
-                                <strong className="text-green-700">💡 Fix:</strong> {issue.suggestion}
+                            <div className="mt-2 p-3 bg-slate-800 rounded border border-red-900/30">
+                              <p className="text-sm text-slate-300">
+                                <strong className="text-green-400">💡 Fix:</strong> {issue.suggestion}
                               </p>
                             </div>
                           )}
@@ -192,21 +193,21 @@ END`}
 
             {/* Suggestions */}
             {analysisResult.suggestions.length > 0 && (
-              <div className="bg-white rounded-lg border border-blue-200 shadow-sm overflow-hidden">
-                <div className="bg-blue-50 p-4 border-b border-blue-100">
-                  <h3 className="font-bold text-blue-900 flex items-center gap-2">
+              <div className="bg-slate-900 rounded-lg border border-blue-900/50 shadow-sm overflow-hidden">
+                <div className="bg-blue-900/20 p-4 border-b border-blue-900/30">
+                  <h3 className="font-bold text-blue-400 flex items-center gap-2">
                     <span>💡</span> Optimization Suggestions ({analysisResult.suggestions.length})
                   </h3>
                 </div>
                 <div className="p-4 space-y-3">
                   {analysisResult.suggestions.map((sugg, idx) => (
-                    <div key={idx} className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
+                    <div key={idx} className="bg-blue-900/10 p-4 rounded-lg border border-blue-900/30 flex gap-3 items-start">
                       <span className="text-xl">💡</span>
                       <div className="flex-1">
-                        <span className="px-2 py-1 bg-blue-200 text-blue-900 rounded text-xs font-bold uppercase block w-fit mb-2">
+                        <span className="px-2 py-1 bg-blue-900/40 text-blue-200 rounded text-xs font-bold uppercase block w-fit mb-2">
                           {sugg.type}
                         </span>
-                        <p className="text-blue-900">{sugg.message}</p>
+                        <p className="text-blue-200">{sugg.message}</p>
                       </div>
                     </div>
                   ))}
@@ -216,10 +217,10 @@ END`}
 
             {/* No Issues */}
             {analysisResult.issues.length === 0 && analysisResult.suggestions.length === 0 && (
-              <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center">
+              <div className="bg-green-900/20 p-6 rounded-lg border border-green-900/50 text-center">
                 <span className="text-4xl block mb-2">✅</span>
-                <p className="text-green-800 font-bold text-lg">Excellent! No performance issues detected.</p>
-                <p className="text-green-700 text-sm mt-1">Your stored procedure follows best practices.</p>
+                <p className="text-green-400 font-bold text-lg">Excellent! No performance issues detected.</p>
+                <p className="text-green-300 text-sm mt-1">Your stored procedure follows best practices.</p>
               </div>
             )}
           </div>
@@ -303,28 +304,28 @@ SET READ_COMMITTED_SNAPSHOT ON;`
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-slate-900">
+      <h1 className="text-4xl font-bold mb-3 text-white">
         NOLOCK & Hints Guide
       </h1>
 
-      <p className="text-slate-600 mb-8 text-lg">
+      <p className="text-slate-400 mb-8 text-lg">
         Understanding locking, blocking, and table hints in SQL Server.
       </p>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200">
+      <div className="flex gap-2 mb-6 border-b border-slate-700">
         {['guide', 'terms', 'playground'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-slate-600 hover:text-blue-500'
+              ? 'text-blue-400 border-b-2 border-blue-500'
+              : 'text-slate-400 hover:text-blue-300'
               }`}
           >
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
-            {tab === 'playground' && '� Performance Analyzer'}
+            {tab === 'playground' && '⚡ Performance Analyzer'}
           </button>
         ))}
       </div>
@@ -337,22 +338,22 @@ SET READ_COMMITTED_SNAPSHOT ON;`
           </InfoCard>
 
           <SectionTitle>📖 Basics: What is NOLOCK?</SectionTitle>
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
-            <p className="text-slate-700 leading-relaxed mb-4">
+          <div className="bg-yellow-900/20 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+            <p className="text-slate-300 leading-relaxed mb-4">
               By default, SQL Server is very careful. If someone is updating a row, SQL Server won't let you read it until they are finished. This ensures you never see "half-finished" work. This is called <strong>Read Committed</strong>.
             </p>
-            <p className="text-slate-700 leading-relaxed mb-4">
+            <p className="text-slate-300 leading-relaxed mb-4">
               However, this safety causes <strong>Blocking</strong>. If a report takes 5 minutes to run, it might lock the table, preventing customers from placing orders.
             </p>
-            <p className="text-slate-700 leading-relaxed mb-4">
+            <p className="text-slate-300 leading-relaxed mb-4">
               <code>NOLOCK</code> removes the safety. It lets you read the data <em>right now</em>, even if it's being changed.
             </p>
 
             <SubSectionTitle>The Danger: Dirty Reads</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               Imagine a bank transfer:
             </p>
-            <ol className="list-decimal list-inside text-slate-700 space-y-1 mb-4">
+            <ol className="list-decimal list-inside text-slate-300 space-y-1 mb-4">
               <li>Transaction starts: Deduct $500 from Alice.</li>
               <li><strong>You read the balance with NOLOCK. You see the -$500.</strong></li>
               <li>Transaction fails (error). Rollback happens. Money is put back.</li>
@@ -362,38 +363,38 @@ SET READ_COMMITTED_SNAPSHOT ON;`
 
           <SectionTitle>🚀 Advanced Performance Optimization</SectionTitle>
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-3">1. SARGable Queries</h3>
-              <p className="text-slate-600 mb-2">
+            <div className="bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-700">
+              <h3 className="text-lg font-bold text-white mb-3">1. SARGable Queries</h3>
+              <p className="text-slate-300 mb-2">
                 <strong>SARGable</strong> (Search ARGumentable) means writing queries so SQL Server can use indexes.
               </p>
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="bg-red-50 p-3 rounded border border-red-100">
-                  <span className="text-red-700 font-bold block mb-1">❌ Bad (Index Scan)</span>
+                <div className="bg-red-900/20 p-3 rounded border border-red-900/50">
+                  <span className="text-red-400 font-bold block mb-1">❌ Bad (Index Scan)</span>
                   <code className="text-sm">WHERE YEAR(OrderDate) = 2023</code>
-                  <p className="text-xs text-red-600 mt-1">Applying a function to a column hides the column from the index.</p>
+                  <p className="text-xs text-red-300 mt-1">Applying a function to a column hides the column from the index.</p>
                 </div>
-                <div className="bg-green-50 p-3 rounded border border-green-100">
-                  <span className="text-green-700 font-bold block mb-1">✅ Good (Index Seek)</span>
+                <div className="bg-green-900/20 p-3 rounded border border-green-900/50">
+                  <span className="text-green-400 font-bold block mb-1">✅ Good (Index Seek)</span>
                   <code className="text-sm">WHERE OrderDate &gt;= '2023-01-01' AND OrderDate &lt; '2024-01-01'</code>
-                  <p className="text-xs text-green-600 mt-1">Range comparison allows direct index usage.</p>
+                  <p className="text-xs text-green-300 mt-1">Range comparison allows direct index usage.</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-3">2. Avoid SELECT *</h3>
-              <p className="text-slate-600 mb-2">
+            <div className="bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-700">
+              <h3 className="text-lg font-bold text-white mb-3">2. Avoid SELECT *</h3>
+              <p className="text-slate-300 mb-2">
                 Always specify columns. <code>SELECT *</code> forces the engine to read more data than needed (increasing I/O) and prevents the use of Covering Indexes.
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-3">3. Parameter Sniffing</h3>
-              <p className="text-slate-600 mb-2">
+            <div className="bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-700">
+              <h3 className="text-lg font-bold text-white mb-3">3. Parameter Sniffing</h3>
+              <p className="text-slate-300 mb-2">
                 If a query runs fast sometimes and slow other times, it might be Parameter Sniffing. SQL Server caches a plan for the first parameter it sees (e.g., a small date range), which might be terrible for a large date range.
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-400">
                 <strong>Fix:</strong> Use <code>OPTION (RECOMPILE)</code> or optimize for the most common case.
               </p>
             </div>
@@ -402,8 +403,8 @@ SET READ_COMMITTED_SNAPSHOT ON;`
           <SectionTitle>When to Use NOLOCK</SectionTitle>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-bold text-green-700 mb-2">✅ Use When...</h3>
-              <ul className="list-disc list-inside text-slate-700 space-y-2">
+              <h3 className="text-lg font-bold text-green-400 mb-2">✅ Use When...</h3>
+              <ul className="list-disc list-inside text-slate-300 space-y-2">
                 <li>Running heavy reports on historical data.</li>
                 <li>Approximate numbers are acceptable (e.g., "Total Website Hits").</li>
                 <li>The system is under heavy load and blocking is killing performance.</li>
@@ -411,8 +412,8 @@ SET READ_COMMITTED_SNAPSHOT ON;`
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-red-700 mb-2">❌ Do NOT Use When...</h3>
-              <ul className="list-disc list-inside text-slate-700 space-y-2">
+              <h3 className="text-lg font-bold text-red-400 mb-2">❌ Do NOT Use When...</h3>
+              <ul className="list-disc list-inside text-slate-300 space-y-2">
                 <li>Moving money or financial calculations.</li>
                 <li>Checking inventory levels for a sale.</li>
                 <li>Data consistency is critical.</li>
@@ -437,53 +438,53 @@ SET READ_COMMITTED_SNAPSHOT ON;`
           {terms.map((term, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+              className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
             >
               <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                 onClick={() => toggleTerm(index)}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{term.icon}</span>
                   <div>
-                    <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                    <p className="text-sm text-slate-600">{term.description}</p>
+                    <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                    <p className="text-sm text-slate-400">{term.description}</p>
                   </div>
                 </div>
-                <div className="text-slate-400">
+                <div className="text-slate-500">
                   {expandedTerm === index ? "▲" : "▼"}
                 </div>
               </div>
 
               {expandedTerm === index && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.details}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                   </div>
 
                   <div className="mb-2">
-                    <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                    <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                     <CodeBlock>{term.code}</CodeBlock>
                   </div>
 
-                  <div className="mt-4 pt-2 border-t border-slate-200">
+                  <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                      term.color === 'orange' ? 'text-orange-600' :
-                        term.color === 'yellow' ? 'text-yellow-600' :
-                          term.color === 'green' ? 'text-green-600' :
-                            'text-blue-600'
+                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                      term.color === 'orange' ? 'text-orange-400' :
+                        term.color === 'yellow' ? 'text-yellow-400' :
+                          term.color === 'green' ? 'text-green-400' :
+                            'text-blue-400'
                       }`}>{term.impact}</span>
                   </div>
                 </div>

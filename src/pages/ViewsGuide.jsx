@@ -25,23 +25,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+  <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
     {children}
   </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-  <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+  <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
     {children}
   </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
   const styles = {
-    info: "bg-blue-50 border-blue-500 text-blue-800",
-    success: "bg-green-50 border-green-500 text-green-800",
-    warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-    danger: "bg-red-50 border-red-500 text-red-800",
+    info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+    success: "bg-green-900/20 border-green-500/50 text-green-200",
+    warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+    danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
     <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -68,58 +68,58 @@ ${condition ? "WHERE " + condition : ""};`;
   };
 
   return (
-    <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">🛠 Try It Yourself: View Generator</h2>
+    <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-white">🛠 Try It Yourself: View Generator</h2>
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-2 font-semibold text-slate-700">View Name</label>
+          <label className="block mb-2 font-semibold text-slate-300">View Name</label>
           <input
             type="text"
             value={viewName}
             onChange={(e) => setViewName(e.target.value)}
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold text-slate-700">Table Name</label>
+          <label className="block mb-2 font-semibold text-slate-300">Table Name</label>
           <input
             type="text"
             value={table}
             onChange={(e) => setTable(e.target.value)}
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label className="block mb-2 font-semibold text-slate-700">Columns</label>
+          <label className="block mb-2 font-semibold text-slate-300">Columns</label>
           <input
             type="text"
             value={columns}
             onChange={(e) => setColumns(e.target.value)}
             placeholder="e.g., EmployeeID, FirstName, LastName"
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label className="block mb-2 font-semibold text-slate-700">Condition (Optional)</label>
+          <label className="block mb-2 font-semibold text-slate-300">Condition (Optional)</label>
           <input
             type="text"
             value={condition}
             onChange={(e) => setCondition(e.target.value)}
             placeholder="e.g., IsActive = 1"
-            className="input-modern w-full"
+            className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label className="flex items-center gap-2 text-slate-700 font-semibold">
+          <label className="flex items-center gap-2 text-slate-300 font-semibold">
             <input
               type="checkbox"
               checked={schemaBinding}
               onChange={(e) => setSchemaBinding(e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-blue-500"
             />
             Enable Schema Binding (Prevents table changes)
           </label>
@@ -209,20 +209,20 @@ SELECT * FROM Sales2024;`
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-slate-900">Views Guide</h1>
-      <p className="text-slate-600 mb-8 text-lg">
+      <h1 className="text-4xl font-bold mb-3 text-white">Views Guide</h1>
+      <p className="text-slate-400 mb-8 text-lg">
         Simplifying data access and security with SQL Server Views.
       </p>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200">
+      <div className="flex gap-2 mb-6 border-b border-slate-700">
         {['guide', 'terms', 'playground'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-slate-600 hover:text-blue-500'
+              ? 'text-blue-400 border-b-2 border-blue-500'
+              : 'text-slate-400 hover:text-blue-300'
               }`}
           >
             {tab === 'guide' && '📚 Guide'}
@@ -240,18 +240,18 @@ SELECT * FROM Sales2024;`
           </InfoCard>
 
           <SectionTitle>📖 Basics: What is a View?</SectionTitle>
-          <div className="bg-teal-50 border-l-4 border-teal-500 p-6 rounded-r-lg">
-            <p className="text-slate-700 leading-relaxed mb-4">
+          <div className="bg-teal-900/20 border-l-4 border-teal-500 p-6 rounded-r-lg">
+            <p className="text-slate-300 leading-relaxed mb-4">
               A <strong>View</strong> is like a saved shortcut to a complex query. Instead of writing the same complicated SELECT statement over and over, you create a view once and then query it like it's a regular table. Think of it as a "virtual table" - it doesn't store data itself, but shows you data from other tables.
             </p>
 
             <SubSectionTitle>Real-World Analogy</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-4">
+            <p className="text-slate-300 leading-relaxed mb-4">
               Imagine you have a messy closet with clothes scattered everywhere. Instead of reorganizing the closet, you create a "view" - a photo album showing only your favorite outfits, neatly organized. The clothes are still in the messy closet, but the photo album gives you a clean, organized way to see what you want.
             </p>
 
             <SubSectionTitle>Creating Your First View</SubSectionTitle>
-            <p className="text-slate-700 leading-relaxed mb-2">
+            <p className="text-slate-300 leading-relaxed mb-2">
               Let's say you often need to see only active employees. Instead of writing the WHERE clause every time:
             </p>
             <CodeBlock>{`-- Create the view once
@@ -270,21 +270,21 @@ WHERE IsActive = 1;`}</CodeBlock>
 
             <SubSectionTitle>Why Use Views?</SubSectionTitle>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-white p-4 rounded border border-teal-200">
-                <h4 className="font-bold text-teal-700 mb-2">1. Simplify Complex Queries</h4>
-                <p className="text-sm text-slate-700">Hide JOINs, calculations, and filters behind a simple name</p>
+              <div className="bg-slate-800 p-4 rounded border border-teal-500/30">
+                <h4 className="font-bold text-teal-400 mb-2">1. Simplify Complex Queries</h4>
+                <p className="text-sm text-slate-300">Hide JOINs, calculations, and filters behind a simple name</p>
               </div>
-              <div className="bg-white p-4 rounded border border-teal-200">
-                <h4 className="font-bold text-teal-700 mb-2">2. Security</h4>
-                <p className="text-sm text-slate-700">Show only certain columns/rows to users without giving full table access</p>
+              <div className="bg-slate-800 p-4 rounded border border-teal-500/30">
+                <h4 className="font-bold text-teal-400 mb-2">2. Security</h4>
+                <p className="text-sm text-slate-300">Show only certain columns/rows to users without giving full table access</p>
               </div>
-              <div className="bg-white p-4 rounded border border-teal-200">
-                <h4 className="font-bold text-teal-700 mb-2">3. Consistency</h4>
-                <p className="text-sm text-slate-700">Everyone uses the same logic - no duplicate code</p>
+              <div className="bg-slate-800 p-4 rounded border border-teal-500/30">
+                <h4 className="font-bold text-teal-400 mb-2">3. Consistency</h4>
+                <p className="text-sm text-slate-300">Everyone uses the same logic - no duplicate code</p>
               </div>
-              <div className="bg-white p-4 rounded border border-teal-200">
-                <h4 className="font-bold text-teal-700 mb-2">4. Abstraction</h4>
-                <p className="text-sm text-slate-700">Hide database structure changes from applications</p>
+              <div className="bg-slate-800 p-4 rounded border border-teal-500/30">
+                <h4 className="font-bold text-teal-400 mb-2">4. Abstraction</h4>
+                <p className="text-sm text-slate-300">Hide database structure changes from applications</p>
               </div>
             </div>
 
@@ -307,19 +307,19 @@ FROM Employees;
 
             <SubSectionTitle>Important Notes</SubSectionTitle>
             <div className="space-y-2">
-              <div className="bg-white p-3 rounded border border-teal-200">
-                <p className="text-sm text-slate-700">
-                  <strong className="text-teal-700">• Views don't store data</strong> - They're just saved queries. The data still lives in the underlying tables.
+              <div className="bg-slate-800 p-3 rounded border border-teal-500/30">
+                <p className="text-sm text-slate-300">
+                  <strong className="text-teal-400">• Views don't store data</strong> - They're just saved queries. The data still lives in the underlying tables.
                 </p>
               </div>
-              <div className="bg-white p-3 rounded border border-teal-200">
-                <p className="text-sm text-slate-700">
-                  <strong className="text-teal-700">• You can query views like tables</strong> - SELECT, WHERE, JOIN, ORDER BY all work.
+              <div className="bg-slate-800 p-3 rounded border border-teal-500/30">
+                <p className="text-sm text-slate-300">
+                  <strong className="text-teal-400">• You can query views like tables</strong> - SELECT, WHERE, JOIN, ORDER BY all work.
                 </p>
               </div>
-              <div className="bg-white p-3 rounded border border-teal-200">
-                <p className="text-sm text-slate-700">
-                  <strong className="text-teal-700">• Sometimes you can UPDATE through views</strong> - But only simple views (single table, no aggregations).
+              <div className="bg-slate-800 p-3 rounded border border-teal-500/30">
+                <p className="text-sm text-slate-300">
+                  <strong className="text-teal-400">• Sometimes you can UPDATE through views</strong> - But only simple views (single table, no aggregations).
                 </p>
               </div>
             </div>
@@ -335,8 +335,8 @@ EXEC sp_helptext 'vw_ActiveEmployees';`}</CodeBlock>
           <SectionTitle>Why Use Views?</SectionTitle>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-bold text-green-700 mb-2">✅ Advantages</h3>
-              <ul className="list-disc list-inside text-slate-700 space-y-2">
+              <h3 className="text-lg font-bold text-green-400 mb-2">✅ Advantages</h3>
+              <ul className="list-disc list-inside text-slate-300 space-y-2">
                 <li>Simplifies complex queries.</li>
                 <li>Improves security by restricting direct table access.</li>
                 <li>Encapsulates business logic in the database layer.</li>
@@ -344,8 +344,8 @@ EXEC sp_helptext 'vw_ActiveEmployees';`}</CodeBlock>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-red-700 mb-2">⚠️ Limitations</h3>
-              <ul className="list-disc list-inside text-slate-700 space-y-2">
+              <h3 className="text-lg font-bold text-red-400 mb-2">⚠️ Limitations</h3>
+              <ul className="list-disc list-inside text-slate-300 space-y-2">
                 <li>Performance overhead for complex views (especially with joins).</li>
                 <li>Cannot always perform <code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code> on views.</li>
                 <li>Indexed views consume extra storage and maintenance.</li>
@@ -356,13 +356,13 @@ EXEC sp_helptext 'vw_ActiveEmployees';`}</CodeBlock>
           <SectionTitle>Examples of Views</SectionTitle>
 
           <SubSectionTitle>1. Simple View</SubSectionTitle>
-          <p className="text-slate-700 leading-relaxed">A basic view selecting specific columns from a table.</p>
+          <p className="text-slate-300 leading-relaxed">A basic view selecting specific columns from a table.</p>
           <CodeBlock>{`CREATE VIEW vw_EmployeeNames AS
 SELECT EmployeeID, FirstName, LastName
 FROM Employees;`}</CodeBlock>
 
           <SubSectionTitle>2. Complex View (with Join)</SubSectionTitle>
-          <p className="text-slate-700 leading-relaxed">
+          <p className="text-slate-300 leading-relaxed">
             A view combining multiple tables to show richer data.
           </p>
           <CodeBlock>{`CREATE VIEW vw_EmployeeDepartment AS
@@ -371,7 +371,7 @@ FROM Employees e
 JOIN Departments d ON e.DepartmentID = d.DepartmentID;`}</CodeBlock>
 
           <SubSectionTitle>3. Indexed View</SubSectionTitle>
-          <p className="text-slate-700 leading-relaxed">
+          <p className="text-slate-300 leading-relaxed">
             Indexed views store results physically and can improve performance for complex aggregations.
           </p>
           <CodeBlock>{`CREATE VIEW vw_SalesSummary
@@ -393,53 +393,53 @@ ON vw_SalesSummary (SalesPersonID);`}</CodeBlock>
           {terms.map((term, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+              className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
             >
               <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                 onClick={() => toggleTerm(index)}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{term.icon}</span>
                   <div>
-                    <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                    <p className="text-sm text-slate-600">{term.description}</p>
+                    <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                    <p className="text-sm text-slate-400">{term.description}</p>
                   </div>
                 </div>
-                <div className="text-slate-400">
+                <div className="text-slate-500">
                   {expandedTerm === index ? "▲" : "▼"}
                 </div>
               </div>
 
               {expandedTerm === index && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.details}</p>
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                    <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                    <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                    <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                   </div>
 
                   <div className="mb-2">
-                    <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                    <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                     <CodeBlock>{term.code}</CodeBlock>
                   </div>
 
-                  <div className="mt-4 pt-2 border-t border-slate-200">
+                  <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                      term.color === 'orange' ? 'text-orange-600' :
-                        term.color === 'yellow' ? 'text-yellow-600' :
-                          term.color === 'green' ? 'text-green-600' :
-                            'text-blue-600'
+                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                      term.color === 'orange' ? 'text-orange-400' :
+                        term.color === 'yellow' ? 'text-yellow-400' :
+                          term.color === 'green' ? 'text-green-400' :
+                            'text-blue-400'
                       }`}>{term.impact}</span>
                   </div>
                 </div>

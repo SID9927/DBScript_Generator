@@ -26,23 +26,23 @@ const CodeBlock = ({ children }) => {
 };
 
 const SectionTitle = ({ children }) => (
-    <h2 className="text-2xl font-bold text-slate-800 mt-10 mb-4 border-b border-slate-200 pb-2">
+    <h2 className="text-2xl font-bold text-white mt-10 mb-4 border-b border-slate-700 pb-2">
         {children}
     </h2>
 );
 
 const SubSectionTitle = ({ children }) => (
-    <h3 className="text-xl font-semibold text-slate-700 mt-6 mb-3">
+    <h3 className="text-xl font-semibold text-slate-300 mt-6 mb-3">
         {children}
     </h3>
 );
 
 const InfoCard = ({ type = "info", children }) => {
     const styles = {
-        info: "bg-blue-50 border-blue-500 text-blue-800",
-        success: "bg-green-50 border-green-500 text-green-800",
-        warning: "bg-yellow-50 border-yellow-500 text-yellow-800",
-        danger: "bg-red-50 border-red-500 text-red-800",
+        info: "bg-blue-900/20 border-blue-500/50 text-blue-200",
+        success: "bg-green-900/20 border-green-500/50 text-green-200",
+        warning: "bg-yellow-900/20 border-yellow-500/50 text-yellow-200",
+        danger: "bg-red-900/20 border-red-500/50 text-red-200",
     };
     return (
         <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
@@ -119,14 +119,14 @@ const ExecutionPlanAnalyzer = () => {
     };
 
     return (
-        <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg mt-8">
+        <div className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg mt-8">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                    🔍 Execution Plan Analyzer 
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                    🔍 Execution Plan Analyzer
                     {/* <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">AI Powered</span> */}
                 </h2>
                 {analysis && (
-                    <button onClick={clearAnalysis} className="text-sm text-red-600 hover:text-red-800 font-medium">
+                    <button onClick={clearAnalysis} className="text-sm text-red-400 hover:text-red-300 font-medium">
                         Reset Analysis
                     </button>
                 )}
@@ -135,14 +135,14 @@ const ExecutionPlanAnalyzer = () => {
             {!analysis && (
                 <>
                     {/* Upload Section */}
-                    <div className="bg-white rounded-xl p-8 shadow-sm border border-dashed border-slate-300 mb-6 text-center hover:border-blue-400 transition-colors group cursor-pointer" onClick={() => fileInputRef.current.click()}>
+                    <div className="bg-slate-800 rounded-xl p-8 shadow-sm border border-dashed border-slate-700 mb-6 text-center hover:border-blue-500 transition-colors group cursor-pointer" onClick={() => fileInputRef.current.click()}>
                         <div className="mb-4 transform group-hover:scale-110 transition-transform duration-200">
                             <span className="text-5xl">📂</span>
                         </div>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                        <h3 className="text-lg font-semibold text-slate-200 mb-2">
                             Upload .sqlplan File
                         </h3>
-                        <p className="text-slate-500 mb-4 text-sm">
+                        <p className="text-slate-400 mb-4 text-sm">
                             Drag and drop or click to upload your XML Execution Plan
                         </p>
                         <input
@@ -159,15 +159,15 @@ const ExecutionPlanAnalyzer = () => {
                         </button>
                     </div>
 
-                    <div className="text-center text-slate-400 mb-6">- OR -</div>
+                    <div className="text-center text-slate-500 mb-6">- OR -</div>
 
                     {/* Text Area Fallback */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 mb-6">
-                        <p className="text-slate-600 mb-4">
+                    <div className="bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-700 mb-6">
+                        <p className="text-slate-300 mb-4">
                             Paste raw XML execution plan content here:
                         </p>
                         <textarea
-                            className="w-full h-32 p-4 border border-slate-300 rounded-lg font-mono text-sm focus:outline-none focus:border-blue-400 transition-colors custom-scrollbar bg-slate-50"
+                            className="w-full h-32 p-4 border border-slate-700 rounded-lg font-mono text-sm focus:outline-none focus:border-blue-500 transition-colors custom-scrollbar bg-slate-900 text-slate-200"
                             placeholder="<ShowPlanXML ...>"
                             value={executionPlan}
                             onChange={(e) => setExecutionPlan(e.target.value)}
@@ -188,14 +188,14 @@ const ExecutionPlanAnalyzer = () => {
                 <div className="space-y-8 animate-fade-in">
 
                     {/* AI Summary Card */}
-                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-indigo-900/40 to-blue-900/40 p-6 rounded-xl border border-indigo-500/30 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <span className="text-9xl">🤖</span>
                         </div>
-                        <h3 className="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-indigo-300 mb-3 flex items-center gap-2">
                             <span>🤖</span> AI Analysis Summary
                         </h3>
-                        <div className="prose prose-indigo text-indigo-800 leading-relaxed">
+                        <div className="prose prose-invert text-indigo-200 leading-relaxed">
                             <React.Fragment>
                                 {analysis.aiSummary.split('\n').map((line, i) => (
                                     <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></p>
@@ -206,45 +206,45 @@ const ExecutionPlanAnalyzer = () => {
 
                     {/* Summary Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                            <div className="text-slate-500 text-xs uppercase font-bold">Total Cost</div>
-                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.cost.toFixed(2)}</div>
+                        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm">
+                            <div className="text-slate-400 text-xs uppercase font-bold">Total Cost</div>
+                            <div className="text-2xl font-bold text-white">{analysis.summary.cost.toFixed(2)}</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                            <div className="text-slate-500 text-xs uppercase font-bold">Cached Size</div>
-                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.cachedPlanSize} KB</div>
+                        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm">
+                            <div className="text-slate-400 text-xs uppercase font-bold">Cached Size</div>
+                            <div className="text-2xl font-bold text-white">{analysis.summary.cachedPlanSize} KB</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                            <div className="text-slate-500 text-xs uppercase font-bold">Compile CPU</div>
-                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.compileCPU} ms</div>
+                        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm">
+                            <div className="text-slate-400 text-xs uppercase font-bold">Compile CPU</div>
+                            <div className="text-2xl font-bold text-white">{analysis.summary.compileCPU} ms</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                            <div className="text-slate-500 text-xs uppercase font-bold">Compile Memory</div>
-                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.compileMemory} KB</div>
+                        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm">
+                            <div className="text-slate-400 text-xs uppercase font-bold">Compile Memory</div>
+                            <div className="text-2xl font-bold text-white">{analysis.summary.compileMemory} KB</div>
                         </div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                            <div className="text-slate-500 text-xs uppercase font-bold">Max DOP</div>
-                            <div className="text-2xl font-bold text-slate-800">{analysis.summary.degreeOfParallelism}</div>
+                        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-sm">
+                            <div className="text-slate-400 text-xs uppercase font-bold">Max DOP</div>
+                            <div className="text-2xl font-bold text-white">{analysis.summary.degreeOfParallelism}</div>
                         </div>
                     </div>
 
                     {/* Recommendations */}
                     {analysis.recommendations.length > 0 && (
-                        <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r-lg shadow-sm">
-                            <h3 className="text-lg font-bold text-emerald-800 mb-4 flex items-center gap-2">
+                        <div className="bg-emerald-900/20 border-l-4 border-emerald-500 p-6 rounded-r-lg shadow-sm">
+                            <h3 className="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">
                                 🚀 Actionable Recommendations
                             </h3>
                             <div className="space-y-3">
                                 {analysis.recommendations.map((rec, idx) => (
-                                    <div key={idx} className="flex gap-3 items-start bg-white/60 p-3 rounded-md">
+                                    <div key={idx} className="flex gap-3 items-start bg-slate-800/50 p-3 rounded-md">
                                         <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wide
-                                            ${rec.type === 'Index' ? 'bg-blue-100 text-blue-700' :
-                                                rec.type === 'Memory' ? 'bg-purple-100 text-purple-700' :
-                                                    rec.type === 'Code' ? 'bg-orange-100 text-orange-700' :
-                                                        'bg-slate-200 text-slate-700'}`}>
+                                            ${rec.type === 'Index' ? 'bg-blue-900/40 text-blue-300' :
+                                                rec.type === 'Memory' ? 'bg-purple-900/40 text-purple-300' :
+                                                    rec.type === 'Code' ? 'bg-orange-900/40 text-orange-300' :
+                                                        'bg-slate-700 text-slate-300'}`}>
                                             {rec.type}
                                         </span>
-                                        <span className="text-emerald-900 font-medium">{rec.text}</span>
+                                        <span className="text-emerald-200 font-medium">{rec.text}</span>
                                     </div>
                                 ))}
                             </div>
@@ -254,23 +254,23 @@ const ExecutionPlanAnalyzer = () => {
                     {/* Missing Indexes */}
                     {analysis.missingIndexes.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                ⚡ Missing Indexes <span className="bg-red-100 text-red-600 text-sm px-2 py-1 rounded-full">{analysis.missingIndexes.length}</span>
+                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                ⚡ Missing Indexes <span className="bg-red-900/40 text-red-400 text-sm px-2 py-1 rounded-full">{analysis.missingIndexes.length}</span>
                             </h3>
                             <div className="space-y-4">
                                 {analysis.missingIndexes.map((idx, i) => (
-                                    <div key={i} className="bg-white rounded-lg p-6 shadow-sm border border-red-200 relative overflow-hidden">
+                                    <div key={i} className="bg-slate-800 rounded-lg p-6 shadow-sm border border-red-500/30 relative overflow-hidden">
                                         <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
                                         <div className="flex justify-between items-start mb-4 pl-2">
                                             <div>
-                                                <h4 className="font-bold text-slate-800 text-lg">{idx.table}</h4>
-                                                <p className="text-red-600 font-medium flex items-center gap-1">
+                                                <h4 className="font-bold text-white text-lg">{idx.table}</h4>
+                                                <p className="text-red-400 font-medium flex items-center gap-1">
                                                     <span className="text-xl">🔥</span> Impact: {idx.impact.toFixed(1)}% Improvement
                                                 </p>
                                             </div>
                                             <button
                                                 onClick={() => navigator.clipboard.writeText(idx.createScript)}
-                                                className="text-sm bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded transition-colors"
+                                                className="text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded transition-colors"
                                             >
                                                 Copy Script
                                             </button>
@@ -285,15 +285,15 @@ const ExecutionPlanAnalyzer = () => {
                     {/* Warnings */}
                     {analysis.warnings.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-orange-600 mb-4">⚠️ Warnings</h3>
+                            <h3 className="text-xl font-bold text-orange-400 mb-4">⚠️ Warnings</h3>
                             <div className="grid gap-4">
                                 {analysis.warnings.map((w, i) => (
-                                    <div key={i} className="bg-orange-50 p-4 rounded-lg border border-orange-200 flex gap-4 items-start">
+                                    <div key={i} className="bg-orange-900/20 p-4 rounded-lg border border-orange-500/30 flex gap-4 items-start">
                                         <span className="text-2xl">⚠️</span>
                                         <div>
-                                            <h4 className="font-bold text-orange-800">{w.type}</h4>
-                                            <p className="text-orange-900">{w.message}</p>
-                                            {w.details && <p className="text-xs text-orange-700 mt-1 font-mono bg-orange-100/50 p-1 rounded">{w.details}</p>}
+                                            <h4 className="font-bold text-orange-300">{w.type}</h4>
+                                            <p className="text-orange-200">{w.message}</p>
+                                            {w.details && <p className="text-xs text-orange-400 mt-1 font-mono bg-orange-900/40 p-1 rounded">{w.details}</p>}
                                         </div>
                                     </div>
                                 ))}
@@ -304,10 +304,10 @@ const ExecutionPlanAnalyzer = () => {
                     {/* Wait Stats */}
                     {analysis.waitStats && analysis.waitStats.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-4">⏳ Wait Statistics</h3>
-                            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+                            <h3 className="text-xl font-bold text-white mb-4">⏳ Wait Statistics</h3>
+                            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden shadow-sm">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                                    <thead className="bg-slate-700 text-slate-300 border-b border-slate-600">
                                         <tr>
                                             <th className="p-3">Wait Type</th>
                                             <th className="p-3">Time (ms)</th>
@@ -315,13 +315,13 @@ const ExecutionPlanAnalyzer = () => {
                                             <th className="p-3">Explanation</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100">
+                                    <tbody className="divide-y divide-slate-700">
                                         {analysis.waitStats.map((wait, i) => (
-                                            <tr key={i} className="hover:bg-slate-50">
-                                                <td className="p-3 font-mono text-slate-700 font-semibold">{wait.type}</td>
-                                                <td className="p-3 text-slate-600">{wait.time.toLocaleString()}</td>
-                                                <td className="p-3 text-slate-600">{wait.count.toLocaleString()}</td>
-                                                <td className="p-3 text-slate-500 italic">{wait.explanation}</td>
+                                            <tr key={i} className="hover:bg-slate-700/50">
+                                                <td className="p-3 font-mono text-slate-200 font-semibold">{wait.type}</td>
+                                                <td className="p-3 text-slate-300">{wait.time.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-300">{wait.count.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-400 italic">{wait.explanation}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -333,18 +333,18 @@ const ExecutionPlanAnalyzer = () => {
                     {/* Parameter Sniffing */}
                     {analysis.parameterAnalysis && analysis.parameterAnalysis.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-purple-700 mb-4">🔎 Parameter Analysis</h3>
-                            <div className="bg-purple-50 rounded-lg border border-purple-200 p-4">
-                                <p className="text-purple-900 mb-3 font-medium">
+                            <h3 className="text-xl font-bold text-purple-400 mb-4">🔎 Parameter Analysis</h3>
+                            <div className="bg-purple-900/20 rounded-lg border border-purple-500/30 p-4">
+                                <p className="text-purple-300 mb-3 font-medium">
                                     Discrepancies found between compiled and runtime values (Parameter Sniffing risk):
                                 </p>
                                 <div className="space-y-2">
                                     {analysis.parameterAnalysis.map((param, i) => (
-                                        <div key={i} className="bg-white p-3 rounded border border-purple-100 text-sm">
-                                            <div className="font-mono font-bold text-slate-700">{param.name}</div>
+                                        <div key={i} className="bg-slate-800 p-3 rounded border border-purple-500/30 text-sm">
+                                            <div className="font-mono font-bold text-slate-300">{param.name}</div>
                                             <div className="grid grid-cols-2 gap-4 mt-1">
-                                                <div><span className="text-slate-500 text-xs">Compiled:</span> <span className="font-mono text-purple-700">{param.compiled}</span></div>
-                                                <div><span className="text-slate-500 text-xs">Runtime:</span> <span className="font-mono text-purple-700">{param.runtime}</span></div>
+                                                <div><span className="text-slate-500 text-xs">Compiled:</span> <span className="font-mono text-purple-400">{param.compiled}</span></div>
+                                                <div><span className="text-slate-500 text-xs">Runtime:</span> <span className="font-mono text-purple-400">{param.runtime}</span></div>
                                             </div>
                                         </div>
                                     ))}
@@ -356,11 +356,11 @@ const ExecutionPlanAnalyzer = () => {
                     {/* Expensive Operations */}
                     {analysis.expensiveOperations.length > 0 && (
                         <div>
-                            <h3 className="text-xl font-bold text-slate-800 mb-4">🐢 Most Expensive Operations</h3>
-                            <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
-                                <table className="w-full text-left border-collapse bg-white">
+                            <h3 className="text-xl font-bold text-white mb-4">🐢 Most Expensive Operations</h3>
+                            <div className="overflow-x-auto rounded-lg border border-slate-700 shadow-sm">
+                                <table className="w-full text-left border-collapse bg-slate-800">
                                     <thead>
-                                        <tr className="bg-slate-100 text-slate-600 text-sm">
+                                        <tr className="bg-slate-700 text-slate-300 text-sm">
                                             <th className="p-3">Operation</th>
                                             <th className="p-3">Cost %</th>
                                             <th className="p-3">Est. Rows</th>
@@ -370,26 +370,26 @@ const ExecutionPlanAnalyzer = () => {
                                             <th className="p-3">Suggestion</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="text-sm divide-y divide-slate-100">
+                                    <tbody className="text-sm divide-y divide-slate-700">
                                         {analysis.expensiveOperations.map((op, i) => (
-                                            <tr key={i} className="hover:bg-slate-50">
-                                                <td className="p-3 font-medium text-slate-800">
+                                            <tr key={i} className="hover:bg-slate-700/50">
+                                                <td className="p-3 font-medium text-slate-200">
                                                     {op.op}
-                                                    {op.parallel && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1 rounded">Parallel</span>}
+                                                    {op.parallel && <span className="ml-2 text-xs bg-blue-900/40 text-blue-300 px-1 rounded">Parallel</span>}
                                                 </td>
                                                 <td className="p-3">
                                                     <div className="flex items-center gap-2">
-                                                        <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                        <div className="w-16 h-2 bg-slate-600 rounded-full overflow-hidden">
                                                             <div className={`h-full ${parseFloat(op.costPercent) > 50 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${op.costPercent}%` }}></div>
                                                         </div>
-                                                        <span>{op.costPercent}%</span>
+                                                        <span className='text-slate-300'>{op.costPercent}%</span>
                                                     </div>
                                                 </td>
-                                                <td className="p-3 text-slate-600">{op.rows.toLocaleString()}</td>
-                                                <td className="p-3 text-slate-600">{op.io.toFixed(4)}</td>
-                                                <td className="p-3 text-slate-600">{op.cpu.toFixed(4)}</td>
-                                                <td className="p-3 text-red-600 font-medium">{op.issue}</td>
-                                                <td className="p-3 text-slate-600 text-xs">{op.suggestion}</td>
+                                                <td className="p-3 text-slate-300">{op.rows.toLocaleString()}</td>
+                                                <td className="p-3 text-slate-300">{op.io.toFixed(4)}</td>
+                                                <td className="p-3 text-slate-300">{op.cpu.toFixed(4)}</td>
+                                                <td className="p-3 text-red-400 font-medium">{op.issue}</td>
+                                                <td className="p-3 text-slate-400 text-xs">{op.suggestion}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -487,23 +487,23 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-slate-900">
+            <h1 className="text-4xl font-bold mb-3 text-white">
                 SQL Execution Plan Guide
             </h1>
 
-            <p className="text-slate-600 mb-8 text-lg">
+            <p className="text-slate-400 mb-8 text-lg">
                 Learn how to read and optimize SQL Server execution plans.
             </p>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b border-slate-200">
+            <div className="flex gap-2 mb-6 border-b border-slate-700">
                 {['guide', 'terms', 'analyzer'].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
-                            ? 'text-blue-600 border-b-2 border-blue-600'
-                            : 'text-slate-600 hover:text-blue-500'
+                            ? 'text-blue-400 border-b-2 border-blue-500'
+                            : 'text-slate-400 hover:text-blue-300'
                             }`}
                     >
                         {tab === 'guide' && '📚 Guide'}
@@ -521,17 +521,17 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
                     </InfoCard>
 
                     <SectionTitle>📖 Basics: How to Read a Plan</SectionTitle>
-                    <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-                        <p className="text-slate-700 leading-relaxed mb-4">
+                    <div className="bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                        <p className="text-slate-300 leading-relaxed mb-4">
                             Reading an execution plan is like reading a map, but with one golden rule:
                         </p>
-                        <h4 className="text-xl font-bold text-slate-800 mb-2">Always Read from Right to Left</h4>
-                        <p className="text-slate-700 leading-relaxed mb-4">
+                        <h4 className="text-xl font-bold text-white mb-2">Always Read from Right to Left</h4>
+                        <p className="text-slate-300 leading-relaxed mb-4">
                             Data flows from right to left. The operations on the far right happen first (fetching data), and the operations on the left happen last (aggregating or sending results to you).
                         </p>
 
                         <SubSectionTitle>Key Indicators</SubSectionTitle>
-                        <ul className="list-disc list-inside text-slate-700 space-y-2">
+                        <ul className="list-disc list-inside text-slate-300 space-y-2">
                             <li><strong>Arrow Thickness:</strong> Thicker arrows mean more rows are moving. If you see a thick arrow going into a filter and a thin arrow coming out, that filter is doing a lot of work.</li>
                             <li><strong>Cost %:</strong> Each operator shows a percentage. Look for the big numbers (e.g., 80% cost). That's your bottleneck.</li>
                             <li><strong>Warnings:</strong> Look for yellow exclamation marks ⚠️. These indicate missing statistics, implicit conversions, or spills to TempDB.</li>
@@ -541,8 +541,8 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
                     <SectionTitle>Common Operators</SectionTitle>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                            <h3 className="text-lg font-bold text-green-700 mb-2">✅ The Good</h3>
-                            <ul className="space-y-2">
+                            <h3 className="text-lg font-bold text-green-400 mb-2">✅ The Good</h3>
+                            <ul className="space-y-2 text-slate-300">
                                 <li className="flex items-start gap-2">
                                     <span className="text-2xl">🟢</span>
                                     <div>
@@ -558,8 +558,8 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-red-700 mb-2">❌ The Bad</h3>
-                            <ul className="space-y-2">
+                            <h3 className="text-lg font-bold text-red-400 mb-2">❌ The Bad</h3>
+                            <ul className="space-y-2 text-slate-300">
                                 <li className="flex items-start gap-2">
                                     <span className="text-2xl">🔴</span>
                                     <div>
@@ -601,53 +601,53 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
                     {terms.map((term, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden transition-all"
+                            className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden transition-all"
                         >
                             <div
-                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50"
                                 onClick={() => toggleTerm(index)}
                             >
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{term.icon}</span>
                                     <div>
-                                        <h3 className="font-bold text-slate-800 text-lg">{term.name}</h3>
-                                        <p className="text-sm text-slate-600">{term.description}</p>
+                                        <h3 className="font-bold text-white text-lg">{term.name}</h3>
+                                        <p className="text-sm text-slate-400">{term.description}</p>
                                     </div>
                                 </div>
-                                <div className="text-slate-400">
+                                <div className="text-slate-500">
                                     {expandedTerm === index ? "▲" : "▼"}
                                 </div>
                             </div>
 
                             {expandedTerm === index && (
-                                <div className="p-4 bg-slate-50 border-t border-slate-100">
+                                <div className="p-4 bg-slate-900/50 border-t border-slate-700">
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💡 Basics (For Beginners)</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.basics}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💡 Basics (For Beginners)</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.basics}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">📘 Technical Details</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.details}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">📘 Technical Details</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.details}</p>
                                     </div>
 
                                     <div className="mb-4">
-                                        <h4 className="font-semibold text-slate-700 mb-1">🏢 Real-World Scenario</h4>
-                                        <p className="text-slate-600 leading-relaxed">{term.scenario}</p>
+                                        <h4 className="font-semibold text-slate-300 mb-1">🏢 Real-World Scenario</h4>
+                                        <p className="text-slate-400 leading-relaxed">{term.scenario}</p>
                                     </div>
 
                                     <div className="mb-2">
-                                        <h4 className="font-semibold text-slate-700 mb-1">💻 Example</h4>
+                                        <h4 className="font-semibold text-slate-300 mb-1">💻 Example</h4>
                                         <CodeBlock>{term.code}</CodeBlock>
                                     </div>
 
-                                    <div className="mt-4 pt-2 border-t border-slate-200">
+                                    <div className="mt-4 pt-2 border-t border-slate-700">
                                         <span className="text-sm font-medium text-slate-500">Impact: </span>
-                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-600' :
-                                            term.color === 'orange' ? 'text-orange-600' :
-                                                term.color === 'yellow' ? 'text-yellow-600' :
-                                                    term.color === 'green' ? 'text-green-600' :
-                                                        'text-blue-600'
+                                        <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                                            term.color === 'orange' ? 'text-orange-400' :
+                                                term.color === 'yellow' ? 'text-yellow-400' :
+                                                    term.color === 'green' ? 'text-green-400' :
+                                                        'text-blue-400'
                                             }`}>{term.impact}</span>
                                     </div>
                                 </div>

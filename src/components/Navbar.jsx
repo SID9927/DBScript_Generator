@@ -17,15 +17,18 @@ const Navbar = () => {
               alt="Logo"
               className="h-8 w-auto"
             />
-            <span className="text-white font-semibold tracking-tight text-lg">
+            {/* <span className="text-white font-semibold tracking-tight text-lg">
               DB Playground
-            </span>
+            </span> */}
           </a>
         </div>
 
         <div className="flex items-center space-x-8">
           <NavLink to="/" end className={linkClass}>
             Home
+          </NavLink>
+          <NavLink to="/contact" className={linkClass}>
+            Contact
           </NavLink>
         </div>
       </div>
