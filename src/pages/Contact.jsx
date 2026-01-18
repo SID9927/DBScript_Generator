@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -69,6 +70,10 @@ const Contact = () => {
 
     return (
         <div className="p-8 max-w-2xl mx-auto">
+            <SEO
+                title="Contact Us"
+                description="Get in touch with the DB Playground team for queries, suggestions, or support."
+            />
             <h1 className="text-3xl font-bold mb-2 text-white">Contact Us</h1>
             <p className="text-slate-400 mb-8">
                 Have questions or suggestions? We'd love to hear from you.

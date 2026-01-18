@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import SEO from '../components/SEO';
+import { useState } from "react";
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -246,11 +248,18 @@ INCLUDE (FirstName, LastName);`
     ];
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-white">Indexes Guide</h1>
-            <p className="text-slate-400 mb-8 text-lg">
-                Mastering performance optimization with SQL Server Indexes.
-            </p>
+        <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <SEO
+                title="Index Guide"
+                description="Comprehensive guide to SQL Server indexes. Understand clustered vs non-clustered, heap tables, and fragmentation."
+            />
+
+            <header className="space-y-2">
+                <h1 className="text-4xl font-bold mb-3 text-white">Indexes Guide</h1>
+                <p className="text-slate-400 mb-8 text-lg">
+                    Mastering performance optimization with SQL Server Indexes.
+                </p>
+            </header>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-6 border-b border-slate-700">

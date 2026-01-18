@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import SEO from '../components/SEO';
 import { parseAndAnalyzePlan } from '../utils/executionPlanParser';
 
 // --- Reusable Components ---
@@ -486,14 +487,20 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
     ];
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-white">
-                SQL Execution Plan Guide
-            </h1>
+        <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <SEO
+                title="Execution Plan Analyzer"
+                description="Analyze SQL Server Execution Plans. Upload XML plans to visualize query performance, identify bottlenecks, and get optimization tips."
+            />
 
-            <p className="text-slate-400 mb-8 text-lg">
-                Learn how to read and optimize SQL Server execution plans.
-            </p>
+            <header className="space-y-2">
+                <h1 className="text-4xl font-bold text-white">
+                    SQL Execution Plan Guide
+                </h1>
+                <p className="text-slate-400 text-lg">
+                    Learn how to read and optimize SQL Server execution plans.
+                </p>
+            </header>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-6 border-b border-slate-700">

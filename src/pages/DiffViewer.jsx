@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiffEditorWrapper from '../components/DiffEditorWrapper';
 import FolderCompare from '../components/FolderCompare';
@@ -72,6 +73,10 @@ const DiffViewer = () => {
 
     return (
         <div className="h-screen bg-slate-900 text-slate-200 flex flex-col font-sans overflow-hidden">
+            <SEO
+                title="Diff Viewer"
+                description="Compare text and code with an advanced line-by-line difference viewer."
+            />
             {/* Header */}
             <header className="h-14 border-b border-slate-700 bg-slate-800/50 backdrop-blur-md flex items-center px-4 justify-between z-20 shadow-sm">
                 <div className="flex items-center gap-6">

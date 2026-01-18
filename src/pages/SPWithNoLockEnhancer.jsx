@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEO from '../components/SEO';
 import { analyzeSP } from "../utils/sqlStaticAnalyzer";
 
 // --- Reusable Components ---
@@ -303,14 +304,21 @@ SET READ_COMMITTED_SNAPSHOT ON;`
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-white">
-        NOLOCK & Hints Guide
-      </h1>
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <SEO
+        title="Performance (NoLock)"
+        description="Optimize SQL Stored Procedures by automatically adding WITH (NOLOCK) hints for better concurrency."
+      />
 
-      <p className="text-slate-400 mb-8 text-lg">
-        Understanding locking, blocking, and table hints in SQL Server.
-      </p>
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold mb-3 text-white">
+          NOLOCK & Hints Guide
+        </h1>
+
+        <p className="text-slate-400 mb-8 text-lg">
+          Understanding locking, blocking, and table hints in SQL Server.
+        </p>
+      </header>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-700">

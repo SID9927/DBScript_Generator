@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEO from '../components/SEO';
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -366,11 +367,18 @@ ON Orders(OrderDate);`
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-white">Tables Guide</h1>
-      <p className="text-slate-400 mb-8 text-lg">
-        Mastering table design, optimization, and manipulation in SQL Server.
-      </p>
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <SEO
+        title="Tables Guide"
+        description="Complete guide to SQL Server Tables: Data types, Primary Keys, Foreign Keys, Constraints, and best design practices."
+      />
+
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold mb-3 text-white">Tables Guide</h1>
+        <p className="text-slate-400 mb-8 text-lg">
+          Mastering table design, optimization, and manipulation in SQL Server.
+        </p>
+      </header>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-700">

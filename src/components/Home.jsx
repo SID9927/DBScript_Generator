@@ -13,6 +13,7 @@ import {
   IconCompare,
   IconEdit
 } from './Icons';
+import SEO from './SEO';
 
 const Home = () => {
   const containerVariants = {
@@ -122,6 +123,10 @@ const Home = () => {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-slate-900 relative overflow-hidden">
+      <SEO
+        title="Home"
+        description="Empowering developers to master databases and boost productivity. Your ultimate toolkit for SQL Server management."
+      />
       {/* Dark Mode Background Blobs */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <motion.div

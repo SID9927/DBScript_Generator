@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SubNav from '../components/SubNav';
+import SEO from '../components/SEO';
 
 const StoredProcedure = () => {
   const [spName, setSpName] = useState('');
@@ -127,6 +128,10 @@ GO`);
 
   return (
     <>
+      <SEO
+        title="Stored Procedure Backup"
+        description="Safely generate backup and rollback scripts for SQL Server Stored Procedures. Supports bulk generation."
+      />
       <SubNav />
       <div className="p-8 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-white">
@@ -348,7 +353,7 @@ GO`);
             </div>
           )}
         </div>
-      </div>
+      </div >
     </>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEO from '../components/SEO';
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -354,11 +355,18 @@ END`
     ];
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-white">Stored Procedures Guide</h1>
-            <p className="text-slate-400 mb-8 text-lg">
-                Enterprise-grade development practices for SQL Server Stored Procedures.
-            </p>
+        <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <SEO
+                title="Stored Procedures Guide"
+                description="Deep dive into SQL Server Stored Procedures: Parameters, Return values, Output parameters, and optimization techniques."
+            />
+
+            <header className="space-y-2">
+                <h1 className="text-4xl font-bold mb-3 text-white">Stored Procedures Guide</h1>
+                <p className="text-slate-400 mb-8 text-lg">
+                    Enterprise-grade development practices for SQL Server Stored Procedures.
+                </p>
+            </header>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-6 border-b border-slate-700">

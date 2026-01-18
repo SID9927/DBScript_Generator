@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEO from '../components/SEO';
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -44,7 +45,7 @@ const InfoCard = ({ type = "info", children }) => {
     danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
-    <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
+    <div className={`p - 4 my - 4 rounded - md border - l - 4 ${styles[type]} `}>
       {children}
     </div>
   );
@@ -63,8 +64,8 @@ const ViewPlayground = () => {
 ${schemaBinding ? "WITH SCHEMABINDING" : ""}
 AS
 SELECT ${columns}
-FROM dbo.${table} -- Schema prefix required for SCHEMABINDING
-${condition ? "WHERE " + condition : ""};`;
+FROM dbo.${table} --Schema prefix required for SCHEMABINDING
+${condition ? "WHERE " + condition : ""}; `;
   };
 
   return (
@@ -152,7 +153,7 @@ const ViewsGuide = () => {
       details: "The most common type. It consumes no storage space (other than the definition). Performance depends on the underlying query.",
       scenario: "Hiding complex joins or sensitive columns (like Salary) from end-users.",
       code: `CREATE VIEW vw_EmployeeNames AS
-SELECT FirstName, LastName FROM Employees;`
+SELECT FirstName, LastName FROM Employees; `
     },
     {
       name: "Indexed View",
@@ -167,7 +168,7 @@ SELECT FirstName, LastName FROM Employees;`
 SELECT ProductID, SUM(Amount) as Total
 FROM dbo.Sales GROUP BY ProductID;
 
-CREATE UNIQUE CLUSTERED INDEX IX_View ON vw_SalesTotal(ProductID);`
+CREATE UNIQUE CLUSTERED INDEX IX_View ON vw_SalesTotal(ProductID); `
     },
     {
       name: "Schema Binding",
@@ -192,7 +193,7 @@ CREATE UNIQUE CLUSTERED INDEX IX_View ON vw_SalesTotal(ProductID);`
       code: `CREATE VIEW vw_AllSales AS
 SELECT * FROM Sales2023
 UNION ALL
-SELECT * FROM Sales2024;`
+SELECT * FROM Sales2024; `
     },
     {
       name: "System View",
@@ -203,16 +204,23 @@ SELECT * FROM Sales2024;`
       basics: "System Views are read-only views provided by SQL Server to tell you about the database itself. They answer questions like 'What tables do I have?' or 'Who is logged in?'.",
       details: "Examples include sys.tables, sys.objects, sys.indexes. They are the preferred way to query metadata.",
       scenario: "Checking which tables have been created recently.",
-      code: `SELECT * FROM sys.tables;`
+      code: `SELECT * FROM sys.tables; `
     }
   ];
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-white">Views Guide</h1>
-      <p className="text-slate-400 mb-8 text-lg">
-        Simplifying data access and security with SQL Server Views.
-      </p>
+      <SEO
+        title="View Guide"
+        description="Master SQL Server Views: Standard views, Indexed views, Partitioned views, and security benefits."
+      />
+
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold mb-3 text-white">Views Guide</h1>
+        <p className="text-slate-400 mb-8 text-lg">
+          Simplifying data access and security with SQL Server Views.
+        </p>
+      </header>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-700">
@@ -220,10 +228,10 @@ SELECT * FROM Sales2024;`
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
+            className={`px - 6 py - 3 font - semibold transition - all ${activeTab === tab
               ? 'text-blue-400 border-b-2 border-blue-500'
               : 'text-slate-400 hover:text-blue-300'
-              }`}
+              } `}
           >
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
@@ -260,13 +268,13 @@ SELECT EmployeeID, FirstName, LastName, Email
 FROM Employees
 WHERE IsActive = 1;
 
--- Now query it like a table:
+--Now query it like a table:
 SELECT * FROM vw_ActiveEmployees;
 
--- Much simpler than:
+--Much simpler than:
 SELECT EmployeeID, FirstName, LastName, Email
 FROM Employees
-WHERE IsActive = 1;`}</CodeBlock>
+WHERE IsActive = 1; `}</CodeBlock>
 
             <SubSectionTitle>Why Use Views?</SubSectionTitle>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -290,20 +298,20 @@ WHERE IsActive = 1;`}</CodeBlock>
 
             <SubSectionTitle>Example: Hiding Sensitive Data</SubSectionTitle>
             <CodeBlock>{`-- Table has sensitive salary data
--- CREATE TABLE Employees (
---     EmployeeID INT,
---     Name VARCHAR(100),
---     Salary DECIMAL(10,2),  -- Sensitive!
---     Department VARCHAR(50)
+--CREATE TABLE Employees(
+  --EmployeeID INT,
+  --Name VARCHAR(100),
+  --Salary DECIMAL(10, 2), --Sensitive!
+--Department VARCHAR(50)
 -- );
 
--- Create a view WITHOUT the salary column
+--Create a view WITHOUT the salary column
 CREATE VIEW vw_EmployeeDirectory AS
 SELECT EmployeeID, Name, Department
 FROM Employees;
 
--- Give users access to the view, not the table
--- They can see names and departments, but NOT salaries`}</CodeBlock>
+--Give users access to the view, not the table
+--They can see names and departments, but NOT salaries`}</CodeBlock>
 
             <SubSectionTitle>Important Notes</SubSectionTitle>
             <div className="space-y-2">
@@ -328,8 +336,8 @@ FROM Employees;
             <CodeBlock>{`-- See all views in the database
 SELECT name FROM sys.views;
 
--- See the definition of a specific view
-EXEC sp_helptext 'vw_ActiveEmployees';`}</CodeBlock>
+--See the definition of a specific view
+EXEC sp_helptext 'vw_ActiveEmployees'; `}</CodeBlock>
           </div>
 
           <SectionTitle>Why Use Views?</SectionTitle>
@@ -359,7 +367,7 @@ EXEC sp_helptext 'vw_ActiveEmployees';`}</CodeBlock>
           <p className="text-slate-300 leading-relaxed">A basic view selecting specific columns from a table.</p>
           <CodeBlock>{`CREATE VIEW vw_EmployeeNames AS
 SELECT EmployeeID, FirstName, LastName
-FROM Employees;`}</CodeBlock>
+FROM Employees; `}</CodeBlock>
 
           <SubSectionTitle>2. Complex View (with Join)</SubSectionTitle>
           <p className="text-slate-300 leading-relaxed">
@@ -368,7 +376,7 @@ FROM Employees;`}</CodeBlock>
           <CodeBlock>{`CREATE VIEW vw_EmployeeDepartment AS
 SELECT e.EmployeeID, e.FirstName, d.DepartmentName
 FROM Employees e
-JOIN Departments d ON e.DepartmentID = d.DepartmentID;`}</CodeBlock>
+JOIN Departments d ON e.DepartmentID = d.DepartmentID; `}</CodeBlock>
 
           <SubSectionTitle>3. Indexed View</SubSectionTitle>
           <p className="text-slate-300 leading-relaxed">
@@ -381,9 +389,9 @@ SELECT SalesPersonID, COUNT_BIG(*) AS TotalOrders, SUM(SaleAmount) AS TotalSales
 FROM dbo.Sales
 GROUP BY SalesPersonID;
 
--- Indexed View requires unique clustered index
+--Indexed View requires unique clustered index
 CREATE UNIQUE CLUSTERED INDEX IX_vw_SalesSummary
-ON vw_SalesSummary (SalesPersonID);`}</CodeBlock>
+ON vw_SalesSummary(SalesPersonID); `}</CodeBlock>
         </div>
       )}
 
@@ -435,12 +443,12 @@ ON vw_SalesSummary (SalesPersonID);`}</CodeBlock>
 
                   <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                    <span className={`text - sm font - medium ${term.color === 'red' ? 'text-red-400' :
                       term.color === 'orange' ? 'text-orange-400' :
                         term.color === 'yellow' ? 'text-yellow-400' :
                           term.color === 'green' ? 'text-green-400' :
                             'text-blue-400'
-                      }`}>{term.impact}</span>
+                      } `}>{term.impact}</span>
                   </div>
                 </div>
               )}

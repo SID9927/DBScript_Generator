@@ -1,8 +1,10 @@
 import React from 'react';
+import SEO from '../components/SEO';
 
 const TermsOfService = () => {
     return (
         <div className="p-8 max-w-7xl mx-auto text-slate-300">
+            <SEO title="Terms of Use" description="Terms of use and disclaimers for DB Playground tools." />
             <h1 className="text-3xl font-bold mb-6 text-white">Terms of Use</h1>
             <div className="prose prose-invert max-w-none">
                 <p className="mb-4">Last updated: {new Date().toLocaleDateString()}</p>

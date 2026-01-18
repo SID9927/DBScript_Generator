@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SubNav from '../components/SubNav';
+import SEO from '../components/SEO';
 
 const Tables = () => {
   const [tableName, setTableName] = useState('');
@@ -191,8 +192,16 @@ GO`);
     setBulkInput('');
   };
 
+
+
+
   return (
     <>
+      <SEO
+        title="Table Backup & Rollback"
+        description="Generate SQL Server table backup and rollback scripts instantly. Includes bulk generation and data verification."
+        keywords="sql table backup, sql rollback, table copy, sql server tools, select into"
+      />
       <SubNav />
       <div className="p-8 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-white">

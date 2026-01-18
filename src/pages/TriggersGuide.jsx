@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEO from '../components/SEO';
 
 // --- Reusable Components ---
 const CodeBlock = ({ children }) => {
@@ -44,7 +45,7 @@ const InfoCard = ({ type = "info", children }) => {
     danger: "bg-red-900/20 border-red-500/50 text-red-200",
   };
   return (
-    <div className={`p-4 my-4 rounded-md border-l-4 ${styles[type]}`}>
+    <div className={`p - 4 my - 4 rounded - md border - l - 4 ${styles[type]} `}>
       {children}
     </div>
   );
@@ -64,7 +65,7 @@ ${event}
 AS
 BEGIN
     ${body}
-END;`;
+END; `;
   };
 
   return (
@@ -149,7 +150,7 @@ AFTER INSERT
 AS
 BEGIN
     INSERT INTO AuditLog(Msg) VALUES('New employee added');
-END;`
+END; `
     },
     {
       name: "INSTEAD OF Trigger",
@@ -166,7 +167,7 @@ INSTEAD OF DELETE
 AS
 BEGIN
     PRINT 'Deletions are not allowed!';
-END;`
+END; `
     },
     {
       name: "Magic Tables (inserted & deleted)",
@@ -177,8 +178,8 @@ END;`
       basics: "Inside a trigger, SQL Server gives you two magical tables: 'inserted' and 'deleted'. 'inserted' holds the new data coming in. 'deleted' holds the old data going out. For an UPDATE, you get both (old data in 'deleted', new data in 'inserted').",
       details: "These are memory-resident tables that exist only during the execution of the trigger. They have the same structure as the table being modified.",
       scenario: "Comparing 'inserted.Salary' vs 'deleted.Salary' to see if a raise was given.",
-      code: `SELECT * FROM inserted; -- Shows new values
-SELECT * FROM deleted;  -- Shows old values`
+      code: `SELECT * FROM inserted; --Shows new values
+SELECT * FROM deleted; --Shows old values`
     },
     {
       name: "DDL Trigger",
@@ -194,9 +195,9 @@ ON DATABASE
 FOR DROP_TABLE
 AS
 BEGIN
-    ROLLBACK;
+ROLLBACK;
     PRINT 'Table dropping is disabled.';
-END;`
+END; `
     },
     {
       name: "Recursive Trigger",
@@ -208,16 +209,23 @@ END;`
       details: "Controlled by the 'recursive triggers' database option. SQL Server limits recursion depth to 32 to prevent infinite loops.",
       scenario: "Updating a 'Parent' table when a 'Child' is updated, which might trigger another update.",
       code: `ALTER DATABASE MyDB
-SET RECURSIVE_TRIGGERS ON;`
+SET RECURSIVE_TRIGGERS ON; `
     }
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-3 text-white">Triggers Guide</h1>
-      <p className="text-slate-400 mb-8 text-lg">
-        Automating database actions with SQL Server Triggers.
-      </p>
+    <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <SEO
+        title="Trigger Guide"
+        description="Learn about SQL Server triggers: AFTER vs INSTEAD OF, INSERT/UPDATE/DELETE events, and best practices."
+      />
+
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold text-white">Triggers Guide</h1>
+        <p className="text-slate-400 text-lg">
+          Automating database actions with SQL Server Triggers.
+        </p>
+      </header>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-slate-700">
@@ -225,10 +233,10 @@ SET RECURSIVE_TRIGGERS ON;`
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 font-semibold transition-all ${activeTab === tab
+            className={`px - 6 py - 3 font - semibold transition - all ${activeTab === tab
               ? 'text-blue-400 border-b-2 border-blue-500'
               : 'text-slate-400 hover:text-blue-300'
-              }`}
+              } `}
           >
             {tab === 'guide' && '📚 Guide'}
             {tab === 'terms' && '📖 Terms Dictionary'}
@@ -260,28 +268,28 @@ SET RECURSIVE_TRIGGERS ON;`
               Let's create a trigger that logs every time someone deletes an employee:
             </p>
             <CodeBlock>{`-- Create an audit log table first
-CREATE TABLE EmployeeAuditLog (
-    LogID INT IDENTITY(1,1) PRIMARY KEY,
-    EmployeeID INT,
-    Action VARCHAR(50),
-    ActionDate DATETIME DEFAULT GETDATE()
+CREATE TABLE EmployeeAuditLog(
+  LogID INT IDENTITY(1, 1) PRIMARY KEY,
+  EmployeeID INT,
+  Action VARCHAR(50),
+  ActionDate DATETIME DEFAULT GETDATE()
 );
 
--- Create the trigger
+--Create the trigger
 CREATE TRIGGER trg_AfterDeleteEmployee
 ON Employees
-AFTER DELETE  -- Fires AFTER a delete happens
+AFTER DELETE-- Fires AFTER a delete happens
 AS
 BEGIN
-    -- Insert a log entry for each deleted employee
-    INSERT INTO EmployeeAuditLog (EmployeeID, Action)
+--Insert a log entry for each deleted employee
+    INSERT INTO EmployeeAuditLog(EmployeeID, Action)
     SELECT EmployeeID, 'DELETED'
-    FROM deleted;  -- 'deleted' is a special table with the deleted rows
+    FROM deleted; -- 'deleted' is a special table with the deleted rows
 END;
 
--- Now when you delete an employee:
+--Now when you delete an employee:
 DELETE FROM Employees WHERE EmployeeID = 5;
--- The trigger automatically logs it!`}</CodeBlock>
+--The trigger automatically logs it!`}</CodeBlock>
 
             <SubSectionTitle>When to Use Triggers</SubSectionTitle>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -334,17 +342,17 @@ ON Employees
 AFTER UPDATE
 AS
 BEGIN
-    IF EXISTS (
-        SELECT 1
+    IF EXISTS(
+  SELECT 1
         FROM inserted i
         JOIN deleted d ON i.EmployeeID = d.EmployeeID
-        WHERE i.Salary < d.Salary  -- New salary is less than old salary
-    )
-    BEGIN
-        RAISERROR('Salary cannot be decreased!', 16, 1);
+        WHERE i.Salary < d.Salary-- New salary is less than old salary
+)
+BEGIN
+RAISERROR('Salary cannot be decreased!', 16, 1);
         ROLLBACK TRANSACTION;
-    END
-END;`}</CodeBlock>
+END
+END; `}</CodeBlock>
 
             <SubSectionTitle>⚠️ Important Warnings</SubSectionTitle>
             <div className="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded">
@@ -360,9 +368,9 @@ END;`}</CodeBlock>
             <CodeBlock>{`-- See all triggers on a table
 EXEC sp_helptrigger 'Employees';
 
--- See all triggers in the database
+--See all triggers in the database
 SELECT name, parent_id, type_desc
-FROM sys.triggers;`}</CodeBlock>
+FROM sys.triggers; `}</CodeBlock>
           </div>
 
           <SectionTitle>Types of Triggers</SectionTitle>
@@ -376,9 +384,9 @@ ON Employees
 AFTER INSERT
 AS
 BEGIN
-    INSERT INTO AuditLog (Action, Date)
-    VALUES ('Insert', GETDATE());
-END;`}</CodeBlock>
+    INSERT INTO AuditLog(Action, Date)
+VALUES('Insert', GETDATE());
+END; `}</CodeBlock>
 
           <SubSectionTitle>2. INSTEAD OF Triggers</SubSectionTitle>
           <p className="text-slate-300 leading-relaxed">
@@ -390,10 +398,10 @@ ON Employees
 INSTEAD OF DELETE
 AS
 BEGIN
-    -- Prevent deletion and log instead
-    INSERT INTO AuditLog (Action, Date)
-    VALUES ('Attempted Delete', GETDATE());
-END;`}</CodeBlock>
+--Prevent deletion and log instead
+    INSERT INTO AuditLog(Action, Date)
+VALUES('Attempted Delete', GETDATE());
+END; `}</CodeBlock>
 
           <SectionTitle>When to Use Triggers?</SectionTitle>
           <ul className="list-disc list-inside text-slate-300 space-y-2">
@@ -457,12 +465,12 @@ END;`}</CodeBlock>
 
                   <div className="mt-4 pt-2 border-t border-slate-700">
                     <span className="text-sm font-medium text-slate-500">Impact: </span>
-                    <span className={`text-sm font-medium ${term.color === 'red' ? 'text-red-400' :
+                    <span className={`text - sm font - medium ${term.color === 'red' ? 'text-red-400' :
                       term.color === 'orange' ? 'text-orange-400' :
                         term.color === 'yellow' ? 'text-yellow-400' :
                           term.color === 'green' ? 'text-green-400' :
                             'text-blue-400'
-                      }`}>{term.impact}</span>
+                      } `}>{term.impact}</span>
                   </div>
                 </div>
               )}

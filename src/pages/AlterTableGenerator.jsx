@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 import SubNav from '../components/SubNav';
 
 const AlterTableGenerator = () => {
@@ -193,6 +194,10 @@ const AlterTableGenerator = () => {
 
     return (
         <>
+            <SEO
+                title="Alter Table Generator"
+                description="Generate SQL Server ALTER TABLE scripts safely. Add columns with default constraint checks."
+            />
             <SubNav />
             <div className="p-8 max-w-7xl mx-auto">
                 <h1 className="text-3xl font-bold mb-6 text-white">
