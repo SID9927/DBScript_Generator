@@ -138,6 +138,13 @@ GO`);
           Stored Procedure Backup & Rollback
         </h1>
 
+        <div className="bg-blue-900/20 border border-blue-900/50 p-4 mb-8 rounded-md">
+          <p className="text-sm text-blue-200">
+            <span className="font-semibold">How it works:</span> Backup renames existing procedure to *_suffix using <code className="bg-blue-900/50 px-1 rounded text-blue-100">sp_rename</code>.
+            Rollback drops current and restores original name.
+          </p>
+        </div>
+
         {/* Mode Selector */}
         <div className="flex gap-1 mb-8 border-b border-slate-700">
           <button
@@ -187,27 +194,29 @@ GO`);
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                 />
-                <p className="text-sm text-slate-500 mt-1">
-                  Leave empty to use default: {defaultSuffix}
-                </p>
               </div>
 
-              <div className="md:col-span-2 flex gap-3">
-                <button
-                  className="btn-primary"
-                  onClick={generateSingleScript}
-                  disabled={!spName || isGenerating}
-                >
-                  {isGenerating ? 'Generating...' : 'Generate Scripts'}
-                </button>
-                {(backupScript || rollbackScript) && (
+              <div className="md:col-span-2">
+                <p className="text-sm text-slate-500 mb-4">
+                  Backup Stored Procedure will be named: <strong className="text-slate-300">{spName || 'SPName'}_{suffix || defaultSuffix}</strong>
+                </p>
+                <div className="flex gap-3">
                   <button
-                    onClick={clearAll}
-                    className="px-4 py-2 text-red-600 hover:text-red-800 border border-slate-200 rounded-md hover:bg-red-50 transition-colors"
+                    className="btn-primary"
+                    onClick={generateSingleScript}
+                    disabled={!spName || isGenerating}
                   >
-                    Reset
+                    {isGenerating ? 'Generating...' : 'Generate Scripts'}
                   </button>
-                )}
+                  {(backupScript || rollbackScript) && (
+                    <button
+                      onClick={clearAll}
+                      className="px-4 py-2 text-red-600 hover:text-red-800 border border-slate-200 rounded-md hover:bg-red-50 transition-colors"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ) : (

@@ -47,10 +47,6 @@ GO
 SELECT * 
 INTO [dbo].[${backupName}]
 FROM [dbo].[${tableName}];
-GO
-
--- Verify backup
-SELECT COUNT(*) AS BackupRowCount FROM [dbo].[${backupName}];
 GO`.trim();
 
       // Rollback Script: Restore from backup
@@ -71,9 +67,6 @@ BEGIN
     SELECT * 
     INTO [dbo].[${tableName}]
     FROM [dbo].[${backupName}];
-    
-    -- Verify restoration
-    SELECT COUNT(*) AS RestoredRowCount FROM [dbo].[${tableName}];
     
     PRINT 'Table ${tableName} restored successfully from ${backupName}';
 END
@@ -127,10 +120,7 @@ SELECT *
 INTO [dbo].[${backupName}]
 FROM [dbo].[${tableName}];
 GO
-
--- Verify backup
-SELECT COUNT(*) AS BackupRowCount_${tableName} FROM [dbo].[${backupName}];
-GO`);
+`);
 
         rollbackScripts.push(`
 -- ============================================
@@ -150,9 +140,6 @@ BEGIN
     SELECT * 
     INTO [dbo].[${tableName}]
     FROM [dbo].[${backupName}];
-    
-    -- Verify restoration
-    SELECT COUNT(*) AS RestoredRowCount_${tableName} FROM [dbo].[${tableName}];
     
     PRINT 'Table ${tableName} restored successfully';
 END

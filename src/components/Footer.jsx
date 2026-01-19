@@ -47,7 +47,7 @@ const Footer = () => {
 
                             </a>
                             <a
-                                href="www.linkedin.com/in/siddharth-in"
+                                href="https://www.linkedin.com/in/siddharth-in"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-all hover:scale-110 hover:shadow-lg hover:shadow-blue-500/20"
@@ -159,7 +159,7 @@ const Footer = () => {
                         </p>
 
                         {/* Additional Links */}
-                        <div className="flex gap-6 text-sm">
+                        <div className="flex gap-6 text-sm mr-16">
                             <a href="/privacy-policy" className="text-slate-500 hover:text-slate-300 transition-colors">
                                 Privacy Policy
                             </a>

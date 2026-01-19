@@ -8,12 +8,12 @@ import SubNav from './components/SubNav';
 import Home from './components/Home';
 import StoredProcedure from './pages/StoredProcedure';
 import Tables from './pages/Tables';
+import Functions from './pages/Functions';
 import SPWithNoLockEnhancer from './pages/SPWithNoLockEnhancer';
 import Indexes from './pages/Indexes';
 import TriggersGuide from './pages/TriggersGuide';
 import ViewsGuide from './pages/ViewsGuide';
 import StoredProceduresGuide from './pages/StoredProceduresGuide';
-// import BackupRollbackHome from './pages/BackupRollbackHome'; // Removed
 import TablesGuide from './pages/TablesGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
 import DiffViewer from './pages/DiffViewer';
@@ -26,6 +26,7 @@ import Footer from './components/Footer';
 const backupLinks = [
   { name: 'Stored Procedure', to: '/backup&rollback/sp' },
   { name: 'Table', to: '/backup&rollback/table' },
+  { name: 'Function', to: '/backup&rollback/function' },
 ];
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="/backup&rollback" element={<Navigate to="/backup&rollback/sp" replace />} />
           <Route path="/backup&rollback/sp" element={<StoredProcedure />} />
           <Route path="/backup&rollback/table" element={<Tables />} />
+          <Route path="/backup&rollback/function" element={<Functions />} />
           <Route path="/table" element={<Tables />} />
           <Route path="/withnolock" element={<SPWithNoLockEnhancer />} />
           <Route path="/indexes" element={<Indexes />} />

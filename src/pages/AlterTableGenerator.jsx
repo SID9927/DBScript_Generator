@@ -16,8 +16,7 @@ const AlterTableGenerator = () => {
 
         // Header
         scriptParts.push(`-- ============================================`);
-        scriptParts.push(`-- ALTER TABLE: ${table}`);
-        scriptParts.push(`-- Operation: ${operationType.toUpperCase()}`);
+        scriptParts.push(`-- ALTER TABLE: ${table}`); 
         scriptParts.push(`-- Generated: ${new Date().toLocaleString()}`);
         scriptParts.push(`-- Total Columns: ${columnLines.length}`);
         scriptParts.push(`-- ============================================`);
@@ -44,11 +43,7 @@ const AlterTableGenerator = () => {
             scriptParts.push(`-- Column ${index + 1}: ${columnName}`);
 
             if (operationType === 'smart') {
-                scriptParts.push(`IF NOT EXISTS (`);
-                scriptParts.push(`    SELECT 1 FROM sys.columns `);
-                scriptParts.push(`    WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') `);
-                scriptParts.push(`    AND name = '${columnName}'`);
-                scriptParts.push(`)`);
+                scriptParts.push(`IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') AND name = '${columnName}')`);
                 scriptParts.push(`BEGIN`);
                 scriptParts.push(`    -- Column does not exist, ADD it`);
                 scriptParts.push(`    ALTER TABLE [dbo].[${table}]`);
@@ -63,11 +58,7 @@ const AlterTableGenerator = () => {
                 scriptParts.push(`    PRINT 'Column ${columnName} updated in ${table} successfully';`);
                 scriptParts.push(`END`);
             } else if (operationType === 'add') {
-                scriptParts.push(`IF NOT EXISTS (`);
-                scriptParts.push(`    SELECT 1 FROM sys.columns `);
-                scriptParts.push(`    WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') `);
-                scriptParts.push(`    AND name = '${columnName}'`);
-                scriptParts.push(`)`);
+                scriptParts.push(`IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') AND name = '${columnName}')`);
                 scriptParts.push(`BEGIN`);
                 scriptParts.push(`    ALTER TABLE [dbo].[${table}]`);
                 scriptParts.push(`    ADD [${columnName}] ${fullType};`);
@@ -78,11 +69,7 @@ const AlterTableGenerator = () => {
                 scriptParts.push(`    PRINT 'Column ${columnName} already exists in ${table} - skipped ADD';`);
                 scriptParts.push(`END`);
             } else if (operationType === 'update') {
-                scriptParts.push(`IF EXISTS (`);
-                scriptParts.push(`    SELECT 1 FROM sys.columns `);
-                scriptParts.push(`    WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') `);
-                scriptParts.push(`    AND name = '${columnName}'`);
-                scriptParts.push(`)`);
+                scriptParts.push(`IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[${table}]') AND name = '${columnName}')`);
                 scriptParts.push(`BEGIN`);
                 scriptParts.push(`    ALTER TABLE [dbo].[${table}]`);
                 scriptParts.push(`    ALTER COLUMN [${columnName}] ${typeForAlter};`);

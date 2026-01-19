@@ -5,6 +5,7 @@ const BackupRollbackHome = () => {
   const modules = [
     { name: 'Stored Procedure', to: '/backup&rollback/sp' },
     { name: 'Table', to: '/backup&rollback/table' },
+    { name: 'Function', to: '/backup&rollback/function' },
   ];
 
   return (
