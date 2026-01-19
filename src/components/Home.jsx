@@ -11,7 +11,8 @@ import {
   IconEye,
   IconRocket,
   IconCompare,
-  IconEdit
+  IconEdit,
+  IconFunction
 } from './Icons';
 import SEO from './SEO';
 
@@ -56,7 +57,7 @@ const Home = () => {
       bg: 'bg-slate-800'
     },
     {
-      name: 'Table Guide',
+      name: 'Table',
       to: '/table-guide',
       description: 'Comprehensive guide for table operations, DDL, and DML.',
       icon: <IconTable className="w-8 h-8" />,
@@ -72,7 +73,15 @@ const Home = () => {
       bg: 'bg-slate-800'
     },
     {
-      name: 'Index Guide',
+      name: 'Function',
+      to: '/function-guide',
+      description: 'Master Scalar and Table-Valued Functions (TVFs) with best practices.',
+      icon: <IconFunction className="w-8 h-8" />,
+      color: 'from-pink-400 to-rose-500',
+      bg: 'bg-slate-800'
+    },
+    {
+      name: 'Index',
       to: '/indexes',
       description: 'Master database indexes for optimal query performance.',
       icon: <IconSearch className="w-8 h-8" />,
@@ -88,7 +97,7 @@ const Home = () => {
       bg: 'bg-slate-800'
     },
     {
-      name: 'Trigger Guide',
+      name: 'Trigger',
       to: '/triggers',
       description: 'Understanding and implementing database triggers.',
       icon: <IconLightning className="w-8 h-8" />,
@@ -96,7 +105,7 @@ const Home = () => {
       bg: 'bg-slate-800'
     },
     {
-      name: 'View Guide',
+      name: 'View',
       to: '/views',
       description: 'Create and manage database views effectively.',
       icon: <IconEye className="w-8 h-8" />,

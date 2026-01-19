@@ -135,7 +135,7 @@ GO`);
       <SubNav />
       <div className="p-8 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-white">
-          Stored Procedure Backup & Rollback
+          Stored Procedure
         </h1>
 
         <div className="bg-blue-900/20 border border-blue-900/50 p-4 mb-8 rounded-md">

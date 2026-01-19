@@ -362,7 +362,7 @@ END`
             />
 
             <header className="space-y-2">
-                <h1 className="text-4xl font-bold mb-3 text-white">Stored Procedures Guide</h1>
+                <h1 className="text-4xl font-bold mb-3 text-white">Stored Procedures</h1>
                 <p className="text-slate-400 mb-8 text-lg">
                     Enterprise-grade development practices for SQL Server Stored Procedures.
                 </p>

@@ -79,7 +79,7 @@ const Footer = () => {
                                 <li>
                                     <a href="/table-guide" className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                         <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                                        Table Guide
+                                        Table
                                     </a>
                                 </li>
                                 <li>
@@ -89,9 +89,15 @@ const Footer = () => {
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/function-guide" className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 group">
+                                        <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                        Function
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/indexes" className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                         <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                                        Index Guide
+                                        Index
                                     </a>
                                 </li>
                             </ul>
@@ -109,13 +115,13 @@ const Footer = () => {
                                 <li>
                                     <a href="/triggers" className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                         <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                                        Trigger Guide
+                                        Trigger
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/views" className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2 group">
                                         <span className="w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                                        View Guide
+                                        View
                                     </a>
                                 </li>
                                 <li>

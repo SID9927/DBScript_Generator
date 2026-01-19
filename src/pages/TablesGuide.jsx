@@ -374,7 +374,7 @@ ON Orders(OrderDate);`
       />
 
       <header className="space-y-2">
-        <h1 className="text-4xl font-bold mb-3 text-white">Tables Guide</h1>
+        <h1 className="text-4xl font-bold mb-3 text-white">Tables</h1>
         <p className="text-slate-400 mb-8 text-lg">
           Mastering table design, optimization, and manipulation in SQL Server.
         </p>

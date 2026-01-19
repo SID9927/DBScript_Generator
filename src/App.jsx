@@ -15,6 +15,7 @@ import TriggersGuide from './pages/TriggersGuide';
 import ViewsGuide from './pages/ViewsGuide';
 import StoredProceduresGuide from './pages/StoredProceduresGuide';
 import TablesGuide from './pages/TablesGuide';
+import FunctionsGuide from './pages/FunctionsGuide';
 import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
 import DiffViewer from './pages/DiffViewer';
 import AlterTableGenerator from './pages/AlterTableGenerator';
@@ -51,6 +52,7 @@ const App = () => {
           <Route path="/views" element={<ViewsGuide />} />
           <Route path="/stored-procedures-guide" element={<StoredProceduresGuide />} />
           <Route path='/table-guide' element={<TablesGuide />} />
+          <Route path='/function-guide' element={<FunctionsGuide />} />
           <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
           <Route path='/diff-viewer' element={<DiffViewer />} />
           <Route path='/alter-table' element={<AlterTableGenerator />} />

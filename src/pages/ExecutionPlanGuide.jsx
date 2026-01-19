@@ -495,7 +495,7 @@ JOIN LargeTable2 t2 ON t1.Col = t2.Col`
 
             <header className="space-y-2">
                 <h1 className="text-4xl font-bold text-white">
-                    SQL Execution Plan Guide
+                    SQL Execution Plan
                 </h1>
                 <p className="text-slate-400 text-lg">
                     Learn how to read and optimize SQL Server execution plans.
