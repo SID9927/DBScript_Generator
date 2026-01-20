@@ -30,40 +30,48 @@ const backupLinks = [
   { name: 'Function', to: '/backup&rollback/function' },
 ];
 
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
+import CloudClipboard from './pages/CloudClipboard';
+
 const App = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <ScrollToTopButton />
-      <div className="min-h-screen bg-slate-900 text-slate-200">
-        <Navbar />
-        <Breadcrumbs />
-        <SubNav basePath="/backup&rollback" links={backupLinks} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/backup&rollback" element={<Navigate to="/backup&rollback/sp" replace />} />
-          <Route path="/backup&rollback/sp" element={<StoredProcedure />} />
-          <Route path="/backup&rollback/table" element={<Tables />} />
-          <Route path="/backup&rollback/function" element={<Functions />} />
-          <Route path="/table" element={<Tables />} />
-          <Route path="/withnolock" element={<SPWithNoLockEnhancer />} />
-          <Route path="/indexes" element={<Indexes />} />
-          <Route path="/triggers" element={<TriggersGuide />} />
-          <Route path="/views" element={<ViewsGuide />} />
-          <Route path="/stored-procedures-guide" element={<StoredProceduresGuide />} />
-          <Route path='/table-guide' element={<TablesGuide />} />
-          <Route path='/function-guide' element={<FunctionsGuide />} />
-          <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
-          <Route path='/diff-viewer' element={<DiffViewer />} />
-          <Route path='/alter-table' element={<AlterTableGenerator />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<Home title="Select a Module" />} />
-        </Routes>
-      </div>
-      <Footer />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <ScrollToTopButton />
+        <div className="min-h-screen bg-slate-900 text-slate-200">
+          <Navbar />
+          <Breadcrumbs />
+          <SubNav basePath="/backup&rollback" links={backupLinks} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/clipboard" element={<CloudClipboard />} />
+            <Route path="/backup&rollback" element={<Navigate to="/backup&rollback/sp" replace />} />
+            <Route path="/backup&rollback/sp" element={<StoredProcedure />} />
+            <Route path="/backup&rollback/table" element={<Tables />} />
+            <Route path="/backup&rollback/function" element={<Functions />} />
+            <Route path="/table" element={<Tables />} />
+            <Route path="/withnolock" element={<SPWithNoLockEnhancer />} />
+            <Route path="/indexes" element={<Indexes />} />
+            <Route path="/triggers" element={<TriggersGuide />} />
+            <Route path="/views" element={<ViewsGuide />} />
+            <Route path="/stored-procedures-guide" element={<StoredProceduresGuide />} />
+            <Route path='/table-guide' element={<TablesGuide />} />
+            <Route path='/function-guide' element={<FunctionsGuide />} />
+            <Route path='/execution-plan' element={<ExecutionPlanGuide />} />
+            <Route path='/diff-viewer' element={<DiffViewer />} />
+            <Route path='/alter-table' element={<AlterTableGenerator />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<Home title="Select a Module" />} />
+          </Routes>
+        </div>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 };
 
