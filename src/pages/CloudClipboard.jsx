@@ -71,6 +71,28 @@ const CloudClipboard = () => {
         }
     };
 
+    const handleClear = async () => {
+        if (!window.confirm('Are you sure you want to clear the clipboard? This will remove content for all connected devices.')) return;
+
+        setContent('');
+        setStatus('Clearing...');
+
+        if (currentUser) {
+            try {
+                const userDocRef = doc(db, 'clipboards', currentUser.uid);
+                await setDoc(userDocRef, {
+                    text: '',
+                    updatedAt: new Date(),
+                    lastDevice: navigator.userAgent
+                }, { merge: true });
+                setStatus('Ready');
+            } catch (error) {
+                console.error("Error clearing document:", error);
+                setStatus('Error clearing');
+            }
+        }
+    };
+
     const copyToClipboard = () => {
         navigator.clipboard.writeText(content).then(() => {
             setCopied(true);
@@ -138,31 +160,41 @@ const CloudClipboard = () => {
                                 {status}
                             </span>
                         </div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={copyToClipboard}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${copied
-                                ? 'bg-green-500/20 text-green-400 border border-green-500/50'
-                                : 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/50'
-                                }`}
-                        >
-                            {copied ? (
-                                <>
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Copied!
-                                </>
-                            ) : (
-                                <>
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                                    </svg>
-                                    Copy to Device
-                                </>
-                            )}
-                        </motion.button>
+                        <div className="flex items-center gap-3">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleClear}
+                                className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-slate-700 hover:border-red-500/30 transition-all duration-300"
+                            >
+                                Clear
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={copyToClipboard}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${copied
+                                    ? 'bg-green-500/20 text-green-400 border border-green-500/50'
+                                    : 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/50'
+                                    }`}
+                            >
+                                {copied ? (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                        </svg>
+                                        Copy to Device
+                                    </>
+                                )}
+                            </motion.button>
+                        </div>
                     </div>
 
                     {/* TextArea */}
