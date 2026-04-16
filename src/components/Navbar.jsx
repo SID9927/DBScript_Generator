@@ -7,16 +7,21 @@ import Login from '../pages/Login';
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const linkClass = ({ isActive }) =>
-    isActive
-      ? 'text-white font-medium text-sm'
-      : 'text-slate-400 hover:text-white transition-colors duration-200 text-sm font-medium';
+    `transition-colors duration-200 text-sm font-medium ${
+      isActive ? 'text-blue-400' : 'text-slate-400 hover:text-white'
+    }`;
 
-  // Close dropdown when clicking outside
+  const mobileLinkClass = ({ isActive }) =>
+    `block px-4 py-3 rounded-lg text-base font-medium transition-all ${
+      isActive ? 'bg-blue-600/10 text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+    }`;
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,66 +37,60 @@ const Navbar = () => {
       await logout();
       navigate('/');
       setIsDropdownOpen(false);
+      setIsMobileMenuOpen(false);
     } catch (error) {
       console.error('Failed to log out', error);
     }
   };
 
+  const navLinks = [
+    { name: 'Home', to: '/' },
+    { name: 'Cloud Clipboard', to: '/clipboard', protected: true },
+    { name: 'Dev Tools', to: '/devtools' },
+    { name: 'Contact', to: '/contact' }
+  ];
+
   return (
     <>
-      <nav className="bg-slate-900 border-b border-slate-800 px-6 py-4 relative z-50">
-        <div className="max-w-8xl mx-auto flex justify-between items-center">
+      <nav className="bg-[#0a0f1a] border-b border-slate-800/60 sticky top-0 z-[60] backdrop-blur-md bg-opacity-90">
+        <div className="max-w-[1400px] mx-auto px-6 h-16 flex justify-between items-center">
+          
+          {/* Logo Section */}
           <div className="flex items-center gap-3">
-            <a href="/" className="flex items-center gap-3 group">
-              <img
-                src="/logoDB.png"
-                alt="Logo"
-                className="h-8 w-auto"
-              />
-            </a>
+            <NavLink to="/" className="flex items-center gap-3 group">
+              <img src="/logoDB.png" alt="Logo" className="h-8 w-auto transform transition-transform group-hover:scale-110" />
+            </NavLink>
           </div>
 
-          <div className="flex items-center space-x-8">
-            <NavLink to="/" end className={linkClass}>
-              Home
-            </NavLink>
-            <NavLink
-              to="/clipboard"
-              className={linkClass}
-              onClick={(e) => {
-                if (!currentUser) {
-                  e.preventDefault();
-                  setShowLoginModal(true);
-                }
-              }}
-            >
-              Cloud Clipboard
-            </NavLink>
-            <NavLink to="/contact" className={linkClass}>
-              Contact
-            </NavLink>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === '/'}
+                className={linkClass}
+                onClick={(e) => {
+                  if (link.protected && !currentUser) {
+                    e.preventDefault();
+                    setShowLoginModal(true);
+                  }
+                }}
+              >
+                {link.name}
+              </NavLink>
+            ))}
 
-            {/* User Profile Section */}
+            {/* User Dropdown */}
             {currentUser ? (
               <div className="relative" ref={dropdownRef}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 focus:outline-none"
-                >
-                  {currentUser.photoURL ? (
-                    <img
-                      src={currentUser.photoURL}
-                      alt="Profile"
-                      className="w-9 h-9 rounded-full border border-slate-700 hover:border-cyan-500 transition-colors"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm border border-slate-700 hover:border-cyan-400">
-                      {currentUser.email?.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </motion.button>
+                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center focus:outline-none ml-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center p-[1px]">
+                     <div className="w-full h-full bg-[#0a0f1a] rounded-full flex items-center justify-center text-white font-bold text-xs uppercase overflow-hidden border border-slate-700">
+                        {currentUser.photoURL ? <img src={currentUser.photoURL} alt="" /> : currentUser.email?.charAt(0)}
+                     </div>
+                  </div>
+                </button>
 
                 <AnimatePresence>
                   {isDropdownOpen && (
@@ -99,56 +98,93 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-3 w-56 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden py-1"
+                      className="absolute right-0 mt-3 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 overflow-hidden"
                     >
-                      <div className="px-4 py-3 border-b border-slate-700/50">
-                        <p className="text-xs text-slate-400">Signed in as</p>
-                        <p className="text-sm text-white font-medium truncate" title={currentUser.email}>
-                          {currentUser.email}
-                        </p>
+                      <div className="px-5 py-3 border-b border-slate-800/50">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Authenticated As</p>
+                        <p className="text-sm font-bold text-white truncate">{currentUser.email}</p>
                       </div>
-
-                      <div className="py-1">
-                        <NavLink
-                          to="/clipboard"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors"
-                        >
-                          Cloud Clipboard
-                        </NavLink>
-                      </div>
-
-                      <div className="border-t border-slate-700/50 py-1">
-                        <button
-                          onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
-                        >
-                          Sign Out
-                        </button>
+                      <div className="p-1">
+                         <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors font-medium">Log Out</button>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             ) : (
-              <button
+              <button 
                 onClick={() => setShowLoginModal(true)}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition-colors border border-slate-700"
+                className="ml-4 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-900/20"
               >
                 Sign In
               </button>
             )}
           </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden flex items-center gap-4">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-slate-400 hover:text-white"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="md:hidden bg-[#0d1421] border-b border-slate-800 overflow-hidden"
+            >
+              <div className="px-4 py-6 space-y-2">
+                {navLinks.map(link => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className={mobileLinkClass}
+                    onClick={(e) => {
+                      setIsMobileMenuOpen(false);
+                      if (link.protected && !currentUser) {
+                        e.preventDefault();
+                        setShowLoginModal(true);
+                      }
+                    }}
+                  >
+                    {link.name}
+                  </NavLink>
+                ))}
+                
+                <div className="pt-4 mt-4 border-t border-slate-800">
+                  {currentUser ? (
+                    <div className="flex items-center justify-between px-4">
+                      <span className="text-xs text-slate-500 truncate mr-4">{currentUser.email}</span>
+                      <button onClick={handleLogout} className="text-sm font-bold text-red-400">Log Out</button>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => { setIsMobileMenuOpen(false); setShowLoginModal(true); }}
+                      className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold"
+                    >
+                      Sign In
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <AnimatePresence>
         {showLoginModal && (
-          <Login
-            isModal={true}
-            onClose={() => setShowLoginModal(false)}
-          />
+          <Login isModal={true} onClose={() => setShowLoginModal(false)} />
         )}
       </AnimatePresence>
     </>

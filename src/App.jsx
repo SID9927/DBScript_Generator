@@ -22,6 +22,7 @@ import AlterTableGenerator from './pages/AlterTableGenerator';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Contact from './pages/Contact';
+import DevTools from './pages/DevTools';
 import Footer from './components/Footer';
 
 const backupLinks = [
@@ -66,6 +67,7 @@ const App = () => {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/devtools" element={<DevTools />} />
             <Route path="*" element={<Home title="Select a Module" />} />
           </Routes>
         </div>
