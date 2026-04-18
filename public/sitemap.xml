@@ -1,72 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dbplayground.com/</loc>
+    <loc>https://dbscript.netlify.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/backup&amp;rollback/sp</loc>
+    <loc>https://dbscript.netlify.app/backup&amp;rollback/sp</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/backup&amp;rollback/table</loc>
+    <loc>https://dbscript.netlify.app/backup&amp;rollback/table</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/stored-procedures-guide</loc>
+    <loc>https://dbscript.netlify.app/stored-procedures-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/table-guide</loc>
+    <loc>https://dbscript.netlify.app/table-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/indexes</loc>
+    <loc>https://dbscript.netlify.app/indexes</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/execution-plan</loc>
+    <loc>https://dbscript.netlify.app/execution-plan</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/triggers</loc>
+    <loc>https://dbscript.netlify.app/triggers</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/views</loc>
+    <loc>https://dbscript.netlify.app/views</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/withnolock</loc>
+    <loc>https://dbscript.netlify.app/withnolock</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/diff-viewer</loc>
+    <loc>https://dbscript.netlify.app/diff-viewer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/contact</loc>
+    <loc>https://dbscript.netlify.app/contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/terms-of-service</loc>
+    <loc>https://dbscript.netlify.app/terms-of-service</loc>
     <changefreq>yearly</changefreq>
     <priority>0.1</priority>
   </url>
   <url>
-    <loc>https://dbplayground.com/privacy-policy</loc>
+    <loc>https://dbscript.netlify.app/privacy-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.1</priority>
   </url>

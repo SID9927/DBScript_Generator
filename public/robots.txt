@@ -19,4 +19,4 @@ User-agent: OmgiliBot
 Allow: /
 
 # Sitemap location
-Sitemap: https://dbplayground.com/sitemap.xml
+Sitemap: https://dbscript.netlify.app/sitemap.xml
