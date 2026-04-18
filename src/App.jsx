@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Breadcrumbs from './components/Breadcrumbs';
 import ScrollToTop from './components/ScrollToTop';
 import ScrollToTopButton from './components/ScrollToTopButton';
@@ -24,6 +25,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Contact from './pages/Contact';
 import DevTools from './pages/DevTools/index';
 import Footer from './components/Footer';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
+import Offline from './pages/Offline/index'; 
+import { AuthProvider } from './context/AuthContext';
 
 const backupLinks = [
   { name: 'Stored Procedure', to: '/backup&rollback/sp' },
@@ -31,10 +36,26 @@ const backupLinks = [
   { name: 'Function', to: '/backup&rollback/function' },
 ];
 
-  import { AuthProvider } from './context/AuthContext';
-  import Login from './pages/Login';
-
 const App = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  if (!isOnline) {
+    return <Offline />;
+  }
+
   return (
     <AuthProvider>
       <Router>
@@ -64,8 +85,8 @@ const App = () => {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/devtools" element={<DevTools />} />
-            <Route path="*" element={<Home title="Select a Module" />} />
+            <Route path="/devtools" element={<DevTools />} /> 
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         <Footer />
@@ -74,4 +95,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;
