@@ -44,9 +44,36 @@ const Navbar = () => {
     { name: 'Contact', to: '/contact' }
   ];
 
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Always show at the top
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      } else {
+        // Show if scrolling up, hide if scrolling down
+        setIsVisible(currentScrollY < lastScrollY);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
     <>
-      <nav className="bg-[#060b14]/80 border-b border-slate-800/40 sticky top-0 z-[60] backdrop-blur-xl">
+      <motion.nav 
+        initial={{ y: 0 }}
+        animate={{ y: isVisible ? 0 : -100 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="bg-[#060b14]/80 border-b border-white/[0.03] fixed top-0 left-0 right-0 z-[60] backdrop-blur-xl"
+      >
         <div className="max-w-[1500px] mx-auto px-4 md:px-8 h-14 md:h-16 flex justify-between items-center">
           
           {/* Logo Section */}
@@ -194,7 +221,7 @@ const Navbar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </motion.nav>
 
       <AnimatePresence>
         {showLoginModal && (

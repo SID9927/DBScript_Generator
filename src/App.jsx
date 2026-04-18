@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Breadcrumbs from './components/Breadcrumbs';
 import ScrollToTop from './components/ScrollToTop';
@@ -28,7 +28,7 @@ import Footer from './components/Footer';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Offline from './pages/Offline/index'; 
-import { AuthProvider } from './context/AuthContext';
+import DemoVariant1 from './components/ui/background-demo';
 
 const backupLinks = [
   { name: 'Stored Procedure', to: '/backup&rollback/sp' },
@@ -38,6 +38,7 @@ const backupLinks = [
 
 const App = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const location = useLocation();
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -56,14 +57,20 @@ const App = () => {
     return <Offline />;
   }
 
+  // Calculate top padding based on route (if SubNav is present)
+  // SubNav is present if path starts with /backup&rollback
+  const hasSubNav = location.pathname.startsWith('/backup&rollback');
+
   return (
-    <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <ScrollToTopButton />
-        <div className="min-h-screen bg-slate-900 text-slate-200">
-          <Navbar />
-          <SubNav basePath="/backup&rollback" links={backupLinks} />
+    <>
+      <ScrollToTop />
+      <ScrollToTopButton />
+      <div className="min-h-screen bg-slate-900 text-slate-200">
+        <Navbar />
+        <SubNav basePath="/backup&rollback" links={backupLinks} />
+        
+        {/* Dynamic Padding Wrapper to prevent fixed headers from obscuring content */}
+        <div className={`transition-all duration-300 ${hasSubNav ? 'pt-26 md:pt-28' : 'pt-14 md:pt-16'}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -86,12 +93,13 @@ const App = () => {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/devtools" element={<DevTools />} /> 
+            <Route path="/background-demo" element={<DemoVariant1 />} /> 
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-        <Footer />
-      </Router>
-    </AuthProvider>
+      </div>
+      <Footer />
+    </>
   );
 };
 

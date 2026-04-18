@@ -31,4 +31,4 @@ const DemoVariant1 = () => {
   );
 };
 
-export { DemoVariant1 };
+export default DemoVariant1;
