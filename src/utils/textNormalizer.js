@@ -33,7 +33,20 @@ export const normalizeText = (text, options) => {
   } else if (options.format === "json") {
     try {
       const obj = JSON.parse(result);
-      result = JSON.stringify(obj, null, 2);
+      // Top Notch Feature: Sort JSON keys for logical comparison
+      const sortObject = (o) => {
+        if (Array.isArray(o)) return o.map(sortObject);
+        if (o !== null && typeof o === 'object') {
+          return Object.keys(o)
+            .sort()
+            .reduce((prev, key) => {
+              prev[key] = sortObject(o[key]);
+              return prev;
+            }, {});
+        }
+        return o;
+      };
+      result = JSON.stringify(sortObject(obj), null, 2);
     } catch (e) {
       // console.warn('JSON Formatting failed', e);
     }

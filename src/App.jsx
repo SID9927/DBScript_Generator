@@ -6,23 +6,23 @@ import ScrollToTopButton from './components/ScrollToTopButton';
 import Navbar from './components/Navbar';
 import SubNav from './components/SubNav';
 import Home from './components/Home';
-import StoredProcedure from './pages/StoredProcedure';
-import Tables from './pages/Tables';
-import Functions from './pages/Functions';
-import SPWithNoLockEnhancer from './pages/SPWithNoLockEnhancer';
-import Indexes from './pages/Indexes';
-import TriggersGuide from './pages/TriggersGuide';
-import ViewsGuide from './pages/ViewsGuide';
-import StoredProceduresGuide from './pages/StoredProceduresGuide';
-import TablesGuide from './pages/TablesGuide';
-import FunctionsGuide from './pages/FunctionsGuide';
-import ExecutionPlanGuide from './pages/ExecutionPlanGuide';
-import DiffViewer from './pages/DiffViewer';
-import AlterTableGenerator from './pages/AlterTableGenerator';
+import SPBackup from './pages/BackupRollback/SPBackup';
+import TableBackup from './pages/BackupRollback/TableBackup';
+import FunctionBackup from './pages/BackupRollback/FunctionBackup';
+import SPWithNoLockEnhancer from './pages/SPWithNoLockEnhancer/SPWithNoLockEnhancer';
+import Indexes from './pages/Indexes/Indexes';
+import TriggersGuide from './pages/TriggersGuide/TriggersGuide';
+import ViewsGuide from './pages/ViewsGuide/ViewsGuide';
+import StoredProceduresGuide from './pages/StoredProceduresGuide/StoredProceduresGuide';
+import TablesGuide from './pages/TablesGuide/TablesGuide';
+import FunctionsGuide from './pages/FunctionsGuide/FunctionsGuide';
+import ExecutionPlanGuide from './pages/ExecutionPlanGuide/ExecutionPlanGuide';
+import DiffViewer from './pages/DiffViewer/DiffViewer';
+import AlterTableGenerator from './pages/AlterTableGenerator/AlterTableGenerator';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Contact from './pages/Contact';
-import DevTools from './pages/DevTools';
+import DevTools from './pages/DevTools/index';
 import Footer from './components/Footer';
 
 const backupLinks = [
@@ -31,9 +31,8 @@ const backupLinks = [
   { name: 'Function', to: '/backup&rollback/function' },
 ];
 
-import { AuthProvider } from './context/AuthContext';
-import Login from './pages/Login';
-import CloudClipboard from './pages/CloudClipboard';
+  import { AuthProvider } from './context/AuthContext';
+  import Login from './pages/Login';
 
 const App = () => {
   return (
@@ -43,17 +42,15 @@ const App = () => {
         <ScrollToTopButton />
         <div className="min-h-screen bg-slate-900 text-slate-200">
           <Navbar />
-          <Breadcrumbs />
           <SubNav basePath="/backup&rollback" links={backupLinks} />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/clipboard" element={<CloudClipboard />} />
             <Route path="/backup&rollback" element={<Navigate to="/backup&rollback/sp" replace />} />
-            <Route path="/backup&rollback/sp" element={<StoredProcedure />} />
-            <Route path="/backup&rollback/table" element={<Tables />} />
-            <Route path="/backup&rollback/function" element={<Functions />} />
-            <Route path="/table" element={<Tables />} />
+            <Route path="/backup&rollback/sp" element={<SPBackup />} />
+            <Route path="/backup&rollback/table" element={<TableBackup />} />
+            <Route path="/backup&rollback/function" element={<FunctionBackup />} />
+            <Route path="/table" element={<TableBackup />} />
             <Route path="/withnolock" element={<SPWithNoLockEnhancer />} />
             <Route path="/indexes" element={<Indexes />} />
             <Route path="/triggers" element={<TriggersGuide />} />

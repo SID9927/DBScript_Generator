@@ -106,9 +106,30 @@ const Footer = () => {
                            </div>
                         </div>
                         
-                        {/* THE SIGNATURE - Optimized for Mobile */}
-                        <div className="text-[7px] sm:text-[9px] font-mono text-slate-800 uppercase tracking-[0.3em] sm:tracking-[0.5em] pointer-events-none select-none opacity-80 whitespace-nowrap">
-                            Conceived, Designed & Developed by Siddharth
+                        {/* THE SIGNATURE - Compact Stark Style */}
+                        <div className="inline-block relative group/signature">
+                            <div className="text-[7px] sm:text-[9px] font-mono text-slate-700 uppercase tracking-[0.3em] sm:tracking-[0.5em] pointer-events-none select-none opacity-90 whitespace-nowrap mb-1">
+                                CONCEIVED, DESIGNED & DEVELOPED BY SIDDHARTH
+                            </div>
+                            
+                            {/* The Underline with Immediate Star */}
+                            <div className="flex items-center -mt-0.5">
+                                <motion.div 
+                                    initial={{ scaleX: 0 }}
+                                    whileInView={{ scaleX: 1 }}
+                                    transition={{ duration: 1.5, ease: "easeOut" }}
+                                    className="h-[1.5px] flex-grow bg-gradient-to-r from-transparent via-slate-800 to-indigo-500/40 origin-left"
+                                />
+                                <motion.span 
+                                    animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }}
+                                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                                    className="text-indigo-500 shift-y-[-1px] drop-shadow-[0_0_8px_rgba(99,102,241,0.6)] ml-0.5"
+                                >
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                                    </svg>
+                                </motion.span>
+                            </div>
                         </div>
                     </div>
                 </div>

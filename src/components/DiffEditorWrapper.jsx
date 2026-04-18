@@ -206,10 +206,10 @@ const DiffEditorWrapper = ({ original, modified, language = 'plaintext', options
                 language={language}
                 theme="futuristic-dark"
                 options={{
-                    renderSideBySide: true,
+                    renderSideBySide: options.renderSideBySide ?? true,
                     originalEditable: true,
                     readOnly: false,
-                    minimap: { enabled: true },
+                    minimap: { enabled: options.minimap ?? true },
                     scrollBeyondLastLine: false,
                     fontSize: 14,
                     fontFamily: '"Fira Code", monospace',

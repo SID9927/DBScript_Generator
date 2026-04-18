@@ -31,7 +31,7 @@ const Login = ({ isModal = false, onClose }) => {
         if (isModal && onClose) {
             onClose();
         } else {
-            navigate('/clipboard');
+            navigate('/devtools');
         }
     };
 
@@ -104,9 +104,21 @@ const Login = ({ isModal = false, onClose }) => {
                             className="w-32 h-auto mx-auto mb-6 drop-shadow-2xl"
                         />
                         <h2 className="text-2xl font-bold text-white mb-2">Cloud Clipboard</h2>
-                        <p className="text-slate-400 text-sm leading-relaxed">
+                        <p className="text-slate-400 text-sm leading-relaxed mb-8">
                             Sync your snippets seamlessly across your storage devices and environments.
                         </p>
+                        
+                        {!isModal && (
+                            <button 
+                                onClick={() => navigate(-1)}
+                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors group"
+                            >
+                                <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Back to Tools
+                            </button>
+                        )}
                     </div>
                 </div>
 

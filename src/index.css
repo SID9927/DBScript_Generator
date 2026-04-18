@@ -55,6 +55,18 @@
     background-color: #0f172a; /* Slate-900 */
     color: #e2e8f0; /* Slate-200 */
     min-height: 100vh;
+    cursor: default;
+    user-select: none; /* Helps prevent accidental text highlights while clicking around an app */
+  }
+
+  /* Allow text selection and text cursor in appropriate places */
+  input, textarea, .selectable-text, [contenteditable="true"] {
+    cursor: text;
+    user-select: text;
+  }
+
+  button, a, .clickable {
+    cursor: pointer;
   }
 
   code,
@@ -196,5 +208,26 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Custom Animations */
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.05); }
+  }
+  @keyframes radar {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+  .animate-radar {
+    animation: radar 3s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 }
